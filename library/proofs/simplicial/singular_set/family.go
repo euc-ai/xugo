@@ -1,0 +1,30 @@
+// family.go — the singular_set family manifest: the registry handle every
+// member registers into, and the family's ONE shared recorded CNF cache.
+// Proof files carry entry vars; they never call InstallCNFCache — the
+// replay harness installs familyCNF env-side before every member's Build.
+//
+// pb maintenance (recipes in gates/record_cnf_test.go's header):
+//
+//	XUGO_RECORD_FAMILY_CNF=singular_set.<Member> go test -run TestRecordFamilyCNF ./library/integrity/gates/
+//	XUGO_FAMILY_CNF_GC=simplicial/singular_set go test -run TestRecordFamilyCNF ./library/integrity/gates/
+//
+// The two envs take DIFFERENT forms: RECORD_CNF takes the registered
+// member name, which carries the family's BASE name; CNF_GC takes the
+// family's FULL domain path.
+
+package singular_set
+
+import (
+	_ "embed"
+
+	"github.com/euc-ai/xugo/library/registry"
+)
+
+//go:embed singular_set.cnf.pb
+var familyCNF []byte
+
+// family is the family handle; the registered entry prefix is
+// `singular_set.<Member>`. The chapter has no vocabulary of its own:
+// the standard simplices are euclidean_simplex's, the maps out of them
+// continuous's, and the record a simplicial set is simplicial_set's.
+var family = registry.NewFamily("simplicial/singular_set", familyCNF)

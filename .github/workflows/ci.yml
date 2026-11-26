@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+# Three jobs, one runner each: the tree's own checks; the code's tests,
+# every package outside library/integrity; and the corpus battery,
+# library/integrity's gates and then every member replayed through the
+# kernel. The code's tests run one package at a time and the replay has
+# a runner to itself: several tests hold a wall-clock budget, and the
+# refuter gives a search up when no clause has arrived for a tenth of a
+# second, so a starved machine reports a search that did not close where
+# there is no defect.
+
+jobs:
+  tree:
+    name: Format, build, vet, generated code
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Every Go file is gofmt's
+        run: |
+          unformatted=$(gofmt -l .)
+          test -z "$unformatted" || { echo "$unformatted"; exit 1; }
+
+      - name: go.mod and go.sum are tidy
+        run: go mod tidy -diff
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      # A built binary is executable and a hundred megabytes; nothing the
+      # tree holds is either.
+      - name: Every tracked file is a plain file
+        run: |
+          odd=$(git ls-files -s | awk '$1 != "100644"')
+          test -z "$odd" || { echo "$odd"; exit 1; }
+
+      # Regenerated with the protoc and the protoc-gen-go that the
+      # generated files' headers name, which is where the versions live.
+      - name: The protobuf code is what protoc writes
+        run: |
+          protoc_version=$(awk '$1 == "//" && $2 == "protoc" { print $3; exit }' ext/hol.pb.go)
+          plugin_version=$(awk '$1 == "//" && $2 == "protoc-gen-go" { print $3; exit }' ext/hol.pb.go)
+          release=${protoc_version#v*.}
+          curl -fsSL -o "$RUNNER_TEMP/protoc.zip" \
+            "https://github.com/protocolbuffers/protobuf/releases/download/v$release/protoc-$release-linux-x86_64.zip"
+          unzip -q "$RUNNER_TEMP/protoc.zip" -d "$RUNNER_TEMP/protoc"
+          GOBIN="$RUNNER_TEMP/protoc/bin" go install "google.golang.org/protobuf/cmd/protoc-gen-go@$plugin_version"
+          PATH="$RUNNER_TEMP/protoc/bin:$PATH"
+          for proto in $(git ls-files '*.proto'); do
+            protoc -I . "$proto" --go_out=. --go_opt=paths=source_relative
+          done
+          git diff --exit-code
+
+  code:
+    name: Code tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    # A hosted runner is slower than the machine the live searches' time
+    # ceilings were measured on: the tests that open with
+    # wallclock.SkipOnSlowMachine are skipped here.
+    env:
+      XUGO_SLOW_MACHINE: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Every package outside the corpus battery
+        run: |
+          packages=$(go list ./... | grep -v '/library/integrity/')
+          go test -count=1 -p 1 -timeout 180m $packages
+
+  corpus:
+    name: Corpus battery
+    runs-on: ubuntu-latest
+    timeout-minutes: 600
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      # The name gate and the claim-text gate read the tree at a base
+      # commit. On a push that is HEAD, the tree itself; a pull request
+      # is compared with the commit it is to merge into.
+      - name: Fetch the base of a pull request for the gates that compare against one
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BASE"
+          echo "XUGO_GATE_BASE=$BASE" >> "$GITHUB_ENV"
+
+      # The replay is most of the job's time, so the gates beside it run
+      # first, as a step of their own: one that fails ends the job
+      # before the replay starts.
+      - name: Lints, identity, the dependency graph, the generated files
+        run: go test -count=1 -p 1 -timeout 60m -skip '^TestReplayAll$' ./library/integrity/...
+
+      - name: Replay
+        run: go test -count=1 -timeout 600m -run '^TestReplayAll$' ./library/integrity/gates/

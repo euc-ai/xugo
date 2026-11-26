@@ -1,0 +1,896 @@
+<!doctype html>
+<!--NOTICE-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>XuGo family graph</title>
+<style>
+  :root, :root.light, :root[data-theme="light"] {
+    --bg: #ffffff;
+    --foreground: #0f172a;
+    --muted-foreground: #64748b;
+    --card: #f8fafc;
+    --card-border: #cbd5e1;
+    --primary: #2563eb;
+    --primary-foreground: #ffffff;
+    --down: #4d8579;
+    --focus: #ea580c;
+    --up: #b98a2a;
+    --warning: #d97706;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light):not([data-theme="light"]) {
+      --bg: #0f172a;
+      --foreground: #e2e8f0;
+      --muted-foreground: #94a3b8;
+      --card: #1e293b;
+      --card-border: #334155;
+      --primary: #3b82f6;
+      --primary-foreground: #ffffff;
+      --down: #7dbcae;
+      --focus: #f97316;
+      --up: #e0b455;
+      --warning: #f59e0b;
+      color-scheme: dark;
+    }
+  }
+  :root.dark, :root[data-theme="dark"] {
+    --bg: #0f172a;
+    --foreground: #e2e8f0;
+    --muted-foreground: #94a3b8;
+    --card: #1e293b;
+    --card-border: #334155;
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+    --down: #7dbcae;
+    --focus: #f97316;
+    --up: #e0b455;
+    --warning: #f59e0b;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    color: var(--foreground);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .toolbar {
+    flex: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 12px;
+  }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .pill-btn {
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    color: var(--foreground);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 120ms ease, border-color 120ms ease;
+  }
+  .pill-btn:hover { border-color: var(--primary); }
+  a.pill-btn { text-decoration: none; }
+  .search-input {
+    width: 216px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    background: var(--card);
+    color: var(--foreground);
+    border: 1px solid var(--card-border);
+    outline: none;
+  }
+  .search-input::placeholder { color: var(--muted-foreground); }
+  .search-input:focus { border-color: var(--primary); }
+  .size-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding-right: 8px;
+    margin-right: 2px;
+    border-right: 1px solid var(--card-border);
+    color: var(--muted-foreground);
+  }
+  .size-input {
+    width: 52px;
+    padding: 3px 4px 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    background: var(--card);
+    color: var(--foreground);
+    border: 1px solid var(--card-border);
+    outline: none;
+  }
+  .size-input::placeholder { color: var(--muted-foreground); }
+  .size-input:focus { border-color: var(--primary); }
+  .hidden { display: none !important; }
+  .readout {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    color: var(--muted-foreground);
+  }
+  .main { flex: 1; min-height: 0; display: flex; }
+  .canvas-wrap { flex: 1; min-width: 0; overflow: auto; padding: 6px 8px 6px 14px; user-select: none; }
+  .canvas-wrap.pannable { cursor: grab; }
+  .canvas-wrap.panning { cursor: grabbing; }
+  .canvas-wrap svg { display: block; width: 100%; height: auto; }
+  .blk { cursor: pointer; transition: opacity 100ms ease; }
+  .blk-rect { transition: fill 100ms ease, stroke 100ms ease, stroke-width 100ms ease; }
+  .edge-path { fill: none; pointer-events: none; }
+  .sidebar {
+    flex: none;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    padding: 12px 14px;
+    border-left: 1px solid var(--card-border);
+    font-size: 12.5px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  .side-body { display: flex; flex-direction: column; gap: 14px; }
+  .side-path { font-size: 11.5px; }
+  .side-name { font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .side-head { font-weight: 600; }
+  .side-list { list-style: none; margin: 3px 0 0; padding: 0; font-size: 11.5px; line-height: 1.55; }
+  .side-list a, .side-path a { color: inherit; text-decoration: none; cursor: pointer; }
+  .side-list a:hover, .side-path a:hover, .side-list a:hover .whole { color: var(--primary); text-decoration: underline; }
+  .whole { display: inline-block; max-width: 100%; }
+  .members { padding-top: 12px; border-top: 1px solid var(--card-border); }
+  .status-tag {
+    margin-left: 6px;
+    padding: 0 4px;
+    border: 1px solid var(--card-border);
+    border-radius: 3px;
+    color: var(--muted-foreground);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 10px;
+  }
+  .status-tag.on_cards, .status-tag.card { border-color: var(--warning); color: var(--warning); }
+  .side-gloss { font-weight: 600; }
+  .readme { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid var(--card-border); }
+  .readme p, .readme ul, .readme ol, .readme pre { margin: 0; }
+  .readme ul, .readme ol { padding-left: 18px; }
+  .readme li + li { margin-top: 3px; }
+  .formula { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+  math { font-size: 1.1em; }
+  .readme code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+  .readme pre {
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: var(--card);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    overflow-x: auto;
+    overflow-wrap: normal;
+  }
+  .side-foot {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--muted-foreground);
+  }
+  .legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+  .chip { display: inline-block; width: 11px; height: 8px; border-radius: 2px; }
+  .chip.focus { background: color-mix(in srgb, var(--focus) 28%, var(--card)); border: 1.5px solid var(--focus); }
+  .chip.full { background: color-mix(in srgb, var(--primary) 15%, var(--card)); border: 2px solid color-mix(in srgb, var(--primary) 60%, var(--foreground)); }
+  .line-chip { display: inline-block; width: 12px; height: 0; border-top: 2px solid var(--down); vertical-align: middle; }
+  .line-chip.up { border-top-color: var(--up); }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .muted { color: var(--muted-foreground); }
+  .plain { font-weight: 400; }
+  @media (max-width: 860px) {
+    .main { flex-direction: column; }
+    .sidebar { width: auto; max-height: 42%; border-left: 0; border-top: 1px solid var(--card-border); }
+  }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="controls">
+    <a class="pill-btn" href="../" title="The site's front page, one directory above the corpus">XuGo</a>
+    <label class="size-group">Font size
+      <input id="font-size" class="size-input" type="number" step="1" />px
+    </label>
+    <input id="search" class="search-input" type="text" placeholder="Find a family (finite_group, real…)" />
+    <button id="btn-clear" class="pill-btn hidden" type="button">Clear focus</button>
+  </div>
+  <div id="readout" class="readout"></div>
+</div>
+
+<div class="main">
+  <div id="wrap" class="canvas-wrap">
+    <svg id="svg-head" role="img" aria-label="Every family of the corpus by height, the foundations at the foot"></svg>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div id="side" class="side-body"></div>
+    <div class="side-foot">
+      <div class="legend">
+        <span class="legend-item"><span class="chip full"></span>fully proved</span>
+        <span class="legend-item"><span class="chip focus"></span>hovered or locked</span>
+        <span class="legend-item"><span class="line-chip"></span>imports</span>
+        <span class="legend-item"><span class="line-chip up"></span>importers</span>
+      </div>
+      <div>Hover a family to read it here and see its nearest imports and importers. Click one to lock everything it stands on and everything standing on it: its nearest in full colour, the rest paler. Click the blank to clear the lock and the search. Drag to pan.</div>
+    </div>
+  </aside>
+</div>
+
+<!--SHARED-->
+<script>
+(async function () {
+  "use strict";
+
+  // The family graph as visualize.Families lays it out, read from the
+  // site's files: the page paints it. What is said of a family — its
+  // gloss, its README's introduction, its definitions and theorems, each
+  // name a link to its page — is in the family's own file, read when the
+  // family is first shown.
+  const SITE = window.xugoSite;
+  let DATA;
+  try {
+    DATA = await SITE.families();
+  } catch (refused) {
+    document.getElementById("side").innerHTML = `<div class="muted">The family graph could not be read (${String(refused.message).replace(/[&<>"]/g, "")}).</div>`;
+    return;
+  }
+  // What the families' files say (visualize.SiteFamily), by family, as
+  // they arrive.
+  const SAID = new Map();
+
+  const NODES = DATA.nodes;
+  // An edge names its ends by their places among the nodes: u imports v.
+  const placeOf = new Map(NODES.map((n, i) => [n.family, i]));
+  const EDGES = DATA.edges.map(e => ({ u: placeOf.get(e.s), v: placeOf.get(e.t), x1: e.x1, x2: e.x2 }));
+
+  const dnAdj = NODES.map(() => []);
+  const upAdj = NODES.map(() => []);
+  EDGES.forEach(({ u, v }, ei) => {
+    dnAdj[u].push({ ei, v });
+    upAdj[v].push({ ei, u });
+  });
+
+  const wrap = document.getElementById("wrap");
+  const svg = document.getElementById("svg-head");
+  const readout = document.getElementById("readout");
+  const sidebar = document.getElementById("sidebar");
+  const side = document.getElementById("side");
+  const sizeEl = document.getElementById("font-size");
+  const btnClear = document.getElementById("btn-clear");
+  const searchEl = document.getElementById("search");
+
+  // A block's label is LABEL_SIZE of the viewBox's units. The drawing
+  // is scaled to set a label at the font size its reader asks, in
+  // pixels: fontPx. It opens at the least size, whatever the screen.
+  const LABEL_SIZE = 8.4;
+  const FONT = { least: 6, most: 24, first: 6 };
+  let fontPx = FONT.first;
+  // A family is fully proved where no member of it is a card or stands
+  // on one: each is proved outright, or is a postulate.
+  const FULL = NODES.map(n => n.proved + n.postulates === n.members);
+  // The heavy border: a fully proved family's, and that of a block drawn
+  // in a focus colour.
+  const BOLD = 1.2;
+  let hoveredIdx = null;
+  let clickedIdx = null;
+  let query = "";
+  let blkNodes = [];
+  let rectNodes = [];
+  let edgeNodes = [];
+  // What the sidebar holds, so that it is written only when that changes.
+  let sideKey = null;
+
+  svg.setAttribute("viewBox", `0 0 ${DATA.width} ${DATA.height}`);
+  sizeEl.min = FONT.least;
+  sizeEl.max = FONT.most;
+
+  function plural(n, one, many) {
+    return `${n} ${n === 1 ? one : many}`;
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  // A name with the places a line may break it at: after a "/", a "."
+  // or a "_", and before a capital that follows a small letter or a
+  // digit. A name too long for its line breaks there, and not inside a
+  // word.
+  function nameHtml(s) {
+    return String(s).split(/(?<=[\/._])|(?<=[a-z0-9])(?=[A-Z])/).map(escHtml).join("<wbr>");
+  }
+
+  function isLightTheme() {
+    const root = document.documentElement;
+    const dt = root.getAttribute("data-theme");
+    if (dt === "light" || root.classList.contains("light")) return true;
+    if (dt === "dark" || root.classList.contains("dark")) return false;
+    return !(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  }
+
+  // A family's name in two parts: the path it lies under and its own.
+  function nameParts(family) {
+    const cut = family.lastIndexOf("/") + 1;
+    return [family.slice(0, cut), family.slice(cut)];
+  }
+
+  function palette() {
+    const cs = getComputedStyle(document.documentElement);
+    const get = (v, fb) => (cs.getPropertyValue(v) || "").trim() || fb;
+    const isLight = isLightTheme();
+    const card = get("--card", isLight ? "#f8fafc" : "#1e293b");
+    const primary = get("--primary", isLight ? "#2563eb" : "#3b82f6");
+    const border = get("--card-border", isLight ? "#cbd5e1" : "#334155");
+    // The focus colour is the hovered or locked block's; down and up are
+    // the colours of what it stands on and of what stands on it. A block
+    // is filled with a colour at full strength or pale, and a pale
+    // block's border is the colour halfway to the plain border.
+    const focus = get("--focus", isLight ? "#ea580c" : "#f97316");
+    const down = get("--down", isLight ? "#4d8579" : "#7dbcae");
+    const up = get("--up", isLight ? "#b98a2a" : "#e0b455");
+    const filled = (colour, share) => `color-mix(in srgb, ${colour} ${share}%, ${card})`;
+    const paled = colour => `color-mix(in srgb, ${colour} 50%, ${border})`;
+    return {
+      fg: get("--foreground", isLight ? "#0f172a" : "#e2e8f0"),
+      muted: get("--muted-foreground", isLight ? "#64748b" : "#94a3b8"),
+      border,
+      nodeFill: isLight
+        ? `color-mix(in srgb, ${primary} 15%, ${card})`
+        : `color-mix(in srgb, ${primary} 22%, ${card})`,
+      nodeStroke: `color-mix(in srgb, ${primary} 32%, ${border})`,
+      fullStroke: isLight
+        ? `color-mix(in srgb, ${primary} 42%, #172554)`
+        : `color-mix(in srgb, ${primary} 72%, #1d4ed8)`,
+      focus,
+      down,
+      up,
+      focusFill: filled(focus, 28),
+      downFill: filled(down, 30),
+      upFill: filled(up, 30),
+      downPaleFill: filled(down, 13),
+      upPaleFill: filled(up, 13),
+      downPaleStroke: paled(down),
+      upPaleStroke: paled(up)
+    };
+  }
+
+  function nsEl(tag, attrs, parent) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const k in attrs) el.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(el);
+    return el;
+  }
+
+  function bfsCone(startIdx, adj, key) {
+    const seen = new Set();
+    const q = [startIdx];
+    while (q.length) {
+      const cur = q.pop();
+      for (const item of adj[cur]) {
+        const nxt = item[key];
+        if (!seen.has(nxt)) {
+          seen.add(nxt);
+          q.push(nxt);
+        }
+      }
+    }
+    return seen;
+  }
+
+  function summary() {
+    return `${plural(NODES.length, "family", "families")} · ${plural(DATA.layers, "height", "heights")} (H0–H${DATA.layers - 1}) · ${plural(EDGES.length, "edge", "edges")}`;
+  }
+
+  // A section of the sidebar: its heading and families by name, each a
+  // link that locks the family. A family's own name is kept whole, on
+  // the line after its path where the two do not fit on one.
+  function sideSection(head, names) {
+    const items = names.map(name => {
+      const [under, own] = nameParts(name);
+      return `<li><a data-family="${escHtml(name)}"><span class="muted">${nameHtml(under)}</span><span class="whole">${nameHtml(own)}</span></a></li>`;
+    });
+    return `<div><div class="side-head">${head}${items.length ? "" : ` <span class="muted plain">· none</span>`}</div>${items.length ? `<ul class="side-list mono">${items.join("")}</ul>` : ""}</div>`;
+  }
+
+  // What a theorem's name is tagged with: proved outright, proved on
+  // cards — one of the results under it is a card — a card, or a
+  // postulate.
+  const STATUS_TAGS = {
+    proved: `<span class="status-tag">proved</span>`,
+    on_cards: `<span class="status-tag on_cards">on cards</span>`,
+    card: `<span class="status-tag card">card</span>`,
+    postulate: `<span class="status-tag">postulate</span>`
+  };
+
+  // A member's name in a family's list: a link to the page of its unit,
+  // the member itself or the door call that registered it.
+  function memberHtml(family, unit, name) {
+    return `<a href="${escHtml(SITE.pageOf(`${family}.${unit}`))}">${nameHtml(name)}</a>`;
+  }
+
+  // A family's definitions, in the chapter's order: a door call that
+  // registered several members is one of them, by its own name. A
+  // definition is tagged only where it stands on a card.
+  function definitionsHtml(said) {
+    const definitions = said.units.filter(u => u.definition);
+    if (definitions.length === 0) return "";
+    const items = definitions.map(d =>
+      `<li>${memberHtml(said.family, d.name, d.name)}${d.status === "on_cards" ? STATUS_TAGS.on_cards : ""}</li>`);
+    return `<div class="members"><div class="side-head">Definitions <span class="muted plain">· ${definitions.length}</span></div><ul class="side-list mono">${items.join("")}</ul></div>`;
+  }
+
+  // A family's theorems and cards, in the chapter's order: its members
+  // that are theorems, cards or postulates, whatever registered them.
+  function theoremsHtml(said) {
+    const theorems = [];
+    for (const unit of said.units) {
+      for (const m of unit.members) {
+        if (m.kind === "theorem" || m.kind === "card" || m.kind === "postulate") theorems.push({ unit: unit.name, name: m.member, status: m.status });
+      }
+    }
+    if (theorems.length === 0) return "";
+    const count = status => theorems.filter(t => t.status === status).length;
+    const proved = count("proved"), cards = count("card"), onCards = count("on_cards"), postulates = count("postulate");
+    const items = theorems.map(t => `<li>${memberHtml(said.family, t.unit, t.name)}${STATUS_TAGS[t.status] || ""}</li>`);
+    const strata = [proved ? `${proved} proved` : "", postulates ? plural(postulates, "postulate", "postulates") : "", onCards ? `${onCards} on cards` : "", cards ? plural(cards, "card", "cards") : ""].filter(Boolean).join(", ");
+    return `<div class="members"><div class="side-head">Theorems <span class="muted plain">· ${theorems.length}${strata ? `: ${strata}` : ""}</span></div><ul class="side-list mono">${items.join("")}</ul></div>`;
+  }
+
+  // A line of a README: its markdown's `code`, **strong** and *emphasis*
+  // marked up, and a link left as the words it is written on. A formula
+  // stands in the line as MathML between two marks (visualize.typeset)
+  // and is set as it is. The formulas and the code are set aside first,
+  // so that a mark inside one is no mark and a mark around one still
+  // closes. A name among the words may break where nameHtml breaks one.
+  function inlineHtml(s) {
+    const formulas = [], codes = [];
+    const marked = escHtml(s
+      .replace(/\u0002([^\u0003]*)\u0003/g, (_, math) => `\u0001${formulas.push(math) - 1}\u0001`)
+      .replace(/`([^`]+)`/g, (_, code) => `\u0000${codes.push(code) - 1}\u0000`))
+      .replace(/\[([^\]]+)\]\([^)\s]+\)/g, "$1")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/(^|[^*\w])\*([^*\s](?:[^*]*[^*\s])?)\*(?![*\w])/g, "$1<em>$2</em>")
+      .replace(/(?<=[a-z0-9])(?=[A-Z])|(?<=[a-z]{2}[._\/])(?=[A-Za-z])/g, "<wbr>");
+    return marked
+      .replace(/\u0000(\d+)\u0000/g, (_, k) => `<code>${nameHtml(codes[k])}</code>`)
+      .replace(/\u0001(\d+)\u0001/g, (_, k) => formulas[k]);
+  }
+
+  // A README's introduction as visualize.readmeIntro reads it, block by block.
+  function readmeHtml(blocks) {
+    return blocks.map(b => {
+      if (b.items) {
+        const tag = b.ordered ? "ol" : "ul";
+        return `<${tag}>${b.items.map(item => `<li>${inlineHtml(item)}</li>`).join("")}</${tag}>`;
+      }
+      if (b.code) return `<pre>${escHtml(b.text)}</pre>`;
+      if (b.formula) return `<div class="formula">${b.formula}</div>`;
+      return `<p>${inlineHtml(b.text)}</p>`;
+    }).join("");
+  }
+
+  // The sidebar holds the hovered family, else the locked one, else the corpus.
+  function showSide() {
+    const idx = hoveredIdx !== null ? hoveredIdx : clickedIdx;
+    const key = `${idx}`;
+    if (key === sideKey) return;
+    sideKey = key;
+    sidebar.scrollTop = 0;
+    if (idx === null) {
+      const members = NODES.reduce((sum, n) => sum + n.members, 0);
+      const cards = NODES.reduce((sum, n) => sum + n.cards, 0);
+      side.innerHTML = `
+        <div class="side-name">XuGo family graph</div>
+        <div>${plural(NODES.length, "family", "families")} on ${plural(DATA.layers, "height", "heights")}, H0 to H${DATA.layers - 1}: a family stands one row above the highest family it imports.</div>
+        <div>${plural(members, "member", "members")}, ${plural(cards, "card", "cards")} among them.</div>
+        <div>${plural(FULL.filter(Boolean).length, "family", "families")} fully proved, drawn with a heavy border: no member is a card or stands on one.</div>
+        <div>${plural(EDGES.length, "edge", "edges")}: an import with no family between the two.</div>`;
+      return;
+    }
+    // The family's block says its name, its counts and its imports; its
+    // file says the rest, and is written in when it has been read. A
+    // file that could not be read is asked for again the next time the
+    // family is shown.
+    const n = NODES[idx];
+    const write = () => {
+      const said = SAID.get(n.family);
+      const [under, own] = nameParts(n.family);
+      const imports = dnAdj[idx].map(x => NODES[x.v].family).sort();
+      const importers = upAdj[idx].map(x => NODES[x.u].family).sort();
+      side.innerHTML = `
+        <div>
+          <div class="side-path mono muted">${nameHtml(under)}</div>
+          <div class="side-name mono">${nameHtml(own)}</div>
+          <div class="muted">${plural(n.definitions, "definition", "definitions")}${n.postulates ? ` · ${plural(n.postulates, "postulate", "postulates")}` : ""} · ${plural(n.proved_theorems, "proved result", "proved results")} · ${n.theorems_on_cards} on cards</div>
+          <div class="muted">Height ${n.height}</div>
+        </div>
+        ${said && said.gloss ? `<div class="side-gloss">${inlineHtml(said.gloss)}</div>` : ""}
+        ${sideSection(`<span class="line-chip"></span> Imports`, imports)}
+        ${sideSection(`<span class="line-chip up"></span> Imported by`, importers)}
+        ${said && said.intro.length ? `<div class="readme">${readmeHtml(said.intro)}</div>` : ""}
+        ${said ? definitionsHtml(said) + theoremsHtml(said) : ""}`;
+    };
+    write();
+    if (!SAID.has(n.family)) {
+      SITE.family(n.family).then(said => {
+        SAID.set(n.family, said);
+        if (sideKey === key) write();
+      });
+    }
+  }
+
+  // The page's address names the locked family and the font size, and
+  // names them again whenever its reader changes either.
+  function nameInAddress() {
+    const here = new URL(location.href);
+    if (clickedIdx === null) here.searchParams.delete("family");
+    else here.searchParams.set("family", NODES[clickedIdx].family);
+    if (fontPx === FONT.first) here.searchParams.delete("size");
+    else here.searchParams.set("size", fontPx);
+    history.replaceState(null, "", here);
+  }
+
+  // lock locks a family, or none.
+  function lock(idx) {
+    clickedIdx = idx;
+    nameInAddress();
+    applyHighlight();
+  }
+
+  function applyHighlight() {
+    const P = palette();
+    btnClear.classList.toggle("hidden", clickedIdx === null && query === "");
+
+    // The families the search finds are marked and the rest dimmed. A
+    // search that finds none marks nothing and dims nothing: on a page
+    // served it may be a search of the whole corpus, listed under the
+    // field.
+    const q = query.trim().toLowerCase();
+    const found = q
+      ? new Set(NODES.map((n, i) => (n.family.toLowerCase().includes(q) ? i : -1)).filter(i => i >= 0))
+      : null;
+    const searchHits = found !== null && found.size > 0 ? found : null;
+
+    const hasHover = hoveredIdx !== null;
+    const hoverDnNodes = hasHover ? new Set(dnAdj[hoveredIdx].map(x => x.v)) : null;
+    const hoverUpNodes = hasHover ? new Set(upAdj[hoveredIdx].map(x => x.u)) : null;
+    const hoverDnEdges = hasHover ? new Set(dnAdj[hoveredIdx].map(x => x.ei)) : null;
+    const hoverUpEdges = hasHover ? new Set(upAdj[hoveredIdx].map(x => x.ei)) : null;
+
+    const hasClick = clickedIdx !== null;
+    let dnCone = null, upCone = null, allCone = null;
+    if (hasClick) {
+      dnCone = bfsCone(clickedIdx, dnAdj, "v");
+      upCone = bfsCone(clickedIdx, upAdj, "u");
+      allCone = new Set([clickedIdx, ...dnCone, ...upCone]);
+    }
+    const lockDnNodes = hasClick ? new Set(dnAdj[clickedIdx].map(x => x.v)) : null;
+    const lockUpNodes = hasClick ? new Set(upAdj[clickedIdx].map(x => x.u)) : null;
+
+    const hasFocus = hasClick || searchHits !== null;
+
+    NODES.forEach((n, i) => {
+      let fill = P.nodeFill;
+      let stroke = FULL[i] ? P.fullStroke : P.nodeStroke;
+      let sw = FULL[i] ? BOLD : 0.9;
+
+      let op = 1;
+      if (hasClick) {
+        const inCone = allCone.has(i);
+        const hitQ = !searchHits || searchHits.has(i);
+        op = (inCone && hitQ) ? 1 : (inCone ? 0.52 : 0.12);
+      } else if (searchHits !== null) {
+        op = searchHits.has(i) ? 1 : 0.12;
+      }
+
+      // The locked family is in the focus colour; the families it
+      // imports and its importers in theirs; and the rest of its two
+      // cones in the pale of the same colours.
+      if (hasClick) {
+        if (i === clickedIdx) {
+          fill = P.focusFill; stroke = P.focus; sw = BOLD;
+        } else if (lockDnNodes.has(i)) {
+          fill = P.downFill; stroke = P.down; sw = BOLD;
+        } else if (lockUpNodes.has(i)) {
+          fill = P.upFill; stroke = P.up; sw = BOLD;
+        } else if (dnCone.has(i)) {
+          fill = P.downPaleFill; stroke = P.downPaleStroke; sw = BOLD;
+        } else if (upCone.has(i)) {
+          fill = P.upPaleFill; stroke = P.upPaleStroke; sw = BOLD;
+        }
+      }
+
+      // The hovered family and its nearest neighbours are drawn over that.
+      if (hasHover) {
+        if (i === hoveredIdx) {
+          op = 1;
+          fill = P.focusFill; stroke = P.focus; sw = BOLD;
+        } else if (hoverDnNodes.has(i)) {
+          op = 1;
+          fill = P.downFill; stroke = P.down; sw = BOLD;
+        } else if (hoverUpNodes.has(i)) {
+          op = 1;
+          fill = P.upFill; stroke = P.up; sw = BOLD;
+        } else if (!hasFocus) {
+          op = 0.22;
+        } else if (op > 0.5) {
+          op = 0.72;
+        }
+      }
+
+      blkNodes[i].setAttribute("opacity", op);
+      rectNodes[i].setAttribute("fill", fill);
+      rectNodes[i].setAttribute("stroke", stroke);
+      rectNodes[i].setAttribute("stroke-width", sw);
+    });
+
+    // An edge is drawn only for a focus: the hovered family's own edges,
+    // the edges inside the locked family's two cones, the edges at a
+    // family the search finds.
+    EDGES.forEach(({ u, v }, ei) => {
+      let stroke = null, width = 0, opacity = 0;
+      if (hasHover && hoverDnEdges.has(ei)) {
+        stroke = P.down; width = 1.4; opacity = 0.96;
+      } else if (hasHover && hoverUpEdges.has(ei)) {
+        stroke = P.up; width = 1.4; opacity = 0.96;
+      } else if (hasClick) {
+        if ((u === clickedIdx || dnCone.has(u)) && dnCone.has(v)) {
+          stroke = P.down; width = 1.0; opacity = hasHover ? 0.35 : 0.72;
+        } else if ((v === clickedIdx || upCone.has(v)) && upCone.has(u)) {
+          stroke = P.up; width = 1.0; opacity = hasHover ? 0.35 : 0.72;
+        }
+      } else if (searchHits !== null && (searchHits.has(u) || searchHits.has(v))) {
+        stroke = P.down; width = 1.15; opacity = hasHover ? 0.25 : 0.55;
+      }
+      const edge = edgeNodes[ei];
+      if (stroke === null) {
+        edge.setAttribute("display", "none");
+        return;
+      }
+      edge.removeAttribute("display");
+      edge.setAttribute("stroke", stroke);
+      edge.setAttribute("stroke-width", width);
+      edge.setAttribute("stroke-opacity", opacity);
+    });
+
+    readout.textContent = found !== null
+      ? `${found.size} of ${plural(NODES.length, "family", "families")} match`
+      : summary();
+    showSide();
+  }
+
+  // The graph is dragged wherever it runs past its pane.
+  function updatePannable() {
+    wrap.classList.toggle("pannable", wrap.scrollWidth > wrap.clientWidth + 1 || wrap.scrollHeight > wrap.clientHeight + 1);
+  }
+
+  let dragActive = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragScrollLeft = 0;
+  let dragScrollTop = 0;
+  let didDrag = false;
+
+  wrap.addEventListener("mousedown", e => {
+    didDrag = false;
+    if (e.button !== 0 || !wrap.classList.contains("pannable")) return;
+    dragActive = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    dragScrollLeft = wrap.scrollLeft;
+    dragScrollTop = wrap.scrollTop;
+    wrap.classList.add("panning");
+  });
+  window.addEventListener("mousemove", e => {
+    if (!dragActive) return;
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) didDrag = true;
+    wrap.scrollLeft = dragScrollLeft - dx;
+    wrap.scrollTop = dragScrollTop - dy;
+  });
+  window.addEventListener("mouseup", () => {
+    if (!dragActive) return;
+    dragActive = false;
+    wrap.classList.remove("panning");
+  });
+  window.addEventListener("resize", updatePannable);
+
+  function render() {
+    const P = palette();
+    svg.innerHTML = "";
+    svg.style.width = `${DATA.width * fontPx / LABEL_SIZE}px`;
+    blkNodes = [];
+    rectNodes = [];
+    edgeNodes = [];
+
+    const gridG = nsEl("g", {}, svg);
+
+    // A row is named by its height in the left margin; no line runs
+    // along it.
+    for (let h = 0; h < DATA.layers; h++) {
+      const yMid = (DATA.base - h * DATA.step) + DATA.block * 0.5;
+      const major = (h === 0 || h === DATA.layers - 1 || h % 5 === 0);
+      const ht = nsEl("text", {
+        x: 33, y: yMid + 3, "text-anchor": "end",
+        fill: P.muted, "font-size": 9.5, "font-family": "ui-monospace, monospace", "font-weight": major ? 600 : 400
+      }, gridG);
+      ht.textContent = `H${h}`;
+    }
+
+    const edgeG = nsEl("g", {}, svg);
+    EDGES.forEach(({ u, v, x1, x2 }) => {
+      const nu = NODES[u], nv = NODES[v];
+      const y1 = nu.y + DATA.block, y2 = nv.y;
+      const dy = (y2 - y1) * 0.48;
+      const path = nsEl("path", {
+        class: "edge-path",
+        d: `M ${x1} ${y1} C ${x1} ${y1 + dy}, ${x2} ${y2 - dy}, ${x2} ${y2}`
+      }, edgeG);
+      edgeNodes.push(path);
+    });
+
+    const blkG = nsEl("g", {}, svg);
+    NODES.forEach((n, idx) => {
+      const { x, y, w } = n;
+
+      const g = nsEl("g", { class: "blk" }, blkG);
+      blkNodes.push(g);
+
+      // applyHighlight fills the block and draws its border.
+      const rect = nsEl("rect", {
+        class: "blk-rect",
+        x, y, width: w, height: DATA.block, rx: 2.5
+      }, g);
+      rectNodes.push(rect);
+
+      // The block is sized for its two lines (visualize.familyBlockWidth):
+      // the path the family lies under, paler and smaller, and its own
+      // name.
+      const [under, own] = nameParts(n.family);
+      const pt = nsEl("text", {
+        x: x + w * 0.5, y: y + 9.2, "text-anchor": "middle",
+        fill: P.muted, "font-size": 7, "font-family": "ui-monospace, monospace"
+      }, g);
+      pt.textContent = under;
+      const bt = nsEl("text", {
+        x: x + w * 0.5, y: y + 19.4, "text-anchor": "middle",
+        fill: P.fg, "font-size": LABEL_SIZE, "font-family": "ui-monospace, monospace", "font-weight": 500
+      }, g);
+      bt.textContent = own;
+
+      g.addEventListener("mouseenter", () => {
+        if (dragActive) return;
+        hoveredIdx = idx;
+        applyHighlight();
+      });
+      g.addEventListener("mouseleave", () => {
+        if (hoveredIdx === null) return;
+        hoveredIdx = null;
+        applyHighlight();
+      });
+      g.addEventListener("click", () => {
+        if (didDrag) return;
+        lock(clickedIdx === idx ? null : idx);
+      });
+    });
+
+    applyHighlight();
+    updatePannable();
+  }
+
+  // A point of the drawing, as fractions of its width and height: the
+  // locked family's middle, or else whatever is in the middle of the
+  // pane.
+  function anchor() {
+    if (clickedIdx !== null) {
+      const n = NODES[clickedIdx];
+      return [(n.x + n.w * 0.5) / DATA.width, (n.y + DATA.block * 0.5) / DATA.height];
+    }
+    const box = svg.getBoundingClientRect(), pane = wrap.getBoundingClientRect();
+    return [(pane.left + pane.width * 0.5 - box.left) / box.width, (pane.top + pane.height * 0.5 - box.top) / box.height];
+  }
+
+  // bring scrolls a point of the drawing to the middle of the pane, as
+  // far as the drawing's edges let it.
+  function bring([fx, fy]) {
+    const box = svg.getBoundingClientRect(), pane = wrap.getBoundingClientRect();
+    wrap.scrollLeft += (box.left + fx * box.width) - (pane.left + pane.width * 0.5);
+    wrap.scrollTop += (box.top + fy * box.height) - (pane.top + pane.height * 0.5);
+  }
+
+  // scale draws at a font size, and keeps a point where it is in the
+  // pane (anchor).
+  function scale(next) {
+    sizeEl.value = next;
+    if (next === fontPx) return;
+    const kept = anchor();
+    fontPx = next;
+    render();
+    bring(kept);
+    nameInAddress();
+  }
+
+  // The font size asked is kept inside its range; a field left empty or
+  // holding no number goes back to the size in use.
+  function setFont() {
+    const asked = Math.round(Number(sizeEl.value));
+    scale(sizeEl.value.trim() !== "" && Number.isFinite(asked)
+      ? Math.min(FONT.most, Math.max(FONT.least, asked))
+      : fontPx);
+  }
+
+  sizeEl.addEventListener("change", setFont);
+  // Clearing the focus unlocks the family locked and empties the
+  // search: the button does, and a click on the drawing's blank, a
+  // drag aside.
+  function clearFocus() {
+    query = "";
+    searchEl.value = "";
+    lock(null);
+  }
+  btnClear.addEventListener("click", clearFocus);
+  wrap.addEventListener("click", e => {
+    if (!didDrag && !e.target.closest(".blk")) clearFocus();
+  });
+  // A family named in the sidebar locks it.
+  side.addEventListener("click", e => {
+    const named = e.target.closest("a[data-family]");
+    if (!named) return;
+    e.preventDefault();
+    hoveredIdx = null;
+    lock(placeOf.get(named.dataset.family));
+  });
+  searchEl.addEventListener("input", () => {
+    query = searchEl.value;
+    applyHighlight();
+  });
+
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+  }
+  window.addEventListener("themechange", render);
+  // The page opens on the family its address names, locked, and at the
+  // font size it names: on that family, or else on the drawing's top
+  // left corner, the heights' names in view.
+  {
+    const asked = new URLSearchParams(location.search);
+    const opened = placeOf.get(asked.get("family"));
+    if (opened !== undefined) clickedIdx = opened;
+    const size = Math.round(Number(asked.get("size")));
+    if (asked.get("size") && Number.isFinite(size)) fontPx = Math.min(FONT.most, Math.max(FONT.least, size));
+  }
+  sizeEl.value = fontPx;
+  render();
+  if (clickedIdx !== null) bring(anchor());
+  else wrap.scrollLeft = wrap.scrollTop = 0;
+})();
+</script>
+</body>
+</html>

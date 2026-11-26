@@ -1,0 +1,1219 @@
+<!doctype html>
+<!--NOTICE-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>XuGo proof graph</title>
+<style>
+  :root, :root.light, :root[data-theme="light"] {
+    --bg: #ffffff;
+    --foreground: #0f172a;
+    --muted-foreground: #64748b;
+    --card: #f8fafc;
+    --card-border: #cbd5e1;
+    --primary: #2563eb;
+    --primary-foreground: #ffffff;
+    --down: #4d8579;
+    --focus: #ea580c;
+    --up: #b98a2a;
+    --warning: #d97706;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light):not([data-theme="light"]) {
+      --bg: #0f172a;
+      --foreground: #e2e8f0;
+      --muted-foreground: #94a3b8;
+      --card: #1e293b;
+      --card-border: #334155;
+      --primary: #3b82f6;
+      --primary-foreground: #ffffff;
+      --down: #7dbcae;
+      --focus: #f97316;
+      --up: #e0b455;
+      --warning: #f59e0b;
+      color-scheme: dark;
+    }
+  }
+  :root.dark, :root[data-theme="dark"] {
+    --bg: #0f172a;
+    --foreground: #e2e8f0;
+    --muted-foreground: #94a3b8;
+    --card: #1e293b;
+    --card-border: #334155;
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+    --down: #7dbcae;
+    --focus: #f97316;
+    --up: #e0b455;
+    --warning: #f59e0b;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    color: var(--foreground);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .toolbar {
+    flex: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 12px;
+  }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .grain-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding-right: 6px;
+    margin-right: 2px;
+    border-right: 1px solid var(--card-border);
+  }
+  .pill-btn {
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    color: var(--foreground);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 120ms ease, border-color 120ms ease;
+  }
+  .pill-btn:hover { border-color: var(--primary); }
+  .pill-btn.active {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+    font-weight: 600;
+  }
+  .search-input {
+    width: 216px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    background: var(--card);
+    color: var(--foreground);
+    border: 1px solid var(--card-border);
+    outline: none;
+  }
+  .search-input::placeholder { color: var(--muted-foreground); }
+  .size-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding-right: 8px;
+    margin-right: 2px;
+    border-right: 1px solid var(--card-border);
+    color: var(--muted-foreground);
+  }
+  .size-input {
+    width: 52px;
+    padding: 3px 4px 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    background: var(--card);
+    color: var(--foreground);
+    border: 1px solid var(--card-border);
+    outline: none;
+  }
+  .size-input:focus { border-color: var(--primary); }
+  .search-input:focus { border-color: var(--primary); }
+  .hidden { display: none !important; }
+  .readout {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    color: var(--muted-foreground);
+  }
+  .main { flex: 1; min-height: 0; display: flex; }
+  .canvas-wrap { flex: 1; min-width: 0; overflow: auto; padding: 6px 8px 6px 14px; user-select: none; }
+  .canvas-wrap.pannable { cursor: grab; }
+  .canvas-wrap.panning { cursor: grabbing; }
+  .canvas-wrap svg { display: block; height: auto; }
+  .blk { cursor: pointer; transition: opacity 100ms ease; }
+  .blk-rect { transition: fill 100ms ease, stroke 100ms ease, stroke-width 100ms ease; }
+  .edge-path { fill: none; transition: opacity 100ms ease, stroke-width 100ms ease; pointer-events: none; }
+  .sidebar {
+    flex: none;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    padding: 12px 14px;
+    border-left: 1px solid var(--card-border);
+    font-size: 12.5px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  .side-body { display: flex; flex-direction: column; gap: 14px; }
+  .side-path { font-size: 11.5px; }
+  .side-name { font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .side-head { font-weight: 600; }
+  .side-list { list-style: none; margin: 3px 0 0; padding: 0; font-size: 11.5px; line-height: 1.55; }
+  .side-list a, .side-path a, .side-name a { color: inherit; text-decoration: none; }
+  .side-list a:hover, .side-path a:hover, .side-name a:hover, .side-list a:hover .whole { color: var(--primary); text-decoration: underline; }
+  .whole { display: inline-block; max-width: 100%; }
+  .side-more summary { margin-top: 2px; font-size: 11.5px; color: var(--muted-foreground); cursor: pointer; }
+  .side-more summary:hover { color: var(--primary); }
+  a.pill-btn { text-decoration: none; }
+  .side-gloss code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+  math { font-size: 1.1em; }
+  .stated { display: flex; flex-direction: column; gap: 8px; }
+  .stated-member { font-size: 11.5px; font-weight: 600; }
+  .statement {
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 7px 9px;
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    background: var(--card);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    user-select: text;
+  }
+  .abbreviations { margin: 4px 0 0; padding: 0 0 0 9px; list-style: none; font-size: 11px; line-height: 1.5; color: var(--muted-foreground); }
+  .minted { margin-top: 4px; font-size: 11.5px; }
+  .minted code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .reading { margin-top: 6px; padding-left: 9px; border-left: 2px solid var(--card-border); }
+  .side-sub { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; padding-left: 9px; }
+  .side-sub .side-head { font-weight: 500; }
+  .side-foot {
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--muted-foreground);
+  }
+  .legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+  .swatch {
+    display: inline-block;
+    width: 14px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--card);
+    border: 1px solid color-mix(in srgb, var(--primary) 34%, var(--card-border));
+  }
+  .swatch.def { border-radius: 999px; }
+  .swatch.fold {
+    box-shadow: 2px 2px 0 -1px var(--card), 2px 2px 0 0 color-mix(in srgb, var(--primary) 34%, var(--card-border));
+    margin-right: 2px;
+  }
+  .swatch.proved { border: 1.5px solid color-mix(in srgb, var(--primary) 60%, var(--foreground)); }
+  .swatch.card {
+    background: color-mix(in srgb, var(--muted-foreground) 26%, var(--card));
+    border-color: color-mix(in srgb, var(--muted-foreground) 55%, var(--card-border));
+  }
+  .chip { display: inline-block; width: 11px; height: 8px; border-radius: 2px; }
+  .chip.focus { background: color-mix(in srgb, var(--focus) 28%, var(--card)); border: 1.5px solid var(--focus); }
+  .edge-key { display: inline-block; width: 14px; height: 0; border-top: 1px solid var(--muted-foreground); }
+  .edge-key.dashed { border-top-style: dashed; }
+  .edge-key.line { width: 18px; border-top: 1.5px dashed var(--muted-foreground); }
+  .line-chip { display: inline-block; width: 12px; height: 0; border-top: 2px solid var(--down); vertical-align: middle; }
+  .line-chip.up { border-top-color: var(--up); }
+  .grains { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; }
+  .grains .now { color: var(--foreground); font-weight: 600; }
+  .status-tag {
+    margin-right: 6px;
+    padding: 1px 6px;
+    border: 1px solid var(--card-border);
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .status-tag.on_cards, .status-tag.card { border-color: var(--warning); color: var(--warning); }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .muted { color: var(--muted-foreground); }
+  .plain { font-weight: 400; }
+  @media (max-width: 860px) {
+    .main { flex-direction: column; }
+    .sidebar { width: auto; max-height: 42%; border-left: 0; border-top: 1px solid var(--card-border); }
+  }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="controls">
+    <a class="pill-btn" href="../" title="The site's front page, one directory above the corpus">XuGo</a>
+    <a class="pill-btn" href="./" title="The family graph: the whole corpus">Corpus</a>
+    <div id="grain-buttons" class="grain-group"></div>
+    <label class="size-group">Font size
+      <input id="font-size" class="size-input" type="number" step="1" />px
+    </label>
+    <input id="search" class="search-input" type="text" placeholder="Find a theorem or a family" />
+    <button id="btn-clear" class="pill-btn hidden" type="button">Clear focus</button>
+  </div>
+  <div id="readout" class="readout"></div>
+</div>
+
+<div class="main">
+  <div id="wrap" class="canvas-wrap">
+    <svg id="svg-proof" role="img" aria-label="A proof drawn left to right: the results the target stands on, the target at the right edge"></svg>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div id="side" class="side-body"></div>
+    <div class="side-foot">
+      <div class="legend">
+        <span class="legend-item"><span class="swatch proved def"></span>a definition</span>
+        <span class="legend-item"><span class="swatch proved"></span>proved</span>
+        <span class="legend-item"><span class="swatch"></span>own proof written, standing on cards</span>
+        <span class="legend-item"><span class="swatch card"></span>a card</span>
+        <span class="legend-item" data-page="proof"><span class="edge-key line"></span>under the line, the ground</span>
+        <span class="legend-item" data-page="definition"><span class="swatch fold"></span>a family, for its units that use the definition</span>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><span class="edge-key"></span>cited directly</span>
+        <span class="legend-item"><span class="edge-key dashed"></span>through units not drawn</span>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><span class="chip focus"></span>hovered or locked</span>
+        <span class="legend-item"><span class="line-chip"></span>stands on</span>
+        <span class="legend-item" data-page="proof"><span class="line-chip up"></span>stands on it</span>
+        <span class="legend-item" data-page="definition"><span class="line-chip up"></span>stands on it, or uses it</span>
+      </div>
+      <div data-page="grains">
+        A grain says how much of what the target stands on is drawn. Its own chapter's theorems always are, and so is every card it stands on, of whatever family; where the target is a card, so is everything it cites, the results its proof is to cite. Of every other family, the theorems cited from outside it that gather a part of their chapter under them:
+      </div>
+      <div id="grains" class="grains" data-page="grains"></div>
+      <div data-page="grains">
+        A family is ambient when that many more families stand on it than on the target's own: the ground the whole neighbourhood is built on. Of its theorems, those a node above cites directly are drawn under the dashed line, each with the edges of its direct citations, and so are its cards and what a target that is a card cites of it.
+      </div>
+      <div data-page="one">
+        Of what the target stands on, its own chapter's theorems are drawn, every card of whatever family, everything a target that is a card cites, and of every other family the theorems cited from outside it that gather a part of their chapter under them. Every grain draws this graph alike, so the page offers none. Under a dashed line, where there is one, is the ground: theorems of the families the whole neighbourhood is built on, each cited directly from above, those families' cards, and what a target that is a card cites of them.
+      </div>
+      <div data-page="definition">
+        Left of the definition is what it is built from: every unit it cites. Right of it is who uses it. The units of its own chapter are drawn one by one, by how each uses it: a definition whose statement names what this one mints; a theorem whose statement names it, a theorem about it; and a unit that names it nowhere and cites or unfolds it in its proof. Every other family is one node, the family with the most users first.
+      </div>
+      <div>Hover a node to read it here, a theorem with what it uses and what uses it in the whole corpus, and see its nearest neighbours in the drawing. Click one to lock the whole derivation through it: its nearest neighbours in full colour, the rest paler. Click the blank to clear the lock and the search. Drag to pan. A name here, or a node clicked twice, opens that member's page.</div>
+    </div>
+  </aside>
+</div>
+
+<!--SHARED-->
+<script>
+(async function () {
+  "use strict";
+
+  // The graph of the unit the page's address names (proof.html?m=<id>),
+  // as visualize.Proof lays it out, grain by grain: the page reads it
+  // from the site's files and paints the grain its reader picks. A
+  // node's name is a link to its page, and its family a link to the
+  // family graph.
+  const SITE = window.xugoSite;
+  const named = new URLSearchParams(location.search).get("m") || "";
+  let DATA;
+  try {
+    DATA = await SITE.proof(named);
+  } catch (refused) {
+    document.getElementById("side").innerHTML = named
+      ? `<div><b>No page for ${named.replace(/[&<>"]/g, "")}.</b></div><div class="muted">A member's page is named by its id, &lt;family&gt;.&lt;Name&gt; (${String(refused.message).replace(/[&<>"]/g, "")}).</div>`
+      : `<div class="muted">The address names no member: proof.html?m=&lt;family&gt;.&lt;Name&gt;.</div>`;
+    return;
+  }
+
+  const GRAINS = new Map(DATA.grains.map(g => [g.key, g]));
+  const GRAIN_LABELS = { compact: "Compact", standard: "Standard", deep: "Deep" };
+  // A definition's page (visualize.ProofGraph.Definition) draws what the
+  // definition is built from and who uses it, in one drawing.
+  const DEFINITION = DATA.definition || null;
+  // The grains are offered where they draw different graphs. A graph
+  // every grain draws alike — the same nodes on the same side of the
+  // line, under the same edges — is one drawing, and so is a
+  // definition's: there the page offers no grain.
+  const drawingOf = g => JSON.stringify([g.nodes.map(n => [n.id, !!n.ambient]), g.edges.map(e => [e.s, e.t])]);
+  const CHOICE = new Set(DATA.grains.map(drawingOf)).size > 1;
+  const FIRST_GRAIN = GRAINS.has("standard") ? "standard" : DATA.grains[0].key;
+  // A node's name is NAME_SIZE of the viewBox's units, and the drawing
+  // is scaled to set it at the font size its reader asks, in pixels.
+  const NAME_SIZE = 9.1;
+  // The heavy border of a node drawn in a focus colour at full strength:
+  // the hovered or locked node, and the nodes an edge of it runs to.
+  // Every other border is plain.
+  const BOLD = 2.0;
+  const FONT = { least: 6, most: 24, first: 12 };
+  let grainKey = FIRST_GRAIN;
+  let fontPx = FONT.first;
+  // The page's address may name the grain and the font size it opens
+  // at, and names them again whenever its reader changes either.
+  {
+    const asked = new URLSearchParams(location.search);
+    if (CHOICE && GRAINS.has(asked.get("grain"))) grainKey = asked.get("grain");
+    const size = Math.round(Number(asked.get("size")));
+    if (asked.get("size") && Number.isFinite(size)) fontPx = Math.min(FONT.most, Math.max(FONT.least, size));
+  }
+  function nameInAddress() {
+    const here = new URL(location.href);
+    // A page that offers no grain leaves the one its address names to
+    // the pages its links open.
+    if (CHOICE) {
+      if (grainKey === FIRST_GRAIN) here.searchParams.delete("grain");
+      else here.searchParams.set("grain", grainKey);
+    }
+    if (fontPx === FONT.first) here.searchParams.delete("size");
+    else here.searchParams.set("size", fontPx);
+    history.replaceState(null, "", here);
+  }
+  let hoveredIdx = null;
+  let clickedIdx = null;
+  let query = "";
+
+  let GRAIN = null;
+  let NODES = [];
+  // An edge names its ends by their places among the nodes: u stands on
+  // v, and the edge is drawn from v, on the left, to u. It carries no
+  // arrowhead: every edge reads left to right.
+  let EDGES = [];
+  let targetIdx = 0;
+  let leftAdj = [];
+  let rightAdj = [];
+  let blkNodes = [];
+  let rectNodes = [];
+  let edgeNodes = [];
+  // What the sidebar holds, so that it is written only when that changes.
+  let sideKey = null;
+
+  const wrap = document.getElementById("wrap");
+  const svg = document.getElementById("svg-proof");
+  const readout = document.getElementById("readout");
+  const sidebar = document.getElementById("sidebar");
+  const side = document.getElementById("side");
+  const grainButtons = document.getElementById("grain-buttons");
+  const grainsEl = document.getElementById("grains");
+  const sizeEl = document.getElementById("font-size");
+  const btnClear = document.getElementById("btn-clear");
+  const searchEl = document.getElementById("search");
+
+  document.title = `${DATA.name} — XuGo ${DEFINITION ? "definition" : "proof graph"}`;
+  if (DEFINITION) svg.setAttribute("aria-label", "A definition drawn left to right: what it is built from, the definition, and who uses it");
+  // The legend says what the page in hand draws.
+  const PAGE = DEFINITION ? "definition" : (CHOICE ? "grains" : "one");
+  document.querySelectorAll("[data-page]").forEach(el => {
+    const of = el.dataset.page;
+    el.classList.toggle("hidden", of === "proof" ? DEFINITION !== null : of !== PAGE);
+  });
+  grainButtons.classList.toggle("hidden", !CHOICE);
+  sizeEl.min = FONT.least;
+  sizeEl.max = FONT.most;
+  sizeEl.value = fontPx;
+
+  function plural(n, one, many) {
+    return `${n} ${n === 1 ? one : many}`;
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  // A name with the places a line may break it at: after a "/", a "."
+  // or a "_", and before a capital that follows a small letter or a
+  // digit. A name too long for its line breaks there, and not inside a
+  // word.
+  function nameHtml(s) {
+    return String(s).split(/(?<=[\/._])|(?<=[a-z0-9])(?=[A-Z])/).map(escHtml).join("<wbr>");
+  }
+
+  // A chapter's words about a member: `code`, **strong** and *emphasis*
+  // marked up, and a link left as the words it is written on. A formula
+  // stands in them as MathML between two marks (visualize.typeset)
+  // and is set as it is. The formulas and the code are set aside first,
+  // so that a mark inside one is no mark and a mark around one still
+  // closes. A name among the words may break where nameHtml breaks one.
+  function inlineHtml(s) {
+    const formulas = [], codes = [];
+    const marked = escHtml(s
+      .replace(/\u0002([^\u0003]*)\u0003/g, (_, math) => `\u0001${formulas.push(math) - 1}\u0001`)
+      .replace(/`([^`]+)`/g, (_, code) => `\u0000${codes.push(code) - 1}\u0000`))
+      .replace(/\[([^\]]+)\]\([^)\s]+\)/g, "$1")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/(^|[^*\w])\*([^*\s](?:[^*]*[^*\s])?)\*(?![*\w])/g, "$1<em>$2</em>")
+      .replace(/(?<=[a-z0-9])(?=[A-Z])|(?<=[a-z]{2}[._\/])(?=[A-Za-z])/g, "<wbr>");
+    return marked
+      .replace(/\u0000(\d+)\u0000/g, (_, k) => `<code>${nameHtml(codes[k])}</code>`)
+      .replace(/\u0001(\d+)\u0001/g, (_, k) => formulas[k]);
+  }
+
+  function isLightTheme() {
+    const root = document.documentElement;
+    const dt = root.getAttribute("data-theme");
+    if (dt === "light" || root.classList.contains("light")) return true;
+    if (dt === "dark" || root.classList.contains("dark")) return false;
+    return !(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  }
+
+  // A family's last two path segments: what a node says of its family
+  // (visualize.familyTail).
+  function shortPkg(fam) {
+    const parts = fam.split("/");
+    return parts.length <= 2 ? fam : parts.slice(-2).join("/");
+  }
+
+  // The grains' buttons, and their line each in the legend, where the
+  // page offers the grains.
+  (CHOICE ? DATA.grains : []).forEach(g => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pill-btn";
+    btn.dataset.grain = g.key;
+    btn.textContent = `${GRAIN_LABELS[g.key]} (${g.nodes.length})`;
+    btn.addEventListener("click", () => switchGrain(g.key));
+    grainButtons.appendChild(btn);
+
+    const name = document.createElement("span");
+    name.dataset.grain = g.key;
+    name.textContent = GRAIN_LABELS[g.key];
+    const rule = document.createElement("span");
+    rule.dataset.grain = g.key;
+    rule.textContent = `up to ${g.per_family} of a family, each gathering ${g.theorems} theorems or more; ambient past ${g.allowance} families more`;
+    grainsEl.append(name, rule);
+  });
+
+  function loadGrain(key, keepFocusUid) {
+    grainKey = key;
+    GRAIN = GRAINS.get(key);
+    NODES = GRAIN.nodes;
+    const placeOf = new Map(NODES.map((n, i) => [n.id, i]));
+    EDGES = GRAIN.edges.map(e => ({ u: placeOf.get(e.s), v: placeOf.get(e.t), via: !!e.via, y1: e.y1, y2: e.y2 }));
+    targetIdx = NODES.findIndex(n => n.target);
+
+    leftAdj = NODES.map(() => []);
+    rightAdj = NODES.map(() => []);
+    EDGES.forEach(({ u, v, via }, ei) => {
+      leftAdj[u].push({ ei, v, via });
+      rightAdj[v].push({ ei, u, via });
+    });
+
+    hoveredIdx = null;
+    clickedIdx = null;
+    if (keepFocusUid) {
+      const idx = NODES.findIndex(n => n.id === keepFocusUid);
+      clickedIdx = idx >= 0 ? idx : null;
+    }
+    sideKey = null;
+    svg.setAttribute("viewBox", `0 0 ${GRAIN.width} ${GRAIN.height}`);
+  }
+
+  function palette() {
+    const cs = getComputedStyle(document.documentElement);
+    const get = (v, fb) => (cs.getPropertyValue(v) || "").trim() || fb;
+    const isLight = isLightTheme();
+    const card = get("--card", isLight ? "#f8fafc" : "#1e293b");
+    const primary = get("--primary", isLight ? "#2563eb" : "#3b82f6");
+    const border = get("--card-border", isLight ? "#cbd5e1" : "#334155");
+    // The focus colour is the hovered or locked block's; down and up are
+    // the colours of what it stands on and of what stands on it. A block
+    // is filled with a colour at full strength or pale, and a pale
+    // block's border is the colour halfway to the plain border.
+    const focus = get("--focus", isLight ? "#ea580c" : "#f97316");
+    const down = get("--down", isLight ? "#4d8579" : "#7dbcae");
+    const up = get("--up", isLight ? "#b98a2a" : "#e0b455");
+    const filled = (colour, share) => `color-mix(in srgb, ${colour} ${share}%, ${card})`;
+    const paled = colour => `color-mix(in srgb, ${colour} 50%, ${border})`;
+    const muted = get("--muted-foreground", isLight ? "#64748b" : "#94a3b8");
+    return {
+      fg: get("--foreground", isLight ? "#0f172a" : "#e2e8f0"),
+      muted,
+      border,
+      // Every node but a card is filled with the card colour, over the
+      // line and under it alike: its border says its stratum.
+      nodeFill: card,
+      ordStroke: `color-mix(in srgb, ${primary} 34%, ${border})`,
+      // A proved node's border is the family graph's for a family fully
+      // proved; a card is grey.
+      provedStroke: isLight
+        ? `color-mix(in srgb, ${primary} 42%, #172554)`
+        : `color-mix(in srgb, ${primary} 72%, #1d4ed8)`,
+      cardFill: filled(muted, 26),
+      cardStroke: `color-mix(in srgb, ${muted} 55%, ${border})`,
+      focus,
+      down,
+      up,
+      focusFill: filled(focus, 28),
+      downFill: filled(down, 30),
+      upFill: filled(up, 30),
+      downPaleFill: filled(down, 13),
+      upPaleFill: filled(up, 13),
+      downPaleStroke: paled(down),
+      upPaleStroke: paled(up)
+    };
+  }
+
+  // A node is drawn by its stratum: a card is grey; the rest is in the
+  // card colour under a blue border, the heavier for a node proved
+  // outright, a postulate, assumed for good, with it, and the plain for
+  // a node standing on a card.
+  function isCard(n) {
+    return n.status === "card";
+  }
+  function proved(n) {
+    return n.status === "proved" || n.status === "postulate";
+  }
+  // The border of a node proved outright, as the family graph's for a
+  // family fully proved.
+  const PROVED_WIDTH = 1.2;
+
+  // A node right of a definition may stand for a family's units that
+  // use it, or for the families not drawn, in place of a unit.
+  function stands(n) {
+    return n.use === "family" || n.use === "more";
+  }
+
+  // A use's heading, as the drawing's group has it and the sidebar's
+  // list.
+  function useHead(use) {
+    const label = DEFINITION.uses.find(u => u.use === use).label;
+    return label[0].toUpperCase() + label.slice(1);
+  }
+
+  // What a unit's use of the definition says of it.
+  const USE_SAYS = {
+    defines: "Its statement names what the definition mints: it is built on it.",
+    about: "Its statement names what the definition mints: it is a theorem about it.",
+    cites: "Its statement names nothing the definition mints: its proof cites or unfolds it."
+  };
+
+  function nsEl(tag, attrs, parent) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const k in attrs) el.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(el);
+    return el;
+  }
+
+  function bfsCone(startIdx, adj, key) {
+    const seen = new Set();
+    const q = [startIdx];
+    while (q.length) {
+      const cur = q.pop();
+      for (const item of adj[cur]) {
+        const nxt = item[key];
+        if (!seen.has(nxt)) {
+          seen.add(nxt);
+          q.push(nxt);
+        }
+      }
+    }
+    return seen;
+  }
+
+  // A section of the sidebar: its heading and nodes by name, each a
+  // link to its page where the page is served. A node's name is kept
+  // whole, on the line after its family where the two do not fit on
+  // one.
+  function sideSection(head, ends) {
+    const items = ends.map(({ n }) =>
+      `<li>${linked(n.id, `<span class="muted">${nameHtml(shortPkg(n.family))}.</span><span class="whole">${nameHtml(n.name)}</span>`)}</li>`);
+    return `<div><div class="side-head">${head}${items.length ? "" : ` <span class="muted plain">· none</span>`}</div>${items.length ? `<ul class="side-list mono">${items.join("")}</ul>` : ""}</div>`;
+  }
+
+  // What the registry says the node shown uses, or what uses it,
+  // whatever the page draws: its own family's units first, then the
+  // rest, each part in id order, each a link to its page. Past the first
+  // FOLD the list is folded under a line saying how many more there are.
+  const FOLD = 10;
+  function registryHtml(chip, head, ids, own) {
+    const familyOf = id => id.slice(0, id.lastIndexOf("."));
+    const ordered = [...ids.filter(id => familyOf(id) === own), ...ids.filter(id => familyOf(id) !== own)];
+    const items = ordered.map(id => {
+      const of = familyOf(id);
+      return `<li>${linked(id, `<span class="muted">${nameHtml(shortPkg(of))}.</span><span class="whole">${nameHtml(id.slice(of.length + 1))}</span>`)}</li>`;
+    });
+    const list = slice => `<ul class="side-list mono">${slice.join("")}</ul>`;
+    const folded = items.length > FOLD
+      ? `<details class="side-more"><summary>${items.length - FOLD} more</summary>${list(items.slice(FOLD))}</details>`
+      : "";
+    return `<div><div class="side-head">${chip} ${head} <span class="muted plain">· ${items.length || "none"}</span></div>${items.length ? list(items.slice(0, FOLD)) : ""}${folded}</div>`;
+  }
+
+  // linked makes of a node's name a link to its page.
+  function linked(id, nameHtml) {
+    return `<a href="${escHtml(SITE.pageOf(id))}">${nameHtml}</a>`;
+  }
+
+  // familyLinked makes of a family's name a link to the family graph
+  // with that family locked.
+  function familyLinked(family) {
+    return `<a href="${escHtml(SITE.familyPage(family))}">${nameHtml(family)}</a>`;
+  }
+
+  // What a node states: its member's statement as the chapter states
+  // it, and under it the names the statement spells as «Name» with what
+  // each stands for; what a definition's statement mints — its
+  // constants, each with the spelling its chapter declared for it, the
+  // type, named once for a node, and the shape of the definition; and
+  // the statement read in this encoding, where its author wrote that.
+  // A door call's members come one by one, each under its name.
+  function statedHtml(n) {
+    const typed = new Set();
+    const parts = n.statements.map(st => {
+      const where = (st.abbreviations || []).map(a =>
+        `<li>«${escHtml(a.name)}» = ${escHtml(a.text)}</li>`);
+      const mints = (st.defines || []).map(c =>
+        `<code>${nameHtml(c.name)}</code>${c.notation ? ` <span class="muted">written</span> <code>${escHtml(c.notation)}</code>` : ""}`);
+      if (st.type && !typed.has(st.type)) {
+        typed.add(st.type);
+        mints.push(`<span class="muted">the type</span> <code>${nameHtml(st.type)}</code>`);
+      }
+      const minted = mints.length
+        ? `<div class="minted"><span class="muted">Defines</span> ${mints.join(", ")}${st.shape ? ` <span class="muted">· ${escHtml(st.shape)}</span>` : ""}</div>`
+        : "";
+      const reading = st.reading
+        ? `<div class="reading"><div class="muted">Reading</div>${inlineHtml(st.reading)}</div>`
+        : "";
+      return `<div>${n.statements.length > 1 ? `<div class="stated-member mono">${nameHtml(st.member)}</div>` : ""}<div class="statement">${escHtml(st.text)}</div>${where.length ? `<ul class="abbreviations mono">${where.join("")}</ul>` : ""}${minted}${reading}</div>`;
+    });
+    return `<div class="stated">${parts.join("")}</div>`;
+  }
+
+  // What a definition is built from: every node left of it, each a unit
+  // it cites.
+  function builtHtml() {
+    const ends = NODES.filter(m => m.column < NODES[targetIdx].column)
+      .map(m => ({ n: m }))
+      .sort((a, b) => (a.n.name < b.n.name ? -1 : a.n.name > b.n.name ? 1 : 0));
+    const count = ends.length ? ` <span class="muted plain">· ${ends.length}</span>` : "";
+    return sideSection(`<span class="line-chip"></span> Built from${count}`, ends);
+  }
+
+  // A list of families, each with the count of its units that use the
+  // definition.
+  function familiesHtml(families) {
+    return `<ul class="side-list mono">${families.map(f =>
+      `<li>${familyLinked(f.family)}<span class="muted">&nbsp;·&nbsp;${f.count}</span></li>`).join("")}</ul>`;
+  }
+
+  // Who uses a definition: the units of its own chapter by how each
+  // uses it, in the drawing's order, and the other families, each with
+  // the count of its units.
+  function usedHtml() {
+    const head = `<span class="line-chip up"></span> Used by`;
+    if (DEFINITION.users === 0) {
+      return `<div><div class="side-head">${head} <span class="muted plain">· none</span></div></div>`;
+    }
+    const groups = DEFINITION.uses.map(u => {
+      const ends = NODES.filter(m => m.use === u.use).map(m => ({ n: m }));
+      return ends.length ? sideSection(`${useHead(u.use)} <span class="muted plain">· ${ends.length}</span>`, ends) : "";
+    });
+    const own = NODES[targetIdx].family;
+    const others = DEFINITION.families.filter(f => f.family !== own);
+    const families = others.length
+      ? `<div><div class="side-head">Other families <span class="muted plain">· ${others.length}</span></div>${familiesHtml(others)}</div>`
+      : "";
+    return `<div>
+        <div class="side-head">${head} <span class="muted plain">· ${plural(DEFINITION.users, "unit", "units")} of ${plural(DEFINITION.families.length, "family", "families")}</span></div>
+        <div class="side-sub">${groups.join("")}${families}</div>
+      </div>`;
+  }
+
+  // A stratum, as a list says it of a unit not proved outright.
+  const STATUS_WORDS = { card: "card", on_cards: "on cards", postulate: "postulate" };
+
+  // The sidebar of a node that stands for a family: the family, what its
+  // README says it is, and its units that use the definition, by how
+  // each uses it. The node standing for the families not drawn lists
+  // them.
+  function standsHtml(n) {
+    if (n.use === "more") {
+      const drawn = new Set(NODES.filter(m => m.use === "family").map(m => m.family));
+      const own = NODES[targetIdx].family;
+      const left = DEFINITION.families.filter(f => f.family !== own && !drawn.has(f.family));
+      return `
+        <div><div class="side-name">${escHtml(n.name)}</div></div>
+        <div class="muted">${plural(n.users, "unit", "units")} of ${n.families} more families use ${nameHtml(DATA.name)}. The graph draws the families with the most users one by one.</div>
+        <div>${familiesHtml(left)}</div>`;
+    }
+    const uses = DEFINITION.families.find(f => f.family === n.family);
+    const groups = DEFINITION.uses.map(u => {
+      const users = uses.users.filter(x => x.use === u.use);
+      if (!users.length) return "";
+      const items = users.map(x =>
+        `<li>${linked(`${n.family}.${x.name}`, `<span class="whole">${nameHtml(x.name)}</span>`)}${x.status ? ` <span class="muted">· ${STATUS_WORDS[x.status]}</span>` : ""}</li>`);
+      return `<div><div class="side-head">${useHead(u.use)} <span class="muted plain">· ${users.length}</span></div><ul class="side-list mono">${items.join("")}</ul></div>`;
+    });
+    return `
+      <div><div class="side-name mono">${familyLinked(n.family)}</div></div>
+      ${n.gloss ? `<div class="side-gloss">${inlineHtml(n.gloss)}</div>` : ""}
+      <div class="muted">${plural(n.users, "unit", "units")} of this family ${n.users === 1 ? "uses" : "use"} ${nameHtml(DATA.name)}.</div>
+      ${groups.join("")}`;
+  }
+
+  // Where a node stands among the proved: proved outright, proved on
+  // cards, a card itself, or a postulate. The line counts the results —
+  // theorems, and cards among them — the node stands on in the whole
+  // corpus, directly and through others, a postulate counted no more
+  // than a definition is (visualize._Fold.result): a proved node says
+  // how many, every one proved, or that it stands on none and whether
+  // it cites anything, and one on cards how many of them are cards. A
+  // card has no proof: its plan is what its proof is to cite, and the
+  // line says what the plan cites, by kind, and whether anything under
+  // the card is a card too. A definition says so only where it stands on
+  // a card.
+  function statusHtml(n) {
+    const results = plural(n.theorems, "result", "results");
+    const under = `${n.cards}/${n.theorems}`;
+    switch (n.status) {
+      case "card": {
+        const p = n.plan;
+        const cited = [
+          p.results && plural(p.results, "result", "results"),
+          p.definitions && plural(p.definitions, "definition", "definitions"),
+          p.postulates && plural(p.postulates, "postulate", "postulates"),
+        ].filter(Boolean);
+        if (cited.length && !p.results) cited.push("no result");
+        const cites = cited.length
+          ? `Its plan cites ${cited.length === 1 ? cited[0] : `${cited.slice(0, -1).join(", ")} and ${cited[cited.length - 1]}`}`
+          : "Its plan cites nothing";
+        const plan = n.cards === 0
+          ? `${cites}${cited.length ? "; nothing under it is a card" : ""}: it waits only for its own proof.`
+          : `${cites}; ${n.cards} of the ${results} under it ${n.cards === 1 ? "is a card" : "are cards"} (${under}).`;
+        return `<div><span class="status-tag card">card</span>stated, not yet proved. ${plan}</div>`;
+      }
+      case "postulate":
+        return `<div><span class="status-tag">postulate</span>assumed, not proved</div>`;
+      case "on_cards":
+        return `<div><span class="status-tag on_cards">on cards</span>${under}: ${n.cards} of the ${results} it stands on ${n.cards === 1 ? "is a card" : "are cards"}</div>`;
+    }
+    if (n.definition) return "";
+    const stands = n.theorems
+      ? `stands on ${results} in all, ${n.theorems === 1 ? "proved" : "every one proved"}`
+      : (n.uses.length ? "stands on no other result, only on definitions or postulates" : "stands on nothing");
+    return `<div><span class="status-tag">proved</span>${stands}</div>`;
+  }
+
+  // The sidebar holds the hovered node, else the locked one, else the
+  // target with the grain's sizes.
+  function showSide() {
+    const shown = hoveredIdx !== null ? hoveredIdx : clickedIdx;
+    const key = `${grainKey}:${shown}`;
+    if (key === sideKey) return;
+    sideKey = key;
+    sidebar.scrollTop = 0;
+    const idx = shown !== null ? shown : targetIdx;
+    const n = NODES[idx];
+    if (stands(n)) {
+      side.innerHTML = standsHtml(n);
+      return;
+    }
+    let sizes = "";
+    if (shown === null && !DEFINITION) {
+      const ambient = NODES.filter(m => m.ambient).length;
+      const families = new Set(NODES.map(m => m.family)).size;
+      const via = EDGES.filter(e => e.via).length;
+      sizes = `<div class="muted">${CHOICE ? `${GRAIN_LABELS[grainKey]}: ` : ""}${plural(NODES.length, "node", "nodes")} of ${plural(families, "family", "families")} in ${plural(GRAIN.columns.length, "column", "columns")}${ambient ? `, ${ambient} of them under the line` : ""}; ${plural(EDGES.length, "edge", "edges")}, ${via} through units not drawn.</div>`;
+    }
+    // Around a theorem is what the registry says it uses and what uses
+    // it; a definition has its own page for both. Around a definition on
+    // its own page are all it is built from and all who use it; and a
+    // node that uses the definition says how.
+    let around;
+    if (DEFINITION && idx === targetIdx) {
+      around = builtHtml() + usedHtml();
+    } else if (n.use) {
+      around = `<div><span class="line-chip"></span> <span class="side-head">Uses ${linked(DATA.target, nameHtml(DATA.name))}</span><div>${USE_SAYS[n.use]}</div></div>`;
+    } else if (n.definition) {
+      around = "";
+    } else {
+      around = registryHtml(`<span class="line-chip"></span>`, "Uses", n.uses, n.family) +
+        registryHtml(`<span class="line-chip up"></span>`, "Used by", n.usedBy, n.family);
+    }
+    side.innerHTML = `
+      <div>
+        <div class="side-path mono muted">${familyLinked(n.family)}</div>
+        <div class="side-name mono">${idx === targetIdx ? nameHtml(n.name) : linked(n.id, nameHtml(n.name))}</div>
+      </div>
+      ${statedHtml(n)}
+      ${n.gloss ? `<div class="side-gloss">${inlineHtml(n.gloss)}</div>` : ""}
+      ${sizes}
+      ${statusHtml(n)}
+      ${around}`;
+  }
+
+  function applyHighlight() {
+    const P = palette();
+    grainButtons.querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.grain === grainKey));
+    grainsEl.querySelectorAll("span").forEach(s => s.classList.toggle("now", s.dataset.grain === grainKey));
+    btnClear.classList.toggle("hidden", clickedIdx === null && query === "");
+
+    // The nodes the search finds are marked and the rest dimmed. A
+    // search that finds none marks nothing and dims nothing: on a page
+    // served it may be a search of the whole corpus, listed under the
+    // field.
+    const q = query.trim().toLowerCase();
+    const found = q
+      ? new Set(
+          NODES.map((n, i) =>
+            (n.name.toLowerCase().includes(q) || n.family.toLowerCase().includes(q)) ? i : -1
+          ).filter(i => i >= 0)
+        )
+      : null;
+    const searchHits = found !== null && found.size > 0 ? found : null;
+
+    const hasHover = hoveredIdx !== null;
+    const hoverLeftNodes = hasHover ? new Set(leftAdj[hoveredIdx].map(x => x.v)) : null;
+    const hoverRightNodes = hasHover ? new Set(rightAdj[hoveredIdx].map(x => x.u)) : null;
+    const hoverLeftEdges = hasHover ? new Set(leftAdj[hoveredIdx].map(x => x.ei)) : null;
+    const hoverRightEdges = hasHover ? new Set(rightAdj[hoveredIdx].map(x => x.ei)) : null;
+
+    const hasClick = clickedIdx !== null;
+    let leftCone = null, rightCone = null, allCone = null;
+    if (hasClick) {
+      leftCone = bfsCone(clickedIdx, leftAdj, "v");
+      rightCone = bfsCone(clickedIdx, rightAdj, "u");
+      allCone = new Set([clickedIdx, ...leftCone, ...rightCone]);
+    }
+    const lockLeftNodes = hasClick ? new Set(leftAdj[clickedIdx].map(x => x.v)) : null;
+    const lockRightNodes = hasClick ? new Set(rightAdj[clickedIdx].map(x => x.u)) : null;
+
+    const hasFocus = hasClick || searchHits !== null;
+
+    NODES.forEach((n, i) => {
+      const grey = isCard(n);
+      let fill = grey ? P.cardFill : P.nodeFill;
+      let stroke = grey ? P.cardStroke : (proved(n) ? P.provedStroke : P.ordStroke);
+      let sw = proved(n) ? PROVED_WIDTH : 0.95;
+      // focused says the node is the hovered or the locked one.
+      let focused = false;
+
+      let op = 1;
+      if (hasClick) {
+        const inCone = allCone.has(i);
+        const hitQ = !searchHits || searchHits.has(i);
+        op = (inCone && hitQ) ? 1 : (inCone ? 0.52 : 0.12);
+      } else if (searchHits !== null) {
+        op = searchHits.has(i) ? 1 : 0.12;
+      }
+
+      // The locked node is in the focus colour; the nodes an edge of it
+      // runs to in theirs, by side; and the rest of the derivation
+      // through it in the pale of the same colours, under a plain
+      // border.
+      if (hasClick) {
+        if (i === clickedIdx) {
+          fill = P.focusFill; stroke = P.focus; sw = BOLD; focused = true;
+        } else if (lockLeftNodes.has(i)) {
+          fill = P.downFill; stroke = P.down; sw = BOLD;
+        } else if (lockRightNodes.has(i)) {
+          fill = P.upFill; stroke = P.up; sw = BOLD;
+        } else if (leftCone.has(i)) {
+          fill = P.downPaleFill; stroke = P.downPaleStroke; sw = 0.95;
+        } else if (rightCone.has(i)) {
+          fill = P.upPaleFill; stroke = P.upPaleStroke; sw = 0.95;
+        }
+      }
+
+      // The hovered node and its nearest neighbours are drawn over that.
+      if (hasHover) {
+        if (i === hoveredIdx) {
+          op = 1;
+          fill = P.focusFill; stroke = P.focus; sw = BOLD; focused = true;
+        } else if (hoverLeftNodes.has(i)) {
+          op = 1;
+          fill = P.downFill; stroke = P.down; sw = BOLD; focused = false;
+        } else if (hoverRightNodes.has(i)) {
+          op = 1;
+          fill = P.upFill; stroke = P.up; sw = BOLD; focused = false;
+        } else if (!hasFocus) {
+          op = 0.22;
+        } else if (op > 0.5) {
+          op = 0.72;
+        }
+      }
+
+      // A card stays grey under a neighbour's colour or a cone's, which
+      // is then its border's alone: a card is read in a derivation as it
+      // is anywhere. Only the hovered or locked node itself takes the
+      // focus colour whole.
+      if (grey && !focused) fill = P.cardFill;
+
+      blkNodes[i].setAttribute("opacity", op);
+      for (const rect of rectNodes[i]) {
+        rect.setAttribute("fill", fill);
+        rect.setAttribute("stroke", stroke);
+        rect.setAttribute("stroke-width", sw);
+      }
+    });
+
+    EDGES.forEach(({ u, v }, ei) => {
+      let stroke = P.muted, width = 0.85, opacity = hasHover ? 0.05 : 0.28;
+      if (hasHover && hoverLeftEdges.has(ei)) {
+        stroke = P.down; width = 1.5; opacity = 0.96;
+      } else if (hasHover && hoverRightEdges.has(ei)) {
+        stroke = P.up; width = 1.5; opacity = 0.96;
+      } else if (hasClick) {
+        if ((u === clickedIdx || leftCone.has(u)) && leftCone.has(v)) {
+          stroke = P.down; width = 1.1; opacity = hasHover ? 0.36 : 0.78;
+        } else if ((v === clickedIdx || rightCone.has(v)) && rightCone.has(u)) {
+          stroke = P.up; width = 1.1; opacity = hasHover ? 0.36 : 0.78;
+        } else {
+          width = 0.65; opacity = 0.04;
+        }
+      } else if (searchHits !== null) {
+        if (searchHits.has(u) || searchHits.has(v)) {
+          stroke = P.down; width = 1.25; opacity = hasHover ? 0.28 : 0.65;
+        } else {
+          width = 0.7; opacity = 0.05;
+        }
+      }
+      const edge = edgeNodes[ei];
+      edge.setAttribute("stroke", stroke);
+      edge.setAttribute("stroke-width", width);
+      edge.setAttribute("stroke-opacity", opacity);
+    });
+
+    readout.textContent = found !== null
+      ? `${found.size} of ${plural(NODES.length, "node", "nodes")} match`
+      : `${DATA.name} · ${CHOICE ? `${GRAIN_LABELS[grainKey].toLowerCase()}: ` : ""}${plural(NODES.length, "node", "nodes")}, ${plural(EDGES.length, "edge", "edges")}`;
+    showSide();
+  }
+
+  // The graph is dragged wherever it runs past its pane.
+  function updatePannable() {
+    wrap.classList.toggle("pannable", wrap.scrollWidth > wrap.clientWidth + 1 || wrap.scrollHeight > wrap.clientHeight + 1);
+  }
+
+  let dragActive = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragScrollLeft = 0;
+  let dragScrollTop = 0;
+  let didDrag = false;
+
+  wrap.addEventListener("mousedown", e => {
+    didDrag = false;
+    if (e.button !== 0 || !wrap.classList.contains("pannable")) return;
+    dragActive = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    dragScrollLeft = wrap.scrollLeft;
+    dragScrollTop = wrap.scrollTop;
+    wrap.classList.add("panning");
+  });
+  window.addEventListener("mousemove", e => {
+    if (!dragActive) return;
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) didDrag = true;
+    wrap.scrollLeft = dragScrollLeft - dx;
+    wrap.scrollTop = dragScrollTop - dy;
+  });
+  window.addEventListener("mouseup", () => {
+    if (!dragActive) return;
+    dragActive = false;
+    wrap.classList.remove("panning");
+  });
+  window.addEventListener("resize", updatePannable);
+
+  function render() {
+    const P = palette();
+    svg.innerHTML = "";
+    svg.style.width = `${GRAIN.width * fontPx / NAME_SIZE}px`;
+    blkNodes = [];
+    rectNodes = [];
+    edgeNodes = [];
+
+    // No line runs along a column or through the target: the one line
+    // drawn is the ground's.
+    const gridG = nsEl("g", {}, svg);
+
+    // The line the ambient families' nodes are drawn under.
+    if (GRAIN.line) {
+      nsEl("line", {
+        x1: 6, y1: GRAIN.line, x2: GRAIN.width - 6, y2: GRAIN.line,
+        stroke: P.muted, "stroke-width": 1.1, "stroke-opacity": 0.7, "stroke-dasharray": "7 5"
+      }, gridG);
+      const under = nsEl("text", {
+        x: 8, y: GRAIN.line + 11, fill: P.muted,
+        "font-size": 8.6, "font-family": "ui-monospace, monospace"
+      }, gridG);
+      under.textContent = "ground: the ambient families, stood on from above";
+    }
+
+    const edgeG = nsEl("g", {}, svg);
+    EDGES.forEach(({ u, v, via: isVia, y1, y2 }) => {
+      const nu = NODES[u], nv = NODES[v];
+      const x1 = nv.x + nv.w;
+      const x2 = nu.x;
+      const mx = (x1 + x2) * 0.5;
+      const attrs = {
+        class: "edge-path",
+        d: `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`
+      };
+      if (isVia) attrs["stroke-dasharray"] = "4 2.5";
+      edgeNodes.push(nsEl("path", attrs, edgeG));
+    });
+
+    // The headings of the column right of a definition, each over the
+    // nodes that use it one way (visualize.ProofGroup).
+    (GRAIN.groups || []).forEach(group => {
+      const heading = nsEl("text", {
+        x: group.x, y: group.y, fill: P.muted,
+        "font-size": 7.4, "font-family": "ui-monospace, monospace"
+      }, gridG);
+      heading.textContent = `${group.label} · ${group.count}`;
+    });
+
+    const blkG = nsEl("g", {}, svg);
+    NODES.forEach((n, idx) => {
+      const { definition: isDef, x, y, w } = n;
+      const g = nsEl("g", { class: "blk" }, blkG);
+      blkNodes.push(g);
+
+      // applyHighlight fills the block and draws its border. A
+      // definition's corners are round; nothing marks the target or the
+      // nodes of its family. A node standing for a family is a block
+      // over another, set a little down and to the right.
+      const rects = [];
+      if (stands(n)) {
+        rects.push(nsEl("rect", {
+          class: "blk-rect",
+          x: x + 2.4, y: y + 2.4, width: w, height: GRAIN.block,
+          rx: 3.5
+        }, g));
+      }
+      rects.push(nsEl("rect", {
+        class: "blk-rect",
+        x, y, width: w, height: GRAIN.block,
+        rx: isDef ? 12 : 3.5
+      }, g));
+      rectNodes.push(rects);
+
+      // The column is sized for its labels (visualize.grain): the name,
+      // and under it the family, or the count of the units a node
+      // stands for (visualize.usesLine).
+      const t1 = nsEl("text", {
+        x: x + w * 0.5, y: y + 11.4, "text-anchor": "middle",
+        fill: P.fg, "font-size": NAME_SIZE, "font-family": "ui-monospace, monospace",
+        "font-weight": 500
+      }, g);
+      t1.textContent = n.name;
+
+      const t2 = nsEl("text", {
+        x: x + w * 0.5, y: y + 21.6, "text-anchor": "middle",
+        fill: P.muted, "font-size": 7.4, "font-family": "ui-monospace, monospace"
+      }, g);
+      t2.textContent = stands(n) ? plural(n.users, "user", "users") : shortPkg(n.family);
+
+      g.addEventListener("mouseenter", () => {
+        if (dragActive) return;
+        hoveredIdx = idx;
+        applyHighlight();
+      });
+      g.addEventListener("mouseleave", () => {
+        if (hoveredIdx === null) return;
+        hoveredIdx = null;
+        applyHighlight();
+      });
+      g.addEventListener("click", () => {
+        if (didDrag) return;
+        clickedIdx = (clickedIdx === idx) ? null : idx;
+        applyHighlight();
+      });
+      // A node clicked twice opens its own page, and one standing for
+      // a family the family graph with that family locked.
+      if (idx !== targetIdx && n.use !== "more") {
+        g.addEventListener("dblclick", () => {
+          location.href = stands(n) ? SITE.familyPage(n.family) : SITE.pageOf(n.id);
+        });
+      }
+    });
+
+    applyHighlight();
+    updatePannable();
+  }
+
+  // A point of the drawing, as fractions of its width and height: the
+  // locked node's middle, or else whatever is in the middle of the pane.
+  function anchor() {
+    if (clickedIdx !== null) return middleOf(clickedIdx);
+    const box = svg.getBoundingClientRect(), pane = wrap.getBoundingClientRect();
+    return [(pane.left + pane.width * 0.5 - box.left) / box.width, (pane.top + pane.height * 0.5 - box.top) / box.height];
+  }
+
+  function middleOf(idx) {
+    const n = NODES[idx];
+    return [(n.x + n.w * 0.5) / GRAIN.width, (n.y + GRAIN.block * 0.5) / GRAIN.height];
+  }
+
+  // bring scrolls a point of the drawing to the middle of the pane, as
+  // far as the drawing's edges let it.
+  function bring([fx, fy]) {
+    const box = svg.getBoundingClientRect(), pane = wrap.getBoundingClientRect();
+    wrap.scrollLeft += (box.left + fx * box.width) - (pane.left + pane.width * 0.5);
+    wrap.scrollTop += (box.top + fy * box.height) - (pane.top + pane.height * 0.5);
+  }
+
+  // The font size asked is kept inside its range; a field left empty or
+  // holding no number goes back to the size in use.
+  function setFont() {
+    const asked = Math.round(Number(sizeEl.value));
+    const next = sizeEl.value.trim() !== "" && Number.isFinite(asked)
+      ? Math.min(FONT.most, Math.max(FONT.least, asked))
+      : fontPx;
+    sizeEl.value = next;
+    if (next === fontPx) return;
+    const kept = anchor();
+    fontPx = next;
+    svg.style.width = `${GRAIN.width * fontPx / NAME_SIZE}px`;
+    bring(kept);
+    updatePannable();
+    nameInAddress();
+    sideKey = null;
+    showSide();
+  }
+
+  // A grain opens on its locked node, or on the target at the right edge.
+  function switchGrain(nextKey) {
+    if (nextKey === grainKey) return;
+    loadGrain(nextKey, clickedIdx !== null ? NODES[clickedIdx].id : null);
+    nameInAddress();
+    render();
+    bring(middleOf(clickedIdx !== null ? clickedIdx : targetIdx));
+  }
+
+  sizeEl.addEventListener("change", setFont);
+  // Clearing the focus unlocks the node locked and empties the search:
+  // the button does, and a click on the drawing's blank, a drag aside.
+  function clearFocus() {
+    clickedIdx = null;
+    query = "";
+    searchEl.value = "";
+    applyHighlight();
+  }
+  btnClear.addEventListener("click", clearFocus);
+  wrap.addEventListener("click", e => {
+    if (!didDrag && !e.target.closest(".blk")) clearFocus();
+  });
+  searchEl.addEventListener("input", () => {
+    query = searchEl.value;
+    applyHighlight();
+  });
+
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+  }
+  window.addEventListener("themechange", render);
+  loadGrain(grainKey, null);
+  render();
+  bring(middleOf(targetIdx));
+})();
+</script>
+</body>
+</html>

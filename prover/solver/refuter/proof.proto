@@ -1,0 +1,45 @@
+syntax="proto3";
+package refuter;
+
+option go_package = "github.com/euc-ai/xugo/prover/solver/refuter";
+
+import "ext/hol.proto";
+import "ext/clause/clause.proto";
+
+// Regenerate from the repository root, with the protoc and protoc-gen-go
+// versions the generated file's header names:
+//   protoc -I . prover/solver/refuter/proof.proto --go_out=. --go_opt=paths=source_relative
+
+message ReplayStepProto {
+    oneof step {
+        clause.ClauseThmProto derive = 1;
+        clause.DisjunctClauseProto weaken = 2;
+    }
+}
+
+message DeduceProofProto {
+    clause.ClauseThmProto local_step = 1;
+}
+
+message MergeProofProto {
+    clause.DisjunctClauseProto divisible_clause = 1;
+    repeated clause.DisjunctClauseProto divided_clauses = 2;
+    repeated RefuteStepProto children = 3;
+}
+
+message RefuteStepProto {
+    repeated clause.DisjunctClauseProto hyps = 1;
+    repeated ReplayStepProto replay = 2;
+    oneof step {
+        DeduceProofProto deduce = 3;
+        MergeProofProto merge = 4;
+    }
+}
+
+message CNFRefuteProofProto {
+    // The shared pool owned by this blob. Every clause / term / var referenced
+    // anywhere below is an index into `pool`; shared subterms are stored once.
+    ext.PoolProto pool = 1;
+    ext.HolPropProto goal = 2;
+    RefuteStepProto root = 3;
+}

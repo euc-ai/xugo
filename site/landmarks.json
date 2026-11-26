@@ -1,0 +1,1313 @@
+{
+  "subjects": [
+    {
+      "id": "sets-maps-and-relations",
+      "heading": "Sets, maps and relations",
+      "opening": "The language every chapter reads through: a set is its membership predicate, a map is a function with its properties relativized to a set; equivalences and partitions, well-founded recursion, and the maximal principles through Zorn's lemma, which the algebra above reads for bases and maximal ideals.",
+      "rows": [
+        {
+          "member": "sets/cardinal.SchroederBernstein",
+          "what": "the Schröder–Bernstein theorem"
+        },
+        {
+          "member": "relations/well_founded.Induction",
+          "what": "well-founded induction"
+        },
+        {
+          "member": "relations/well_founded.Recursion",
+          "what": "recursion along a well-founded relation"
+        },
+        {
+          "member": "relations/order.BourbakiWitt",
+          "what": "an operation on sets that only enlarges has a fixed point"
+        },
+        {
+          "member": "relations/order.Zorn",
+          "what": "Zorn's lemma"
+        },
+        {
+          "member": "relations/order.ClosureFromLeast",
+          "what": "least containing objects give closure operators on a carrier: topological closure, submodule span and ideal generation"
+        },
+        {
+          "member": "relations/order.WellOrderingTheorem",
+          "what": "every type has a well-order"
+        }
+      ]
+    },
+    {
+      "id": "combinatorics",
+      "heading": "Combinatorics",
+      "opening": "Finite combinatorics on sets and graphs: a labelled grid and the cell its labels force, the effective divisors of a weighted set and their Euler product, matchings, and the cube graph, with the degree and the sensitivity of a Boolean function.",
+      "rows": [
+        {
+          "member": "cartesian/kuhn_labelling.KuhnLemma",
+          "what": "Kuhn's lemma: a labelling of the grid {0, …, p}ⁿ that is ⊥ where a coordinate is 0 and ⊤ where it is p has a cell in which every coordinate's label takes both values"
+        },
+        {
+          "member": "sets/weighted_divisors.WeightedEulerProduct",
+          "what": "effective divisors on a weighted set: finitely many of each degree, the Euler product over the points, and n · Aₙ = Σ Mₘ Aₙ₋ₘ with Mₘ the total weight of the points whose weight divides m"
+        },
+        {
+          "member": "relations/matching.Hall",
+          "what": "Hall's marriage theorem: a finite family has distinct representatives exactly when every subfamily has at least as many neighbours as members"
+        },
+        {
+          "member": "relations/graph/hypercube.Huang",
+          "what": "Huang's theorem: every set of more than half the vertices of the n-cube holds a vertex with at least √n neighbours in the set"
+        },
+        {
+          "member": "sets/boolean_function/sensitivity.SensitivityTheorem",
+          "what": "the sensitivity theorem, once the sensitivity conjecture: the degree of a Boolean function on a finite set of coordinates is at most the square of its sensitivity"
+        }
+      ]
+    },
+    {
+      "id": "reciprocity-sums-of-squares-and-the-distribution-of-primes",
+      "heading": "Reciprocity, sums of squares and the distribution of primes",
+      "opening": "Quadratic reciprocity through the quadratic Gauss sum, and reciprocity for the Jacobi symbol; sums of two and four squares through the Gaussian integers; Chebyshev's bounds and Bertrand's postulate.",
+      "rows": [
+        {
+          "member": "int_num/quadratic_reciprocity.QuadraticReciprocity",
+          "what": "the law of quadratic reciprocity, proved with the quadratic Gauss sum in a field of characteristic q"
+        },
+        {
+          "member": "int_num/quadratic_reciprocity.JacobiReciprocity",
+          "what": "reciprocity for the Jacobi symbol"
+        },
+        {
+          "member": "nat_num/sum_of_squares.FermatTwoSquares",
+          "what": "Fermat: a prime is a sum of two squares exactly when it is 2 or ≡ 1 (mod 4)"
+        },
+        {
+          "member": "nat_num/sum_of_squares.LagrangeFourSquares",
+          "what": "Lagrange: every natural number is a sum of four squares"
+        },
+        {
+          "member": "nat_num/prime_distribution.ChebyshevBounds",
+          "what": "Chebyshev's bounds: (log 2 / 2) · n ≤ π(n) · log n ≤ 5n"
+        },
+        {
+          "member": "nat_num/prime_distribution.Bertrand",
+          "what": "Bertrand's postulate: a prime lies between n and 2n"
+        }
+      ]
+    },
+    {
+      "id": "data-types-and-machine-words",
+      "heading": "Data types and machine words",
+      "opening": "Lists, options and trees carved out of the recursive-type universe by the datatype door; a machine word is a number with the width a term, read through its value face and its bit face.",
+      "rows": [
+        {
+          "member": "words/machine_word.ValWordGalois",
+          "what": "a word and its value: the Galois connection"
+        },
+        {
+          "member": "words/signed_word.IntOfWordValCong",
+          "what": "the two's-complement reading of a word is congruent to its value mod 2ⁿ"
+        }
+      ]
+    },
+    {
+      "id": "measure-and-the-lebesgue-integral",
+      "heading": "Measure and the Lebesgue integral",
+      "opening": "Lebesgue outer measure on the line in the extended nonnegative reals ⟦0, ∞⟧, Carathéodory's measurable sets, measurable functions, and the integral of a nonnegative function as the supremum of the integrals of the simple functions below it. The convergence theorems are proved on an arbitrary measure space and read on the line at Lebesgue measure.",
+      "rows": [
+        {
+          "member": "measure/caratheodory.MeasureOnCaratheodory",
+          "what": "Carathéodory's theorem: the Carathéodory sets of an outer measure form a σ-algebra, on which it is a measure"
+        },
+        {
+          "member": "real/lebesgue_measure.MeasurableBorel",
+          "what": "every Borel set is Lebesgue measurable"
+        }
+      ]
+    },
+    {
+      "id": "probability-and-martingales",
+      "heading": "Probability and martingales",
+      "opening": "Probability read on a measure space: a probability is a measure of total mass one and expectation its integral; filtrations, stopping times with an infinite value, conditional expectation as a relation between integrals over events, and the martingales built on them, through the optional sampling and optional stopping theorems; and the central limit theorem, read from its martingale form down to independent identically distributed variables.",
+      "rows": [
+        {
+          "member": "probability/martingale/optional_stopping.OptionalSamplingBounded",
+          "what": "optional sampling: for bounded stopping times S ≤ T, a martingale's value at S is the conditional expectation of its value at T on the σ-algebra stopped at S"
+        },
+        {
+          "member": "probability/martingale/optional_stopping.OptionalStoppingDominated",
+          "what": "the optional stopping theorem: an almost surely finite stopping time preserves the expectation of a martingale whose stopped process has an integrable bound"
+        },
+        {
+          "member": "probability/martingale/l2_martingale.L2BoundedMartingaleConverges",
+          "what": "an L²-bounded martingale converges in L² to a limit that closes it"
+        },
+        {
+          "member": "probability/central_limit.CentralLimit",
+          "what": "the central limit theorem: for independent identically distributed variables of mean m and standard deviation σ > 0, the distributions of the normalized sums (X(0) + ⋯ + X(n − 1) − n·m)/(σ√n) converge weakly to the standard normal distribution"
+        }
+      ]
+    },
+    {
+      "id": "complex-analysis",
+      "heading": "Complex analysis",
+      "opening": "Holomorphic functions of a complex variable: the integral along a path, Cauchy's theorem and formula, power series and their estimates, the winding index, residues, the argument principle; and the roots of a complex polynomial.",
+      "rows": [
+        {
+          "member": "complex/finite_spectrum.ComplexPolynomialSplitting",
+          "what": "the fundamental theorem of algebra: a complex polynomial of positive degree has a root, and splits into linear factors"
+        },
+        {
+          "member": "complex/cauchy_integral.Liouville",
+          "what": "Liouville's theorem: a bounded entire function is constant"
+        },
+        {
+          "member": "complex/residue.Rouche",
+          "what": "Rouché's theorem: where |f − g| < |f| along a closed path, f and g have as many zeros, counted by order and winding index"
+        }
+      ]
+    },
+    {
+      "id": "analytic-number-theory",
+      "heading": "Analytic number theory",
+      "opening": "Dirichlet series on their half-planes, the Riemann zeta function on Re s > 0, Dirichlet characters and their L-series, and Newman's Tauberian theorem. The prime number theorem follows from ζ having no zero on Re s = 1, and Dirichlet's theorem on primes in progressions from L(1, χ) ≠ 0.",
+      "rows": [
+        {
+          "member": "complex/tauberian.NewmanTauberian",
+          "what": "Newman's Tauberian theorem: a Dirichlet series with bounded coefficients that continues holomorphically past Re s = 1 converges on Re s ≥ 1"
+        },
+        {
+          "member": "complex/riemann_zeta.ZetaNonzeroOnLine",
+          "what": "ζ(s) has no zero on the line Re s = 1"
+        },
+        {
+          "member": "nat_num/prime_asymptotics.PrimeNumberTheorem",
+          "what": "the prime number theorem: π(n) ~ n / log n"
+        },
+        {
+          "member": "complex/dirichlet_l_function.LSeriesNonzeroAtOne",
+          "what": "L(1, χ) ≠ 0 for every non-principal Dirichlet character χ"
+        },
+        {
+          "member": "nat_num/primes_in_progressions.PrimesInProgression",
+          "what": "Dirichlet's theorem: for a prime to q, infinitely many primes are ≡ a (mod q)"
+        }
+      ]
+    },
+    {
+      "id": "topology",
+      "heading": "Topology",
+      "opening": "A topology as a family of sets, its points the union of the family; closure and the closed sets, and the induced and coinduced topologies through which subspaces, products and quotients are built; compactness, connectedness, separation and continuity; the category of spaces and continuous maps; metric spaces; the real line as an instance; presheaves as functors on the open sets, and sheaves on a space with their germs and stalks, which the spectra read.",
+      "rows": [
+        {
+          "member": "topology/topological_space.InducedCoinducedAdjunction",
+          "what": "the induced and coinduced topologies along a map are adjoint: the first is coarser than the source exactly when the target is coarser than the second"
+        },
+        {
+          "member": "topology/topology_category.TopologyCategory",
+          "what": "the spaces in one type, with their continuous maps, form a category"
+        },
+        {
+          "member": "topology/separation.CompactHausdorffNormal",
+          "what": "a compact Hausdorff space is normal"
+        },
+        {
+          "member": "topology/polish_space.CountableProductPolish",
+          "what": "a countable product of Polish spaces is Polish"
+        },
+        {
+          "member": "topology/baire_category.MycielskiIndependentCantorSet",
+          "what": "Mycielski: a meager relation on a perfect Polish space has continuum many pairwise independent points"
+        },
+        {
+          "member": "topology/product_topology.CompactProduct",
+          "what": "the product of two compact sets is compact, by the tube lemma"
+        },
+        {
+          "member": "topology/real_valued.Urysohn",
+          "what": "Urysohn's lemma: disjoint closed sets of a normal space are separated by a continuous function"
+        },
+        {
+          "member": "topology/real_valued.Tietze",
+          "what": "Tietze's extension theorem"
+        },
+        {
+          "member": "topology/complete_metric.BaireCategory",
+          "what": "Baire's category theorem"
+        },
+        {
+          "member": "topology/complete_metric.BanachFixedPoint",
+          "what": "Banach's fixed point theorem"
+        },
+        {
+          "member": "vector/euclidean_topology.BrouwerCube",
+          "what": "Brouwer's fixed point theorem: a continuous map of the cube ⟦0, 1⟧ⁿ into itself has a fixed point"
+        },
+        {
+          "member": "topology/presheaf.PresheafIffFunctor",
+          "what": "a presheaf is a set-valued functor on the opens ordered by reverse inclusion"
+        },
+        {
+          "member": "topology/presheaf.GermsDetermineSection",
+          "what": "on a sheaf, sections with the same germ at every point are equal"
+        }
+      ]
+    },
+    {
+      "id": "groups-on-a-set",
+      "heading": "Groups on a set",
+      "opening": "A structure is a predicate on its explicit components over a carrier set, group_on(mul, one, inv, c); the whole-type law is its view at 𝕌, a subgroup is a group on its set, a quotient group a group on a set of cosets. Homomorphisms and kernels, quotients, the isomorphism theorems and the butterfly lemma, Schreier and Jordan–Hölder; the order of an element and cyclic groups; group actions, their orbits and stabilizers; the symmetric and free groups as instances.",
+      "rows": [
+        {
+          "member": "algebra/group/group_isomorphism.Zassenhaus",
+          "what": "the butterfly lemma"
+        },
+        {
+          "member": "algebra/group/subnormal_series.JordanHolder",
+          "what": "the Jordan–Hölder theorem: two composition series are equivalent"
+        },
+        {
+          "member": "algebra/group/free_group.Group",
+          "what": "the free group over an alphabet: words modulo cancellation form a group"
+        }
+      ]
+    },
+    {
+      "id": "commutative-algebra-on-a-set",
+      "heading": "Commutative algebra on a set",
+      "opening": "Rings, domains and fields as structures on a carrier set, the ring tower the package imports draw; ideals, prime and maximal ideals through Zorn's lemma, quotient rings, rings of fractions and localization, local rings and residue fields, polynomials over a ring on a set with coprimality by Bézout's identity and the Mason–Stothers theorem; a subfield is a field on its set; integral elements and common denominators, the factorization of ideals of finite height into invertible maximal ideals, the group of fractional ideals and the ideal class group.",
+      "rows": [
+        {
+          "member": "algebra/module/int_lattice.IntegerRingPrincipalIdealDomain",
+          "what": "ℤ is a principal ideal domain"
+        },
+        {
+          "member": "complex/gaussian_integer.PrincipalIdealDomain",
+          "what": "the Gaussian integers ℤ[i] are a Euclidean domain under the norm, hence a principal ideal domain"
+        },
+        {
+          "member": "algebra/ring/characteristic_zero.RationalEmbedding",
+          "what": "the rational numbers embed in every field of characteristic zero, as the fractions of its integer image"
+        },
+        {
+          "member": "algebra/ring/ring_ideal.ExistsMaximalAbove",
+          "what": "a proper ideal lies in a maximal ideal, by Zorn's lemma"
+        },
+        {
+          "member": "algebra/ring/local_ring.Nakayama",
+          "what": "Nakayama's lemma: an ideal N finitely generated modulo J with N ⊆ J + I·N has some s ≡ 1 mod I with s·N ⊆ J"
+        },
+        {
+          "member": "algebra/ring/ring_localization.LocalizationUniversal",
+          "what": "a homomorphism sending the denominators to units extends uniquely to the localization"
+        },
+        {
+          "member": "algebra/ring/ring_localization.FractionFieldLift",
+          "what": "a one-to-one ring map into a field extends to the field of fractions"
+        },
+        {
+          "member": "algebra/ring/integral_element.IntegralElementsSubring",
+          "what": "the elements of a field integral over a subring form a subring: the integral closure is a ring"
+        },
+        {
+          "member": "algebra/module/principal_ideal_domain.PrincipalIdealDomainIntegrallyClosed",
+          "what": "a principal ideal domain is integrally closed in its field of fractions"
+        },
+        {
+          "member": "scheme/projective_form_pair.GradedNullstellensatz",
+          "what": "the projective Nullstellensatz: over an algebraically closed field, a homogeneous ideal with no zero in projective space holds every form of large degree"
+        },
+        {
+          "member": "algebra/ring/polynomial/separable_polynomial.MasonStothers",
+          "what": "the Mason–Stothers theorem: for coprime p and q, divisors of p, q and p + q sharing their derivatives have total degree below each pairwise degree sum"
+        },
+        {
+          "member": "algebra/ring/polynomial/separable_polynomial.FermatPolynomial",
+          "what": "Fermat's equation for polynomials: for n ≥ 3 not zero in the field, xⁿ + yⁿ = zⁿ with x, y coprime forces x, y, z to have zero derivative"
+        },
+        {
+          "member": "algebra/ring/ideal_factorization.IdealFactorizationUnique",
+          "what": "the factorization into invertible maximal ideals is unique"
+        },
+        {
+          "member": "algebra/ring/ideal_factorization.FractionalIdealsFreeAbelian",
+          "what": "the fractional ideals form the free abelian group on the nonzero maximal ideals, by their exponents"
+        },
+        {
+          "member": "algebra/ring/ideal_class_group.InvertibleIdealClassGroupAbelian",
+          "what": "the ideal class group: the invertible fractional ideals modulo the principal ones, an abelian group"
+        }
+      ]
+    },
+    {
+      "id": "modules-over-a-ring-on-a-set",
+      "heading": "Modules over a ring on a set",
+      "opening": "Linear algebra with the ring and the module held as records on carrier sets: submodules, quotients and spans; homomorphisms, kernels and exactness; the free module on a set with its lift, the mechanism every universal property above is built from; bases and dimension over a field by Zorn's lemma and replacement; the trace and the determinant of an endomorphism, read in a finite basis; nondegenerate pairings and the dual; the tensor product and Hom; modules over a principal ideal domain, free when finitely generated and torsion-free, and the index of a sublattice of ℤⁿ.",
+      "rows": [
+        {
+          "member": "algebra/module/free_module.FreeLiftUnique",
+          "what": "homomorphisms out of the free module agreeing on the generators agree: its universal property"
+        },
+        {
+          "member": "algebra/module/linear_independence.BasisExists",
+          "what": "every module over a field has a basis, by Zorn's lemma"
+        },
+        {
+          "member": "algebra/module/tensor_product.TensorUniversal",
+          "what": "a bilinear map factors through the tensor product"
+        },
+        {
+          "member": "algebra/module/tensor_product.TensorRightExact",
+          "what": "tensoring is right exact"
+        },
+        {
+          "member": "algebra/module/hom_module.HomLeftExact",
+          "what": "Hom is left exact"
+        },
+        {
+          "member": "algebra/module/principal_ideal_domain.SubmoduleFree",
+          "what": "over a principal ideal domain, a submodule of a free module of finite rank is free, of no larger rank"
+        },
+        {
+          "member": "algebra/module/principal_ideal_domain.FiniteTorsionFreeFree",
+          "what": "a finitely generated torsion-free module over a principal ideal domain is free"
+        },
+        {
+          "member": "algebra/module/int_lattice.FullRankIffFiniteIndex",
+          "what": "a subgroup of a full integer lattice has finite index exactly when it has full rank"
+        }
+      ]
+    },
+    {
+      "id": "polish-covers-and-definable-cohomology",
+      "heading": "Polish covers and definable cohomology",
+      "opening": "Representative spaces supply regularity to existing quotient carriers: continuous and Borel lifts descend, continuous images give Polishable subgroups, and a Polish cochain model supplies covered cohomology, comparison isomorphisms and connecting maps. Countable Ext resolutions, polynomial cotangent resolutions and countable-cover Čech complexes with Polish section groups enter the same mechanism. Baire category then decides the size of the quotient: a Borel subgroup has countable index or continuum many cosets, so such a cohomology is countable or of the size of the continuum; lim¹ of a tower of Polish abelian groups is the two-term case, and Milnor's sequence reads a tower of complexes.",
+      "rows": [
+        {
+          "member": "algebra/group/polish_group.ContinuousHomImagePolishable",
+          "what": "a continuous homomorphism of Polish groups has a Polishable Borel image"
+        },
+        {
+          "member": "algebra/module/polish_cohomology.CohomologyDefinableFunctor",
+          "what": "a Polish cochain model equips ordinary cohomology and its maps with Polish covers and Borel lifts"
+        },
+        {
+          "member": "algebra/module/polish_cohomology.HomotopyEquivalenceDefinableIso",
+          "what": "a continuous cochain homotopy equivalence of Polish models gives Borel-isomorphic covers in every degree"
+        },
+        {
+          "member": "algebra/module/polish_cohomology.ConnectingMapDefinable",
+          "what": "connecting homomorphisms of a short exact sequence of Polish complexes have Borel lifts"
+        },
+        {
+          "member": "algebra/group/borel_subgroup.BorelSubgroupIndexDichotomy",
+          "what": "a Borel subgroup of a Polish abelian group has countable index or at least continuum many cosets"
+        },
+        {
+          "member": "algebra/module/polish_cohomology.CohomologyCountableOrContinuum",
+          "what": "the cohomology of a Polish cochain model is countable or has at least continuum many classes"
+        },
+        {
+          "member": "algebra/module/derived_limit.PolishDerivedLimitZeroOrContinuum",
+          "what": "lim¹ of a tower of Polish abelian groups with continuous homomorphisms is zero or has continuum many classes"
+        },
+        {
+          "member": "algebra/module/milnor_sequence.MilnorDerivedLimitKernel",
+          "what": "Milnor: lim¹ of the cohomology tower injects into the next cohomology of the limit complex"
+        },
+        {
+          "member": "algebra/module/definable_ext.ExtHasPolishCover",
+          "what": "Ext of countable modules over a countable ring with its canonical Polish cover"
+        },
+        {
+          "member": "algebra/cotangent/definable_andre_quillen.AndreQuillenHasPolishCover",
+          "what": "the standard André–Quillen cochain model of countable rings and coefficients supplies Polish covers"
+        },
+        {
+          "member": "algebra/cotangent/definable_andre_quillen.ResolutionComparisonDefinableIso",
+          "what": "comparison of polynomial resolutions with countable names gives Borel-isomorphic AQ covers"
+        },
+        {
+          "member": "topology/cech_cohomology.PolishCechModel",
+          "what": "a countable cover with Polish section groups and continuous restrictions gives a Polish Čech cochain model"
+        }
+      ]
+    },
+    {
+      "id": "homological-algebra",
+      "heading": "Homological algebra",
+      "opening": "Chain and cochain complexes of modules on sets, homology and the long exact sequences by the diagram chase; the canonical free resolution of a module on one index type; Tor and Ext as the homology and cohomology of the canonical complexes, their long exact sequences and the balance of Tor; based complexes and the transpose, which carries the chain-level facts to cohomology; extensions classified by Ext¹; flatness through Tor.",
+      "rows": [
+        {
+          "member": "algebra/module/chain_complex.FiveLemma",
+          "what": "the five lemma"
+        },
+        {
+          "member": "algebra/module/chain_complex.LongExactMiddle",
+          "what": "the long exact homology sequence of a short exact sequence of complexes, exact at the middle"
+        },
+        {
+          "member": "algebra/module/chain_complex.HomotopicSameHomologyMap",
+          "what": "homotopic chain maps agree on homology"
+        },
+        {
+          "member": "algebra/module/resolution.CanonicalResolution",
+          "what": "every module has a canonical free resolution on one fixed index type"
+        },
+        {
+          "member": "algebra/module/resolution.ResolutionComparison",
+          "what": "a module map lifts to a chain map of resolutions, unique up to homotopy"
+        },
+        {
+          "member": "algebra/module/tor_ext.TorAsHomology",
+          "what": "Tor and Ext are the homology and cohomology of the canonical complexes"
+        },
+        {
+          "member": "algebra/module/tor_ext.TorIndependent",
+          "what": "any free resolution computes Tor"
+        },
+        {
+          "member": "algebra/module/tor_ext.TorLongExactMiddle",
+          "what": "a short exact sequence of modules induces the Tor long exact sequence"
+        },
+        {
+          "member": "algebra/module/tor_ext.TorBalance",
+          "what": "interchanging the two modules gives an isomorphic Tor module"
+        },
+        {
+          "member": "algebra/module/yoneda_ext.YonedaIsoIffSameClass",
+          "what": "extensions of M by N are classified up to isomorphism by Ext¹(M, N)"
+        },
+        {
+          "member": "algebra/module/flat_module.FlatIdealCriterion",
+          "what": "a module is flat exactly when tensoring with every ideal is injective"
+        },
+        {
+          "member": "algebra/module/flat_module.FlatTorVanishes",
+          "what": "a flat module has vanishing Tor in every positive degree"
+        }
+      ]
+    },
+    {
+      "id": "field-theory-and-the-galois-correspondence",
+      "heading": "Field theory and the Galois correspondence",
+      "opening": "Everything inside one field on a set, the ambient field a bundle: a subfield above another is a vector space over it, with the tower law; algebraic elements and their minimal polynomials, K(a) = K[a]; the automorphisms fixing a subfield as a group on a set of permutations, Dedekind and Artin; the correspondence for a finite Galois extension; the field trace of a simple separable extension, nondegenerate with Euler's dual basis, and the field norm; the trace dual of a lattice, the codifferent of a subring and its different; function fields of one variable and their separating parameters; the algebraic closure of a field, built once in a host type fixed by the field's, and the splitting fields inside a closed field; finite fields, their Frobenius, their cyclic group of units, the count of a vector space over one, the field of p elements and the fields of q^m elements inside a closed field.",
+      "rows": [
+        {
+          "member": "algebra/field/field_extension.TowerLaw",
+          "what": "the tower law: [N : K] = [N : M] · [M : K]"
+        },
+        {
+          "member": "algebra/field/algebraic_element.AlgebraicIffFinite",
+          "what": "a is algebraic over K exactly when K(a) is finite over K"
+        },
+        {
+          "member": "algebra/field/algebraic_element.AlgebraicElementsSubfield",
+          "what": "the elements algebraic over K form a subfield"
+        },
+        {
+          "member": "algebra/ring/polynomial/separable_polynomial.SeparableIffDerivative",
+          "what": "an irreducible polynomial is separable exactly when its derivative is not zero"
+        },
+        {
+          "member": "algebra/field/field_automorphism.Dedekind",
+          "what": "Dedekind's lemma: distinct automorphisms are independent"
+        },
+        {
+          "member": "algebra/field/field_automorphism.ArtinFixedField",
+          "what": "Artin's theorem: [M : M^H] = |H| for a finite group H of automorphisms"
+        },
+        {
+          "member": "algebra/field/galois_correspondence.GaloisIffFixed",
+          "what": "a finite extension is Galois exactly when Aut_K(M) fixes nothing but K"
+        },
+        {
+          "member": "algebra/field/galois_correspondence.CorrespondenceFixed",
+          "what": "the fundamental theorem, one way: an intermediate field is the field its group fixes"
+        },
+        {
+          "member": "algebra/field/galois_correspondence.CorrespondenceAutomorphisms",
+          "what": "the other way: a subgroup is the group of its fixed field"
+        },
+        {
+          "member": "algebra/field/galois_correspondence.NormalIffNormalSubgroup",
+          "what": "an intermediate field is normal exactly when its group is a normal subgroup"
+        },
+        {
+          "member": "algebra/field/field_trace.TraceNondegenerate",
+          "what": "the trace pairing of a simple separable extension is nondegenerate"
+        },
+        {
+          "member": "algebra/field/field_trace.TraceDualBasis",
+          "what": "Euler's dual basis: the scaled cofactor coefficients of the minimal polynomial are trace-dual to the power basis"
+        },
+        {
+          "member": "algebra/field/finite_field.FrobeniusFixedField",
+          "what": "inside any field above k, the roots of X^q − X are exactly k"
+        },
+        {
+          "member": "algebra/field/roots_of_unity.FiniteFieldUnitsCyclic",
+          "what": "the multiplicative group of a finite field is cyclic"
+        },
+        {
+          "member": "algebra/field/trace_dual.CodifferentInvertible",
+          "what": "the codifferent of a finite free subring is an invertible fractional ideal whose inverse, the different, is a nonzero ideal"
+        },
+        {
+          "member": "algebra/field/trace_dual.MonogenicCodifferent",
+          "what": "Euler: for B = A[y] with separable minimal polynomial f over A, the codifferent is B / f′(y) and the different is f′(y) · B"
+        },
+        {
+          "member": "algebra/field/separating_parameter.SeparatingParameterExists",
+          "what": "a function field of one variable over a perfect field has a separating parameter"
+        },
+        {
+          "member": "algebra/field/algebraic_closure.AlgebraicClosureFieldOn",
+          "what": "every field has an algebraic closure, built in the host set(prod(num, num → A)) over its type A"
+        },
+        {
+          "member": "algebra/field/algebraic_closure.SplittingFieldInClosed",
+          "what": "inside a closed field the roots of a polynomial over K generate its splitting field, finite over K"
+        }
+      ]
+    },
+    {
+      "id": "number-fields",
+      "heading": "Number fields",
+      "opening": "A number field is a finite field of characteristic zero over its rational image, and its ring of integers the elements integral over the integer image: a full lattice, free over ℤ with an integral basis of [K : ℚ] members; nonzero ideals are invertible and factor uniquely into primes, so the fractional ideals form a group; the norm of an ideal is its index, multiplicative and the absolute field norm on a principal ideal; every ideal class holds an integral ideal of bounded norm, so the class group is finite; the discriminant of an integral basis and the different, with Euler's derivative formula for a monogenic ring of integers.",
+      "rows": [
+        {
+          "member": "algebra/field/number_field/ring_of_integers.RingOfIntegersFreeRankN",
+          "what": "the ring of integers is a full lattice: free over ℤ with an integral basis of [K : ℚ] members"
+        },
+        {
+          "member": "algebra/field/number_field/number_ideals.NumberRingFactorization",
+          "what": "a nonzero ideal of the ring of integers is invertible and factors uniquely into nonzero prime ideals"
+        },
+        {
+          "member": "algebra/field/number_field/number_ideals.NumberFractionalIdeals",
+          "what": "the invertible fractional ideals are the nonzero bounded ones: a common denominator suffices"
+        },
+        {
+          "member": "algebra/field/number_field/ideal_norm.IdealNormMultiplicative",
+          "what": "the ideal norm, the index of the ideal, is multiplicative"
+        },
+        {
+          "member": "algebra/field/number_field/class_number.ClassNumberFinite",
+          "what": "the ideal class group of a number field is finite"
+        },
+        {
+          "member": "algebra/field/number_field/discriminant.DiscriminantIndexSquare",
+          "what": "the discriminant of a full sublattice of the integers is the field discriminant times the square of its index"
+        },
+        {
+          "member": "algebra/field/number_field/different.DifferentNormDiscriminant",
+          "what": "the norm of the different is the absolute value of the discriminant"
+        },
+        {
+          "member": "algebra/field/number_field/different.MonogenicDifferent",
+          "what": "for a ring of integers ℤ[y], the codifferent is ℤ[y] / f′(y) and the different is f′(y) · ℤ[y], f the minimal polynomial of y"
+        }
+      ]
+    },
+    {
+      "id": "free-algebras-derivations-and-differentials",
+      "heading": "Free algebras, derivations and differentials",
+      "opening": "The free commutative algebra on a set of variables, modelled on finitely supported functions of monomials and carried into a host type along an embedding; partial derivatives, derivations and the Jacobian of an algebra map; the module of Kähler differentials with its universal property; square-zero extensions of an algebra by a module and their Baer sum. The commutative algebra the cotangent complex is built from.",
+      "rows": [
+        {
+          "member": "algebra/ring/polynomial/polynomial_algebra_evaluation.PolynomialAlgebraEvalUnique",
+          "what": "a ring map out of the polynomials in a set of variables is determined by its values on the constants and the variables: their universal property"
+        },
+        {
+          "member": "algebra/ring/polynomial/homogeneous_polynomial.EulerIdentity",
+          "what": "Euler's identity: Σ xᵢ·∂P/∂Xᵢ = d·P for a form P of degree d"
+        },
+        {
+          "member": "algebra/ring/kaehler.KaehlerUniversalExists",
+          "what": "every derivation of S over R factors through the universal derivation into Ω_{S/R}"
+        },
+        {
+          "member": "algebra/ring/kaehler.KaehlerFreeAlgebra",
+          "what": "the differentials of a free algebra are free on its variables, du ↦ (∂_x u)_x"
+        },
+        {
+          "member": "algebra/ring/kaehler.KaehlerFirstExact",
+          "what": "the first fundamental exact sequence Ω_{S/R} ⊗_S T → Ω_{T/R} → Ω_{T/S} → 0"
+        },
+        {
+          "member": "algebra/ring/kaehler.MonicEvaluationPresentation",
+          "what": "the differentials of a monic presentation B = S[y]/(F) are B/(F′(y)), generated by dy"
+        },
+        {
+          "member": "algebra/ring/square_zero_extension.LiftDifferenceDerivation",
+          "what": "two lifts of a presentation into a square-zero extension differ by a derivation"
+        }
+      ]
+    },
+    {
+      "id": "first-order-formulas-and-polynomial-parameters",
+      "heading": "First-order formulas and polynomial parameters",
+      "opening": "Named-variable formulas with parameterized atoms, finite supports and carrier semantics. Uniform quantifier elimination separates sentence agreement from preservation along specified embeddings; finite coefficient blocks express polynomials in arbitrary finite dimension and bounded degree.",
+      "rows": [
+        {
+          "member": "datatypes/first_order.QuantifierEliminationFromOne",
+          "what": "uniform elimination of one existential gives quantifier elimination for all formulas"
+        },
+        {
+          "member": "datatypes/first_order.ElementaryFromCommonEquivalent",
+          "what": "uniform quantifier elimination makes atomic embeddings elementary"
+        },
+        {
+          "member": "datatypes/first_order.SentenceTransferFromCommonEquivalent",
+          "what": "under uniform QE, agreement on closed quantifier-free formulas gives agreement on all sentences"
+        }
+      ]
+    },
+    {
+      "id": "real-closed-fields-and-ordered-sign-tables",
+      "heading": "Real closed fields and ordered sign tables",
+      "opening": "Ordered fields, prescribed-order real closures and the real-number instance. Parameter signs control ordered cells and realizable sign vectors. This gives quantifier elimination without an Archimedean hypothesis, independently of elimination over algebraically closed fields.",
+      "rows": [
+        {
+          "member": "algebra/field/real_closure.RootsCharacterization",
+          "what": "an ordered field is real closed exactly when positive elements have square roots and odd-degree polynomials have roots"
+        },
+        {
+          "member": "algebra/field/real_closure.RealClosureExists",
+          "what": "an ordered field has an algebraic real closure preserving its specified order"
+        },
+        {
+          "member": "algebra/field/uniform_sign_table.ParameterizedSignTable",
+          "what": "finite parameter sign data determine an ordered sign table's size and cell sign vectors uniformly over real closed fields"
+        },
+        {
+          "member": "algebra/field/uniform_sign_table.RealizableSignControl",
+          "what": "realizable polynomial sign vectors are uniformly controlled by finitely many parameter-polynomial signs"
+        },
+        {
+          "member": "algebra/field/real_closed_quantifier_elimination.QuantifierElimination",
+          "what": "every ordered-ring formula has a uniform quantifier-free equivalent over real closed fields, with no new free variables"
+        }
+      ]
+    },
+    {
+      "id": "algebraically-closed-fields-and-transfer",
+      "heading": "Algebraically closed fields and transfer",
+      "opening": "Uniform elimination for ring formulas in every characteristic, same-characteristic sentence transfer and parameter-preserving elementary embeddings. Lefschetz and Ax–Grothendieck use sentence transfer; descent of polynomial systems with inequations uses a specified embedding.",
+      "rows": [
+        {
+          "member": "algebra/field/algebraically_closed_quantifier_elimination.QuantifierElimination",
+          "what": "every ring formula has a uniform quantifier-free equivalent over algebraically closed fields, with no new free variables"
+        },
+        {
+          "member": "algebra/field/algebraically_closed_field_transfer.SentenceTransfer",
+          "what": "algebraically closed fields of the same characteristic satisfy the same ring sentences"
+        },
+        {
+          "member": "algebra/field/algebraically_closed_field_transfer.EmbeddingElementary",
+          "what": "embeddings of algebraically closed fields preserve all formulas with their parameters"
+        },
+        {
+          "member": "algebra/field/lefschetz.LefschetzPrinciple",
+          "what": "complex truth is eventual truth in prime characteristic"
+        },
+        {
+          "member": "algebra/field/ax_grothendieck.AxGrothendieck",
+          "what": "an injective polynomial self-map of affine space over an algebraically closed field is surjective"
+        },
+        {
+          "member": "algebra/field/polynomial_system_descent.SolutionDescent",
+          "what": "solutions of finite polynomial systems with inequations descend along algebraically closed embeddings"
+        },
+        {
+          "member": "algebra/field/polynomial_system_descent.FormIdealPrimeDescent",
+          "what": "the ideal finitely many forms generate is prime over one algebraically closed field exactly when its image is prime over a larger one"
+        }
+      ]
+    },
+    {
+      "id": "real-closed-transfer-and-polynomial-applications",
+      "heading": "Real closed transfer and polynomial applications",
+      "opening": "Quantifier elimination via ordered sign tables supplies sentence transfer and elementary ordered embeddings. Universally quantified coefficients give polynomial extrema and cube fixed points. Artin's rational sums of squares use order separation, real closure and existential descent along the given embedding.",
+      "rows": [
+        {
+          "member": "algebra/field/real_closed_field_transfer.SentenceTransfer",
+          "what": "real closed fields satisfy the same ordered-ring sentences"
+        },
+        {
+          "member": "algebra/field/real_closed_field_transfer.EmbeddingElementary",
+          "what": "ordered embeddings of real closed fields preserve all formulas with their parameters"
+        },
+        {
+          "member": "algebra/field/polynomial_optimization.ClosedIntervalExtrema",
+          "what": "a polynomial attains its minimum and maximum on every nonempty closed interval of a real closed field"
+        },
+        {
+          "member": "algebra/field/polynomial_optimization.LexicographicMinimum",
+          "what": "bounded nonempty closed polynomial constraints over a real closed field admit a primary and secondary minimizer"
+        },
+        {
+          "member": "algebra/field/polynomial_brouwer.PolynomialBrouwer",
+          "what": "a polynomial self-map of the cube over a real closed field has a fixed point"
+        },
+        {
+          "member": "algebra/field/artin.Artin",
+          "what": "a nonnegative polynomial over a real closed field is a sum of rational squares"
+        }
+      ]
+    },
+    {
+      "id": "category-theory",
+      "heading": "Category theory",
+      "opening": "Categories as records on two carrier sets and their functors, every category the corpus builds assembled from its hom data by one construction whose laws are proved once: the sets of a type, the preorders, the simplex category. The Yoneda lemma with presheaves valued in the sets of any type: universe levels are type parameters.",
+      "rows": [
+        {
+          "member": "category/category.CategoryFromHom",
+          "what": "a category from its hom data: objects, hom sets, identities and a composition satisfying the laws on the data assemble to a category, the bookkeeping of ends proved once"
+        },
+        {
+          "member": "category/set_category.SetCategory",
+          "what": "the subsets of a type form a category, one per type"
+        },
+        {
+          "member": "category/yoneda.YonedaLemma",
+          "what": "the Yoneda lemma: natural families on the hom sets into c are the elements of P(c)"
+        }
+      ]
+    },
+    {
+      "id": "combinatorial-homotopy",
+      "heading": "Combinatorial homotopy",
+      "opening": "Simplicial sets with the dimension a term and every index condition arithmetic, and the action of the monotone maps on their simplices: ∂∂ = 0, the homotopy groups of a Kan complex, the long exact sequence of a fibration, the Kan condition as extension along the standard horns; simplicial modules with the Moore complex, Kan by Moore's theorem, and the Alexander–Whitney map — the simplicial algebra the cotangent complex reads.",
+      "rows": [
+        {
+          "member": "simplicial/simplicial_chain.ChainComplex",
+          "what": "the alternating face map complex: two boundaries in a row are zero"
+        },
+        {
+          "member": "simplicial/homotopy_group.GroupOn",
+          "what": "πₙ of a Kan complex at a vertex is a group for 0 < n"
+        },
+        {
+          "member": "simplicial/kan_fibration.ExactAtTotal",
+          "what": "the long exact sequence of a Kan fibration, exact at the total space"
+        },
+        {
+          "member": "simplicial/simplicial_operator.SimplicialOperatorCompose",
+          "what": "the action of the monotone maps on the simplices is functorial"
+        },
+        {
+          "member": "simplicial/simplicial_operator.SimplexYoneda",
+          "what": "the n-simplices are the maps out of the standard simplex Δⁿ"
+        },
+        {
+          "member": "simplicial/simplicial_homotopy.ExtraDegeneracyHomotopyEquivalence",
+          "what": "an extra degeneracy makes the augmentation a homotopy equivalence onto the constant simplicial set"
+        },
+        {
+          "member": "simplicial/simplicial_module.HornFillerExists",
+          "what": "Moore's theorem: a simplicial module is a Kan complex"
+        },
+        {
+          "member": "simplicial/simplicial_group.HomotopyGroupMooreHomology",
+          "what": "the homotopy groups of a simplicial module are the homology of its Moore complex"
+        },
+        {
+          "member": "simplicial/simplicial_module.AlexanderWhitneyChainMap",
+          "what": "the Alexander–Whitney map is a chain map from the diagonal of a bisimplicial module to the total complex"
+        }
+      ]
+    },
+    {
+      "id": "algebraic-topology",
+      "heading": "Algebraic topology",
+      "opening": "Homotopy of maps and of paths with their ends held; the fundamental group of a space at a point, the homomorphisms continuous maps induce and the Seifert–van Kampen theorem as a universal property; covering spaces, path and homotopy lifting, and π₁(S¹) ≅ ℤ with the disc and Borsuk–Ulam in the plane; Brouwer's theorem on compact convex sets and the Jordan curve theorem; the singular simplicial set of a space, a Kan complex whose homotopy groups are combinatorial homotopy's, and singular homology with homotopy invariance, small simplices, Mayer–Vietoris and Hₙ(Sⁿ).",
+      "rows": [
+        {
+          "member": "topology/fundamental_group.FundamentalGroupOn",
+          "what": "the fundamental group: the classes of the loops at a point under homotopy with the ends held form a group"
+        },
+        {
+          "member": "topology/fundamental_group.VanKampenExtension",
+          "what": "Seifert–van Kampen: the group of a union of two open sets is the pushout of their groups over the group of the intersection"
+        },
+        {
+          "member": "topology/covering_space.PathHomotopyLifting",
+          "what": "the monodromy theorem: homotopic paths lift from one point to homotopic paths"
+        },
+        {
+          "member": "vector/circle.CircleFundamentalGroup",
+          "what": "π₁(S¹) ≅ ℤ, the integer k going to the loop that winds k times"
+        },
+        {
+          "member": "vector/circle.BorsukUlamPlane",
+          "what": "Borsuk–Ulam in dimension two: a continuous map of S² to the plane agrees at some pair of antipodal points"
+        },
+        {
+          "member": "vector/convex_topology.CompactConvexFixedPoint",
+          "what": "Brouwer's fixed point theorem on a nonempty compact convex set of ℝⁿ"
+        },
+        {
+          "member": "vector/jordan_curve.JordanCurve",
+          "what": "the Jordan curve theorem"
+        },
+        {
+          "member": "simplicial/singular_set.SingularKan",
+          "what": "the singular simplicial set of a space is a Kan complex"
+        },
+        {
+          "member": "simplicial/singular_set.FundamentalGroupSingular",
+          "what": "and its first homotopy group is the fundamental group"
+        },
+        {
+          "member": "simplicial/singular_homology.SingularHomotopyChainHomotopy",
+          "what": "homotopic maps induce chain homotopic maps of singular chains"
+        },
+        {
+          "member": "vector/sphere.SphereTopHomology",
+          "what": "Hₙ(Sⁿ) ≅ R for n ≥ 1, by Mayer–Vietoris"
+        }
+      ]
+    },
+    {
+      "id": "quasi-categories",
+      "heading": "Quasi-categories",
+      "opening": "Quasi-categories and their homotopy categories, equivalences represented by inverse triangles, and left fibrations that reflect equivalences and lift them to prescribed targets. Fixed-prefix cones and extension through partial prefix horns give Joyal's special outer horn theorem, hence the characterization of Kan complexes by groupoid homotopy categories. Mapping complexes are Kan, and the nerve is full and faithful and right adjoint to the homotopy category.",
+      "rows": [
+        {
+          "member": "simplicial/quasi_category.NerveQuasi",
+          "what": "the nerve of a category is a quasi-category"
+        },
+        {
+          "member": "simplicial/segal.SegalCharacterization",
+          "what": "a simplicial set has unique inner fillers exactly when it is isomorphic to the nerve of a category"
+        },
+        {
+          "member": "simplicial/quasi_category.HomotopyCategory",
+          "what": "the homotopy category of a quasi-category"
+        },
+        {
+          "member": "simplicial/nerve.NerveFullyFaithful",
+          "what": "the functors between two categories are the simplicial maps between their nerves"
+        },
+        {
+          "member": "simplicial/quasi_category.HomotopyNerveAdjunction",
+          "what": "the homotopy category is left adjoint to the nerve on quasi-categories"
+        },
+        {
+          "member": "simplicial/quasi_category.RightSpecialHornFill",
+          "what": "Joyal's lifting: an outer horn whose last edge is an equivalence fills"
+        },
+        {
+          "member": "simplicial/quasi_category.KanIffHomotopyGroupoid",
+          "what": "Joyal's theorem: a quasi-category is a Kan complex exactly when its homotopy category is a groupoid"
+        },
+        {
+          "member": "simplicial/mapping_complex.MappingComplexKan",
+          "what": "the mapping complex between two objects of a quasi-category is a Kan complex"
+        }
+      ]
+    },
+    {
+      "id": "differential-topology-and-de-rham-cohomology",
+      "heading": "Differential topology and de Rham cohomology",
+      "opening": "Smooth manifolds on atlases, their tangent and cotangent bundles, differential forms and their integrals, and de Rham cohomology with its Mayer–Vietoris and Künneth sequences, compared with real singular cohomology.",
+      "rows": [
+        {
+          "member": "manifold/form_integral.ManifoldStokes",
+          "what": "Stokes's theorem on a manifold without boundary: an exact top form of compact support integrates to zero"
+        },
+        {
+          "member": "manifold/de_rham_comparison.DeRhamTheorem",
+          "what": "de Rham's theorem: integration identifies de Rham cohomology with real singular cohomology"
+        },
+        {
+          "member": "manifold/thom_form.GaussBonnetChern",
+          "what": "the Gauss–Bonnet–Chern theorem: the integral of the Euler form is the Euler characteristic"
+        },
+        {
+          "member": "manifold/manifold_critical_point.ManifoldSard",
+          "what": "Sard's theorem: the critical values of a smooth map of manifolds form a null set"
+        },
+        {
+          "member": "manifold/manifold_embedding.WhitneyImmersion",
+          "what": "Whitney's immersion theorem: a compact n-manifold immerses smoothly in ℝ²ⁿ"
+        }
+      ]
+    },
+    {
+      "id": "index-theory-and-k-theory",
+      "heading": "Index theory and K-theory",
+      "opening": "Complex K-theory of projection bundles, with compact supports, Bott periodicity and the Thom isomorphism; Fredholm operators and their index, and Toeplitz operators; pseudo-differential operators on closed manifolds, and the index theorem in its topological and cohomological forms.",
+      "rows": [
+        {
+          "member": "topology/bott_periodicity.BottPeriodicity",
+          "what": "Bott periodicity: over a compact base, the external product with the Bott class is an isomorphism in complex K-theory"
+        },
+        {
+          "member": "topology/k_thom.ThomIsomorphism",
+          "what": "the Thom isomorphism in K-theory with compact supports"
+        },
+        {
+          "member": "analysis/toeplitz_operator.ToeplitzIndex",
+          "what": "the Toeplitz index theorem: a nonvanishing piecewise smooth symbol gives a Fredholm operator of index minus its winding number"
+        },
+        {
+          "member": "manifold/index_comparison.AtiyahSingerIndex",
+          "what": "the Atiyah–Singer index theorem: the analytic and the topological index agree"
+        },
+        {
+          "member": "manifold/cohomological_index.AtiyahSingerCohomological",
+          "what": "the index theorem in cohomological form: the analytic index is a signed Chern–Todd integral"
+        }
+      ]
+    },
+    {
+      "id": "the-cotangent-complex-and-andr-quillen-homology",
+      "heading": "The cotangent complex and André–Quillen homology",
+      "opening": "Polynomial simplicial algebras in one host type; the standard resolution of an algebra and the comparison of resolutions; the cotangent complex as the differentials of a resolution, with coefficients in a module, and the homology D_n and cohomology D^n it carries; the transitivity triangle of a tower with its long exact sequences; the complex computed on polynomial algebras, regular quotients, plane curves, étale hypersurfaces, localizations and separable extensions; D¹ as conormal maps modulo derivations, classifying the square-zero extensions.",
+      "rows": [
+        {
+          "member": "algebra/cotangent/standard_resolution.StandardResolution",
+          "what": "the standard free resolution of an algebra is a polynomial resolution"
+        },
+        {
+          "member": "algebra/cotangent/resolution_comparison.ComparisonHomotopyEquivalence",
+          "what": "two resolutions of one algebra are homotopy equivalent over its identity"
+        },
+        {
+          "member": "algebra/cotangent/cotangent_complex.CotangentResolutionIndependence",
+          "what": "any polynomial resolution of an algebra computes its cotangent complex, up to chain homotopy equivalence"
+        },
+        {
+          "member": "algebra/cotangent/cotangent_complex.CotangentDegreeZero",
+          "what": "André–Quillen homology in degree 0 is the module of Kähler differentials, D₀(S/R, S) ≅ Ω_{S/R}"
+        },
+        {
+          "member": "algebra/cotangent/transitivity.TransitivityExactAtMiddle",
+          "what": "the transitivity long exact sequence of a tower R → S → T, exact at D_n(T/R, N)"
+        },
+        {
+          "member": "algebra/cotangent/cotangent_examples.ConormalModule",
+          "what": "for a ring map onto S with kernel I, D₁(S/R, S) is the conormal module I/I²"
+        },
+        {
+          "member": "algebra/cotangent/cotangent_examples.RegularQuotientCotangent",
+          "what": "for g no zero divisor, D_n(R/(g) / R, N) is N in degree 1 and zero in every other degree"
+        },
+        {
+          "member": "algebra/cotangent/cotangent_examples.PlaneCurveCotangentComplex",
+          "what": "the cotangent complex of a plane curve R[x, y]/(F) is the two-term complex A → A², 1 ↦ (F_x, F_y)"
+        },
+        {
+          "member": "algebra/cotangent/cotangent_examples.EtaleHypersurfaceVanishes",
+          "what": "an étale hypersurface R[x]/(g), g no zero divisor and separable, has no André–Quillen homology over R"
+        },
+        {
+          "member": "algebra/cotangent/square_zero_classification.ExtensionIsoIffSameClass",
+          "what": "square-zero extensions of S by N over R are classified up to isomorphism by D¹(S/R, N)"
+        }
+      ]
+    },
+    {
+      "id": "spectra-structure-sheaves-and-affine-morphisms",
+      "heading": "Spectra, structure sheaves and affine morphisms",
+      "opening": "The prime spectrum of a ring on a set with its Zariski topology; the structure sheaf, its sections over a basic open and its stalks as localizations; locally ringed spaces and schemes; Spec on ring maps and the correspondence between maps to a spectrum and maps on global sections. Every object is a set of one type built from the ring's carrier type, and no equality between types is ever asked.",
+      "rows": [
+        {
+          "member": "scheme/structure_sheaf.StructureSheafOfRings",
+          "what": "the sections form a sheaf of rings on the spectrum"
+        },
+        {
+          "member": "scheme/structure_sheaf.GlobalSections",
+          "what": "the global sections of the structure sheaf are the ring"
+        },
+        {
+          "member": "scheme/structure_sheaf.StalkAtPrime",
+          "what": "the stalk at a prime is the localization at it"
+        },
+        {
+          "member": "scheme/scheme.SpecScheme",
+          "what": "the prime spectrum of a commutative ring is a scheme"
+        },
+        {
+          "member": "scheme/spec_functor.BasicOpenAffine",
+          "what": "a basic open is the spectrum of the corresponding localization"
+        },
+        {
+          "member": "scheme/gamma_spec.AdjunctionLeft",
+          "what": "a ring map to global sections is recovered from its induced point and section assignments"
+        },
+        {
+          "member": "scheme/gamma_spec.AffineMorphisms",
+          "what": "every affine morphism comes from a ring homomorphism"
+        }
+      ]
+    },
+    {
+      "id": "curves-held-by-two-charts",
+      "heading": "Curves held by two charts",
+      "opening": "A curve is the coordinate rings of two affine charts inside its function field, and a module on it a lattice pair with two-term Čech cohomology, nothing glued by an isomorphism; the projective line and its O(n); finiteness, degree, Serre duality and Riemann–Roch for curves finite over the line; the elliptic curve with its canonical bundle and its group law; finite separable covers of curves, the inverse different and Riemann–Hurwitz; orders at regular points, closed divisors and Riemann–Roch for them on a smooth curve over a finite field; plane equations and smooth projective curves presented by two charts, the Hilbert function of a plane curve of degree e and its genus (e − 1)(e − 2)/2, and the Weierstrass cubic as a smooth projective curve; and the scheme two charts glue to, bridging to the spectra.",
+      "rows": [
+        {
+          "member": "scheme/invertible_lattice_pair.InvertibleLatticeInverse",
+          "what": "the invertible lattice pairs form a group under the chartwise product, M⁻¹ the inverse"
+        },
+        {
+          "member": "scheme/projective_line.LineH1Dim",
+          "what": "on the line, h¹(O(n)) = max(−n − 1, 0)"
+        },
+        {
+          "member": "scheme/algebraic_curve.InvertibleFinite",
+          "what": "every invertible lattice pair of a curve has finite-dimensional cohomology"
+        },
+        {
+          "member": "scheme/serre_duality.SerreDuality",
+          "what": "Serre duality: dim H¹(M) = dim Hom(M, ω) for an invertible pair M"
+        },
+        {
+          "member": "scheme/serre_duality.RiemannRoch",
+          "what": "Riemann–Roch: ℓ(M) − dim Hom(M, ω) = deg M + 1 − g"
+        },
+        {
+          "member": "scheme/serre_duality.RiemannRochDivisor",
+          "what": "Riemann–Roch for a divisor: ℓ(D) − dim Hom(O(D), ω) = deg D + 1 − g"
+        },
+        {
+          "member": "scheme/algebraic_curve.GenusZeroLine",
+          "what": "the projective line has genus zero"
+        },
+        {
+          "member": "scheme/elliptic_curve.GenusOne",
+          "what": "the Weierstrass cubic has genus one"
+        },
+        {
+          "member": "scheme/elliptic_curve.AbelJacobiBijection",
+          "what": "the rational points of a smooth Weierstrass cubic are in bijection with Pic⁰, by P ↦ O(P − O)"
+        },
+        {
+          "member": "scheme/elliptic_curve.GroupLawFormulas",
+          "what": "the group carried from Pic⁰ is the chord-and-tangent law, in coordinates"
+        },
+        {
+          "member": "scheme/curve_cover.RiemannHurwitz",
+          "what": "Riemann–Hurwitz: 2g_X − 2 = n(2g_Y − 2) + the ramification degree, for the arithmetic genus"
+        },
+        {
+          "member": "scheme/divisor_lattice_correspondence.WeightedDivisorLatticeCorrespondence",
+          "what": "on a smooth curve over a finite field, closed divisors and invertible lattice pairs correspond, degree to degree, with div f principal"
+        },
+        {
+          "member": "scheme/smooth_curve_riemann_roch.RiemannRochClosedDivisors",
+          "what": "Riemann–Roch for closed divisors: ℓ(D) − ℓ(K − D) = deg D + 1 − g, with the canonical divisor K"
+        },
+        {
+          "member": "scheme/smooth_curve_riemann_roch.DegreeZeroClassGroupFinite",
+          "what": "Pic⁰ of a smooth curve over a finite field is finite"
+        },
+        {
+          "member": "scheme/plane_model.PlaneEquationBiaffineCurve",
+          "what": "an integral plane equation, monic in one variable, is a curve held by two charts, free over k[t] on the short powers of the other variable"
+        },
+        {
+          "member": "scheme/projective_curve.CurveHilbertEventuallyLinear",
+          "what": "the Hilbert function of a smooth projective equation curve is eventually e·d + 1 − g"
+        },
+        {
+          "member": "scheme/projective_curve.PlaneCurveHilbertFunction",
+          "what": "a plane curve of degree e has Hilbert function e·d + 1 − (e − 1)(e − 2)/2 from degree e on"
+        },
+        {
+          "member": "scheme/projective_affine_piece.AffinePiecesIntegrallyClosed",
+          "what": "the Jacobian criterion: the affine pieces of a smooth projective equation curve are integrally closed"
+        },
+        {
+          "member": "scheme/projective_presentation.SmoothProjectiveBiaffinePresentation",
+          "what": "a smooth projective equation curve over a finite field is presented by two charts, with the same genus and the same points over every extension"
+        },
+        {
+          "member": "scheme/biaffine_scheme.BiaffineScheme",
+          "what": "two charts glue to a scheme"
+        }
+      ]
+    },
+    {
+      "id": "the-riemann-hypothesis-for-elliptic-curves",
+      "heading": "The Riemann hypothesis for elliptic curves",
+      "opening": "Over a finite field k with q elements, a smooth Weierstrass cubic is a smooth finite curve of genus one, read inside its own function field: its two charts are integrally closed, and its closed points and their residue degrees are those of a smooth curve at the Weierstrass charts. The Hasse–Weil bound of the Weil conjectures, read at the closed points of the curve inside a closed field holding its function field, gives the Riemann hypothesis for every extension degree at once, and m = 1 is Hasse's theorem.",
+      "rows": [
+        {
+          "member": "scheme/closed_point.WeierstrassSmoothFiniteCurve",
+          "what": "the Weierstrass datum is a smooth finite curve over k with coordinate x"
+        },
+        {
+          "member": "scheme/elliptic_hasse_weil.RiemannHypothesisElliptic",
+          "what": "the Riemann hypothesis for elliptic curves: (q^m + 1 − N_m)² ≤ 4q^m for every m ≥ 1, the genus-one case"
+        },
+        {
+          "member": "scheme/elliptic_hasse_weil.HasseTheorem",
+          "what": "Hasse's theorem: (q + 1 − N)² ≤ 4q, the case m = 1"
+        }
+      ]
+    },
+    {
+      "id": "the-weil-conjectures-for-curves-over-finite-fields",
+      "heading": "The Weil conjectures for curves over finite fields",
+      "opening": "For a smooth, projective, geometrically irreducible curve of genus g over a field with q elements, held by two charts: the effective-divisor series is the Euler product over the closed points and has the extension counts N_m as its logarithmic derivative; Riemann–Roch makes it P(T)/((1 − T)(1 − qT)) with P an integer polynomial of degree 2g, P(0) = 1, the functional equation q^g pₙ = qⁿ p₂g₋ₙ, and a divisor of degree one; Bombieri's bound from one-point pole spaces and a Frobenius tensor map, carried to every extension through constant twists and good fibres, bounds every reciprocal root of P by √q, which is the Riemann hypothesis for curves and the Hasse–Weil bound |N_m − qᵐ − 1| ≤ 2g · q^(m/2); the same for a smooth projective curve cut out by homogeneous equations over any finite subfield k of any algebraically closed field M, with no hypothesis but M and the curve's own. Such a curve is carried along M into the algebraic closure of M(x), where its two-chart presentation lives: its genus, its point counts and the size of k are read over k and kept, and its geometric conditions (a prime ideal, a point, the Jacobian rank) cross by elementarity. The line X₂ = 0 of the projective plane is a proved instance; the Weierstrass cubic is a stated one. The complex numbers enter only to split P.",
+      "rows": [
+        {
+          "member": "scheme/curve_zeta.ZetaEulerProductAndLogDerivative",
+          "what": "the effective-divisor series is the Euler product over the closed points, and the extension point counts N_m are its logarithmic derivative"
+        },
+        {
+          "member": "scheme/curve_zeta.DegreeOneDivisorExists",
+          "what": "every smooth curve over a finite field has a divisor of degree one"
+        },
+        {
+          "member": "scheme/curve_zeta.ZetaNumeratorRationality",
+          "what": "rationality: (1 − T)(1 − qT) Σ Aₙ Tⁿ is an integer polynomial P of degree at most 2g with P(0) = 1 and P(1) = #Pic⁰"
+        },
+        {
+          "member": "scheme/curve_zeta.CurveZetaFunctionalEquation",
+          "what": "the functional equation: P has degree 2g and top coefficient q^g, and q^g · pₙ = qⁿ · p₂g₋ₙ"
+        },
+        {
+          "member": "scheme/curve_zeta.CurvePointCountTraceFormula",
+          "what": "the trace formula: N_m = qᵐ + 1 − Σ αᵢᵐ over the 2g reciprocal roots of P, whose product is q^g"
+        },
+        {
+          "member": "scheme/rational_point_bound.BombieriUpperRegularPoints",
+          "what": "Bombieri's bound from one-point pole spaces: over a field with s² elements and s > g² + 3g + 1, at most s² + (2g + 1)s regular rational points"
+        },
+        {
+          "member": "scheme/weil_curve.RiemannHypothesisGeneralCurves",
+          "what": "the Riemann hypothesis for curves: every reciprocal root of P has modulus √q, every zero of P modulus 1/√q"
+        },
+        {
+          "member": "scheme/weil_curve.HasseWeilAllExtensions",
+          "what": "the Hasse–Weil bound |N_m − qᵐ − 1| ≤ 2g · q^(m/2) for every m"
+        },
+        {
+          "member": "algebra/field/rational_function_field.FunctionFieldClosure",
+          "what": "the closed field a curve is carried into: every field embeds in a closed field holding a point transcendental over it"
+        },
+        {
+          "member": "scheme/projective_transfer.CarriedSmoothCurve",
+          "what": "along an embedding of algebraically closed fields, a set of forms cuts out a smooth projective equation curve exactly when its carried forms do"
+        },
+        {
+          "member": "scheme/projective_curve.PlaneLineCurve",
+          "what": "the line X₂ = 0 of the projective plane is a smooth projective equation curve of genus zero: the predicate has an instance"
+        },
+        {
+          "member": "scheme/weil_curve.WeilConjecturesOverFiniteFields",
+          "what": "the Weil conjectures for every smooth projective curve over every finite field"
+        }
+      ]
+    },
+    {
+      "id": "deformations-of-algebras-and-curves",
+      "heading": "Deformations of algebras and curves",
+      "opening": "The cotangent cohomology at work: lifting an algebra map is obstructed in D¹ and the lifts are a torsor under the derivations; deformations of an algebra over a square-zero thickening are obstructed in D² and form a torsor under D¹, and are the flat algebras over the thickening; deformations of a curve held by two charts, obstructed in two levels, with the projective line rigid and the elliptic curve deforming in one dimension.",
+      "rows": [
+        {
+          "member": "algebra/cotangent/algebra_deformation.LiftExistsIffObstructionZero",
+          "what": "a map lifts to a square-zero extension exactly when the class of the pulled-back extension in D¹ vanishes"
+        },
+        {
+          "member": "algebra/cotangent/algebra_deformation.DeformationObstruction",
+          "what": "an algebra has a deformation over a square-zero thickening exactly when its obstruction in D² vanishes"
+        },
+        {
+          "member": "algebra/cotangent/algebra_deformation.DeformationsTorsor",
+          "what": "the deformations of an algebra are a torsor under D¹"
+        },
+        {
+          "member": "algebra/cotangent/algebra_deformation.DeformationIffFlat",
+          "what": "a deformation of a flat algebra is the same as a flat algebra over the thickening reducing to it"
+        },
+        {
+          "member": "scheme/biaffine_deformation.BiaffineDeformationTheorem",
+          "what": "a curve held by two charts deforms exactly when the local obstructions in D² and the gluing obstruction vanish"
+        },
+        {
+          "member": "scheme/biaffine_deformation.ProjectiveLineRigid",
+          "what": "the projective line is rigid"
+        },
+        {
+          "member": "scheme/biaffine_deformation.EllipticDeformationsDimOne",
+          "what": "the first-order deformations of a smooth Weierstrass cubic form a space of dimension one"
+        }
+      ]
+    },
+    {
+      "id": "definable-extensions-and-countable-cover-deformations",
+      "heading": "Definable extensions and countable-cover deformations",
+      "opening": "Marked square-zero extensions have factor-set codes in a closed Polish group, with changes of section giving the actual boundary subgroup and the same quotient cover as D¹. Algebra deformations impose affine conditions on these codes. Increasing unions of algebras give AQ Milnor sequences and phantom extensions. On a fixed countable affine intersection diagram with principal localization arrows, actual extension maps give gluing codes, a low-degree exact sequence with definable maps, and three successive deformation obstructions: local existence, matching local classes, and the final triple class modulo the image of d₂. The objects are cover data with gluing, without asserting a scheme glued from them or independence of the cover.",
+      "rows": [
+        {
+          "member": "algebra/cotangent/definable_deformation.FactorSetAQDefinableIso",
+          "what": "factor-set extension codes modulo section changes and D¹ have Borel-isomorphic Polish covers"
+        },
+        {
+          "member": "algebra/cotangent/definable_deformation.CountableRingCodeClassification",
+          "what": "marked extensions coded on the natural numbers are isomorphic exactly when their extracted factor sets differ by a boundary"
+        },
+        {
+          "member": "algebra/cotangent/definable_deformation.DeformationCodesCoset",
+          "what": "deformation codes, when nonempty, form a closed affine coset in the extension code group"
+        },
+        {
+          "member": "algebra/cotangent/definable_andre_quillen.AQMilnorSequence",
+          "what": "AQ cohomology of an increasing union fits into Milnor's exact sequence with definable maps"
+        },
+        {
+          "member": "algebra/cotangent/definable_deformation.DyadicPhantomExtensions",
+          "what": "the union of Z[x_k] with x_k = 2x_(k+1) has continuum many phantom extension classes, modeled by Z₂/Z"
+        },
+        {
+          "member": "scheme/cover_deformation.CoverExtensionExactSequence",
+          "what": "0 → H¹(Der) → Exal → H⁰(T¹) → H²(Der): compatible local extension classes glue exactly when their triple defect vanishes"
+        },
+        {
+          "member": "scheme/cover_deformation.CoverSequenceDefinable",
+          "what": "the three maps of the cover extension sequence admit Borel lifts between their Polish covers"
+        },
+        {
+          "member": "scheme/cover_deformation.CoverThirdObstruction",
+          "what": "after local existence and matching, the choice-independent gluing obstruction lies in H²(Der) modulo image(d₂)"
+        },
+        {
+          "member": "scheme/cover_deformation.CoverDeformationsTorsor",
+          "what": "nonempty deformation classes of the cover data form a torsor under the reduced-base extension group"
+        }
+      ]
+    },
+    {
+      "id": "causal-inference",
+      "heading": "Causal inference",
+      "opening": "Structural causal models on measurable carriers, their interventions, and the do-calculus: its three rules from separation in a graph with edges deleted, the back-door adjustment in kernel form, and identifiability, decided by the hedge criterion.",
+      "rows": [
+        {
+          "member": "causal/do_calculus.DoObserve",
+          "what": "rule 1 of the do-calculus: inserting and deleting observations"
+        },
+        {
+          "member": "causal/do_calculus.DoExchange",
+          "what": "rule 2 of the do-calculus: exchanging actions and observations"
+        },
+        {
+          "member": "causal/do_calculus.DoDelete",
+          "what": "rule 3 of the do-calculus: inserting and deleting actions"
+        },
+        {
+          "member": "causal/kernel_do_calculus.BackdoorAdjustmentKernel",
+          "what": "the back-door adjustment: under the back-door criterion and overlap, an interventional distribution is the adjusted kernel integral"
+        },
+        {
+          "member": "causal/hedge_criterion.HedgeCriterion",
+          "what": "the hedge criterion: a causal effect is identifiable exactly when there is no hedge for it"
+        }
+      ]
+    }
+  ]
+}

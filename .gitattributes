@@ -1,0 +1,7 @@
+# A checkout is LF on every platform: the gates that hold a generated
+# file current compare it byte for byte with what its generator writes.
+* text=auto eol=lf
+
+# A chapter's recorded refutations, and the emit tests' store of them.
+*.cnf.pb binary
+*.gob    binary

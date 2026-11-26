@@ -1,0 +1,24 @@
+# The binary: `go build -o xugo ./engine/cmd/xugo/`. xugo2, xugo3, … are
+# the later serves a session builds while agents hold live sessions on
+# an earlier one.
+/xugo
+/xugo[0-9]*
+
+# What `go test -c`, a profile and a coverage run leave behind.
+*.test
+*.prof
+*.out
+
+# The session store: `xugo --data-dir data …` keeps the lineages and the
+# CNF certificates they record here, one store per clone.
+/data/
+
+# The /prove pipeline's working notes: the iteration log and the
+# knowledge files a clone's own sessions write. A clone that wants them
+# to keep a history tracks them by choice, with `git add -f`.
+/working_state/
+
+# Claude Code's per-machine settings.
+/.claude/settings.local.json
+
+.DS_Store

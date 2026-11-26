@@ -1,0 +1,113 @@
+name: Pages
+
+# The site published to GitHub Pages: the hand-written pages under site/
+# at its root, and under corpus/ the corpus browser (`xugo browse
+# --write`), written from the commit the run is for. Nothing
+# of the corpus browser is tracked: it is the corpus at the commit it was
+# written from. site/README.md says what each page is and how to read
+# the site before publishing it.
+#
+# A push to master publishes in the public repository, euc-ai/xugo, and
+# nowhere else: in any other copy of the tree, a fork or a private
+# mirror, the site is written and published only when the workflow is
+# started by hand, from the Actions page. The condition on the first
+# job is that switch, and the second job needs the first, so a push
+# elsewhere skips both. The repository's Pages source is "GitHub
+# Actions", set in its settings; where it is not, the second job has
+# nowhere to publish and fails.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A site being published is let finish; of the runs waiting, the last
+# started is the one published next.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  site:
+    name: Write the site
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'euc-ai/xugo'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Build xugo
+        run: go build -o "$RUNNER_TEMP/xugo" ./engine/cmd/xugo/
+
+      - name: Write the site
+        run: |
+          site="$RUNNER_TEMP/site"
+          "$RUNNER_TEMP/xugo" browse --write "$site/corpus"
+          cp -R site/. "$site/"
+          rm "$site/README.md" "$site/landmarks.json"
+
+      # Every link of a hand-written page that stays on the site names a
+      # file the site holds, and a link to a theorem's page names a
+      # theorem the corpus browser has a page for. A member renamed or
+      # retired since the page was written fails the run here, before
+      # anything is published.
+      - name: Check the hand-written pages' links
+        run: |
+          cd "$RUNNER_TEMP/site"
+          status=0 links=0
+          while IFS= read -r page; do
+            dir=$(dirname "$page")
+            while IFS= read -r ref; do
+              case "$ref" in *://*|'#'*|mailto:*) continue ;; esac
+              links=$((links + 1))
+              path=${ref%%[?#]*}
+              target="$dir/$path"
+              [ -d "$target" ] && target="$target/index.html"
+              if [ ! -e "$target" ]; then
+                echo "::error file=site/${page#./}::$ref: the site holds no such file"
+                status=1
+                continue
+              fi
+              case "$ref" in
+                *proof.html\?m=*)
+                  id=${ref#*\?m=}
+                  id=${id%%[&#]*}
+                  if [ ! -f "$(dirname "$target")/data/proof/$id.json" ]; then
+                    echo "::error file=site/${page#./}::$ref: the corpus has no page for $id"
+                    status=1
+                  fi
+                  ;;
+              esac
+            done < <(grep -o 'href="[^"]*"' "$page" | sed 's/^href="//; s/"$//')
+          done < <(find . -path ./corpus -prune -o -name '*.html' -print)
+          echo "$links links checked"
+          exit $status
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ${{ runner.temp }}/site
+
+  publish:
+    name: Publish to GitHub Pages
+    needs: site
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

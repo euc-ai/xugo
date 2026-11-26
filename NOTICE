@@ -1,0 +1,64 @@
+XuGo
+Copyright 2026 The XuGo Authors
+
+
+Acknowledgment: HOL Light
+=========================
+
+XuGo took inspiration from HOL Light, the theorem prover written by John Harrison
+(https://github.com/jrh13/hol-light).
+
+  - The logic is the one HOL Light implements: classical higher-order
+    logic over simple types with type variables. The kernel in core/ is
+    a new implementation in Go; its primitive inference rules are
+    modelled on those of HOL Light's kernel, and the definitions of the
+    logical constants in ext/ follow HOL Light's.
+
+  - The corpus in library/proofs/ is written in XuGo's own proof language.
+    The construction of the real numbers follows the one in HOL Light.
+
+XuGo has since gone its own way. The names, the statements and the
+proofs in this tree are its own, no proof here is required to follow a
+HOL Light script, and nothing in XuGo needs HOL Light to build, to run
+or to be checked.
+
+Reference: John Harrison, "HOL Light: An Overview", in Theorem Proving
+in Higher Order Logics (TPHOLs 2009), LNCS 5674, Springer, 2009.
+
+HOL Light's copyright notice and licence, reproduced in full:
+
+----------------------------------------------------------------------
+            HOL Light copyright notice, licence and disclaimer
+
+                     (c) University of Cambridge 1998
+                  (c) Copyright, John Harrison and others 1998-2012
+
+        Some files in this package are distributed under other licenses;
+        please check individual files or subdirectories for such cases.
+
+                            All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+ o Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+ o Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the
+   distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+----------------------------------------------------------------------

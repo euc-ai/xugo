@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>重要定理 · XuGo</title>
+<meta name="description" content="XuGo 全库中的重要定理，按主题排列，每条链接到全库浏览器中的定理页面。" />
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <a class="brand" href="./">XuGo</a>
+    <nav class="nav">
+      <a href="../corpus/">全库</a>
+      <a href="landmarks.html" aria-current="page">重要定理</a>
+      <a href="./#faq">常见问题</a>
+      <a href="architecture.html">架构</a>
+      <a href="practice.html">实践</a>
+      <a href="https://github.com/euc-ai/xugo">GitHub</a>
+      <a href="../landmarks.html" lang="en">EN</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head prose">
+    <h1>重要定理</h1>
+    <p>每条定理都会在全库浏览器中打开相应的页面，显示其陈述和证明结构图。列表中的每个定理都已完整证明，除非附有 <span class="status on_cards">on cards</span> 标记。</p>
+    <input id="filter" class="filter" type="search" placeholder="筛选重要定理（Galois、curve、ideal…）" aria-label="筛选重要定理" />
+    <p id="none" class="none hidden">没有匹配的定理。</p>
+  </div>
+
+  <div class="sided">
+    <nav class="toc" aria-label="主题">
+      <details id="toc" open>
+        <summary>主题</summary>
+        <ol>
+        <!-- landmarks subjects: the list is site/landmarks.json, written here by go generate ./library/landmarks -->
+        <li><a href="#sets-maps-and-relations">Sets, maps and relations</a></li>
+        <li><a href="#combinatorics">Combinatorics</a></li>
+        <li><a href="#reciprocity-sums-of-squares-and-the-distribution-of-primes">Reciprocity, sums of squares and the distribution of primes</a></li>
+        <li><a href="#data-types-and-machine-words">Data types and machine words</a></li>
+        <li><a href="#measure-and-the-lebesgue-integral">Measure and the Lebesgue integral</a></li>
+        <li><a href="#probability-and-martingales">Probability and martingales</a></li>
+        <li><a href="#complex-analysis">Complex analysis</a></li>
+        <li><a href="#analytic-number-theory">Analytic number theory</a></li>
+        <li><a href="#topology">Topology</a></li>
+        <li><a href="#groups-on-a-set">Groups on a set</a></li>
+        <li><a href="#commutative-algebra-on-a-set">Commutative algebra on a set</a></li>
+        <li><a href="#modules-over-a-ring-on-a-set">Modules over a ring on a set</a></li>
+        <li><a href="#polish-covers-and-definable-cohomology">Polish covers and definable cohomology</a></li>
+        <li><a href="#homological-algebra">Homological algebra</a></li>
+        <li><a href="#field-theory-and-the-galois-correspondence">Field theory and the Galois correspondence</a></li>
+        <li><a href="#number-fields">Number fields</a></li>
+        <li><a href="#free-algebras-derivations-and-differentials">Free algebras, derivations and differentials</a></li>
+        <li><a href="#first-order-formulas-and-polynomial-parameters">First-order formulas and polynomial parameters</a></li>
+        <li><a href="#real-closed-fields-and-ordered-sign-tables">Real closed fields and ordered sign tables</a></li>
+        <li><a href="#algebraically-closed-fields-and-transfer">Algebraically closed fields and transfer</a></li>
+        <li><a href="#real-closed-transfer-and-polynomial-applications">Real closed transfer and polynomial applications</a></li>
+        <li><a href="#category-theory">Category theory</a></li>
+        <li><a href="#combinatorial-homotopy">Combinatorial homotopy</a></li>
+        <li><a href="#algebraic-topology">Algebraic topology</a></li>
+        <li><a href="#quasi-categories">Quasi-categories</a></li>
+        <li><a href="#differential-topology-and-de-rham-cohomology">Differential topology and de Rham cohomology</a></li>
+        <li><a href="#index-theory-and-k-theory">Index theory and K-theory</a></li>
+        <li><a href="#the-cotangent-complex-and-andr-quillen-homology">The cotangent complex and André–Quillen homology</a></li>
+        <li><a href="#spectra-structure-sheaves-and-affine-morphisms">Spectra, structure sheaves and affine morphisms</a></li>
+        <li><a href="#curves-held-by-two-charts">Curves held by two charts</a></li>
+        <li><a href="#the-riemann-hypothesis-for-elliptic-curves">The Riemann hypothesis for elliptic curves</a></li>
+        <li><a href="#the-weil-conjectures-for-curves-over-finite-fields">The Weil conjectures for curves over finite fields</a></li>
+        <li><a href="#deformations-of-algebras-and-curves">Deformations of algebras and curves</a></li>
+        <li><a href="#definable-extensions-and-countable-cover-deformations">Definable extensions and countable-cover deformations</a></li>
+        <li><a href="#causal-inference">Causal inference</a></li>
+        <!-- end landmarks subjects -->
+        </ol>
+      </details>
+    </nav>
+    <div id="topics" lang="en">
+    <!-- landmarks topics: the list is site/landmarks.json, written here by go generate ./library/landmarks -->
+    <section class="topic" id="sets-maps-and-relations">
+      <h2>Sets, maps and relations</h2>
+      <p>The language every chapter reads through: a set is its membership predicate, a map is a function with its properties relativized to a set; equivalences and partitions, well-founded recursion, and the maximal principles through Zorn's lemma, which the algebra above reads for bases and maximal ideals.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=sets/cardinal.SchroederBernstein"><span class="what">the Schröder–Bernstein theorem</span><code>sets/cardinal.SchroederBernstein</code></a></li>
+        <li><a href="../corpus/proof.html?m=relations/well_founded.Induction"><span class="what">well-founded induction</span><code>relations/well_founded.Induction</code></a></li>
+        <li><a href="../corpus/proof.html?m=relations/well_founded.Recursion"><span class="what">recursion along a well-founded relation</span><code>relations/well_founded.Recursion</code></a></li>
+        <li><a href="../corpus/proof.html?m=relations/order.BourbakiWitt"><span class="what">an operation on sets that only enlarges has a fixed point</span><code>relations/order.BourbakiWitt</code></a></li>
+        <li><a href="../corpus/proof.html?m=relations/order.Zorn"><span class="what">Zorn's lemma</span><code>relations/order.Zorn</code></a></li>
+        <li><a href="../corpus/proof.html?m=relations/order.ClosureFromLeast"><span class="what">least containing objects give closure operators on a carrier: topological closure, submodule span and ideal generation</span><code>relations/order.ClosureFromLeast</code></a></li>
+        <li><a href="../corpus/proof.html?m=relations/order.WellOrderingTheorem"><span class="what">every type has a well-order</span><code>relations/order.WellOrderingTheorem</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="combinatorics">
+      <h2>Combinatorics</h2>
+      <p>Finite combinatorics on sets and graphs: a labelled grid and the cell its labels force, the effective divisors of a weighted set and their Euler product, matchings, and the cube graph, with the degree and the sensitivity of a Boolean function.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=cartesian/kuhn_labelling.KuhnLemma"><span class="what">Kuhn's lemma: a labelling of the grid {0, …, p}ⁿ that is ⊥ where a coordinate is 0 and ⊤ where it is p has a cell in which every coordinate's label takes both values</span><code>cartesian/kuhn_labelling.KuhnLemma</code></a></li>
+        <li><a href="../corpus/proof.html?m=sets/weighted_divisors.WeightedEulerProduct"><span class="what">effective divisors on a weighted set: finitely many of each degree, the Euler product over the points, and n · Aₙ = Σ Mₘ Aₙ₋ₘ with Mₘ the total weight of the points whose weight divides m</span><code>sets/weighted_divisors.WeightedEulerProduct</code></a></li>
+        <li><a href="../corpus/proof.html?m=relations/matching.Hall"><span class="what">Hall's marriage theorem: a finite family has distinct representatives exactly when every subfamily has at least as many neighbours as members</span><code>relations/matching.Hall</code></a></li>
+        <li><a href="../corpus/proof.html?m=relations/graph/hypercube.Huang"><span class="what">Huang's theorem: every set of more than half the vertices of the n-cube holds a vertex with at least √n neighbours in the set</span><code>relations/graph/hypercube.Huang</code></a></li>
+        <li><a href="../corpus/proof.html?m=sets/boolean_function/sensitivity.SensitivityTheorem"><span class="what">the sensitivity theorem, once the sensitivity conjecture: the degree of a Boolean function on a finite set of coordinates is at most the square of its sensitivity</span><code>sets/boolean_function/sensitivity.SensitivityTheorem</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="reciprocity-sums-of-squares-and-the-distribution-of-primes">
+      <h2>Reciprocity, sums of squares and the distribution of primes</h2>
+      <p>Quadratic reciprocity through the quadratic Gauss sum, and reciprocity for the Jacobi symbol; sums of two and four squares through the Gaussian integers; Chebyshev's bounds and Bertrand's postulate.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=int_num/quadratic_reciprocity.QuadraticReciprocity"><span class="what">the law of quadratic reciprocity, proved with the quadratic Gauss sum in a field of characteristic q</span><code>int_num/quadratic_reciprocity.QuadraticReciprocity</code></a></li>
+        <li><a href="../corpus/proof.html?m=int_num/quadratic_reciprocity.JacobiReciprocity"><span class="what">reciprocity for the Jacobi symbol</span><code>int_num/quadratic_reciprocity.JacobiReciprocity</code></a></li>
+        <li><a href="../corpus/proof.html?m=nat_num/sum_of_squares.FermatTwoSquares"><span class="what">Fermat: a prime is a sum of two squares exactly when it is 2 or ≡ 1 (mod 4)</span><code>nat_num/sum_of_squares.FermatTwoSquares</code></a></li>
+        <li><a href="../corpus/proof.html?m=nat_num/sum_of_squares.LagrangeFourSquares"><span class="what">Lagrange: every natural number is a sum of four squares</span><code>nat_num/sum_of_squares.LagrangeFourSquares</code></a></li>
+        <li><a href="../corpus/proof.html?m=nat_num/prime_distribution.ChebyshevBounds"><span class="what">Chebyshev's bounds: (log 2 / 2) · n ≤ π(n) · log n ≤ 5n</span><code>nat_num/prime_distribution.ChebyshevBounds</code></a></li>
+        <li><a href="../corpus/proof.html?m=nat_num/prime_distribution.Bertrand"><span class="what">Bertrand's postulate: a prime lies between n and 2n</span><code>nat_num/prime_distribution.Bertrand</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="data-types-and-machine-words">
+      <h2>Data types and machine words</h2>
+      <p>Lists, options and trees carved out of the recursive-type universe by the datatype door; a machine word is a number with the width a term, read through its value face and its bit face.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=words/machine_word.ValWordGalois"><span class="what">a word and its value: the Galois connection</span><code>words/machine_word.ValWordGalois</code></a></li>
+        <li><a href="../corpus/proof.html?m=words/signed_word.IntOfWordValCong"><span class="what">the two's-complement reading of a word is congruent to its value mod 2ⁿ</span><code>words/signed_word.IntOfWordValCong</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="measure-and-the-lebesgue-integral">
+      <h2>Measure and the Lebesgue integral</h2>
+      <p>Lebesgue outer measure on the line in the extended nonnegative reals ⟦0, ∞⟧, Carathéodory's measurable sets, measurable functions, and the integral of a nonnegative function as the supremum of the integrals of the simple functions below it. The convergence theorems are proved on an arbitrary measure space and read on the line at Lebesgue measure.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=measure/caratheodory.MeasureOnCaratheodory"><span class="what">Carathéodory's theorem: the Carathéodory sets of an outer measure form a σ-algebra, on which it is a measure</span><code>measure/caratheodory.MeasureOnCaratheodory</code></a></li>
+        <li><a href="../corpus/proof.html?m=real/lebesgue_measure.MeasurableBorel"><span class="what">every Borel set is Lebesgue measurable</span><code>real/lebesgue_measure.MeasurableBorel</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="probability-and-martingales">
+      <h2>Probability and martingales</h2>
+      <p>Probability read on a measure space: a probability is a measure of total mass one and expectation its integral; filtrations, stopping times with an infinite value, conditional expectation as a relation between integrals over events, and the martingales built on them, through the optional sampling and optional stopping theorems; and the central limit theorem, read from its martingale form down to independent identically distributed variables.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=probability/martingale/optional_stopping.OptionalSamplingBounded"><span class="what">optional sampling: for bounded stopping times S ≤ T, a martingale's value at S is the conditional expectation of its value at T on the σ-algebra stopped at S</span><code>probability/martingale/optional_stopping.OptionalSamplingBounded</code></a></li>
+        <li><a href="../corpus/proof.html?m=probability/martingale/optional_stopping.OptionalStoppingDominated"><span class="what">the optional stopping theorem: an almost surely finite stopping time preserves the expectation of a martingale whose stopped process has an integrable bound</span><code>probability/martingale/optional_stopping.OptionalStoppingDominated</code></a></li>
+        <li><a href="../corpus/proof.html?m=probability/martingale/l2_martingale.L2BoundedMartingaleConverges"><span class="what">an L²-bounded martingale converges in L² to a limit that closes it</span><code>probability/martingale/l2_martingale.L2BoundedMartingaleConverges</code></a></li>
+        <li><a href="../corpus/proof.html?m=probability/central_limit.CentralLimit"><span class="what">the central limit theorem: for independent identically distributed variables of mean m and standard deviation σ &gt; 0, the distributions of the normalized sums (X(0) + ⋯ + X(n − 1) − n·m)/(σ√n) converge weakly to the standard normal distribution</span><code>probability/central_limit.CentralLimit</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="complex-analysis">
+      <h2>Complex analysis</h2>
+      <p>Holomorphic functions of a complex variable: the integral along a path, Cauchy's theorem and formula, power series and their estimates, the winding index, residues, the argument principle; and the roots of a complex polynomial.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=complex/finite_spectrum.ComplexPolynomialSplitting"><span class="what">the fundamental theorem of algebra: a complex polynomial of positive degree has a root, and splits into linear factors</span><code>complex/finite_spectrum.ComplexPolynomialSplitting</code></a></li>
+        <li><a href="../corpus/proof.html?m=complex/cauchy_integral.Liouville"><span class="what">Liouville's theorem: a bounded entire function is constant</span><code>complex/cauchy_integral.Liouville</code></a></li>
+        <li><a href="../corpus/proof.html?m=complex/residue.Rouche"><span class="what">Rouché's theorem: where |f − g| &lt; |f| along a closed path, f and g have as many zeros, counted by order and winding index</span><code>complex/residue.Rouche</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="analytic-number-theory">
+      <h2>Analytic number theory</h2>
+      <p>Dirichlet series on their half-planes, the Riemann zeta function on Re s &gt; 0, Dirichlet characters and their L-series, and Newman's Tauberian theorem. The prime number theorem follows from ζ having no zero on Re s = 1, and Dirichlet's theorem on primes in progressions from L(1, χ) ≠ 0.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=complex/tauberian.NewmanTauberian"><span class="what">Newman's Tauberian theorem: a Dirichlet series with bounded coefficients that continues holomorphically past Re s = 1 converges on Re s ≥ 1</span><code>complex/tauberian.NewmanTauberian</code></a></li>
+        <li><a href="../corpus/proof.html?m=complex/riemann_zeta.ZetaNonzeroOnLine"><span class="what">ζ(s) has no zero on the line Re s = 1</span><code>complex/riemann_zeta.ZetaNonzeroOnLine</code></a></li>
+        <li><a href="../corpus/proof.html?m=nat_num/prime_asymptotics.PrimeNumberTheorem"><span class="what">the prime number theorem: π(n) ~ n / log n</span><code>nat_num/prime_asymptotics.PrimeNumberTheorem</code></a></li>
+        <li><a href="../corpus/proof.html?m=complex/dirichlet_l_function.LSeriesNonzeroAtOne"><span class="what">L(1, χ) ≠ 0 for every non-principal Dirichlet character χ</span><code>complex/dirichlet_l_function.LSeriesNonzeroAtOne</code></a></li>
+        <li><a href="../corpus/proof.html?m=nat_num/primes_in_progressions.PrimesInProgression"><span class="what">Dirichlet's theorem: for a prime to q, infinitely many primes are ≡ a (mod q)</span><code>nat_num/primes_in_progressions.PrimesInProgression</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="topology">
+      <h2>Topology</h2>
+      <p>A topology as a family of sets, its points the union of the family; closure and the closed sets, and the induced and coinduced topologies through which subspaces, products and quotients are built; compactness, connectedness, separation and continuity; the category of spaces and continuous maps; metric spaces; the real line as an instance; presheaves as functors on the open sets, and sheaves on a space with their germs and stalks, which the spectra read.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=topology/topological_space.InducedCoinducedAdjunction"><span class="what">the induced and coinduced topologies along a map are adjoint: the first is coarser than the source exactly when the target is coarser than the second</span><code>topology/topological_space.InducedCoinducedAdjunction</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/topology_category.TopologyCategory"><span class="what">the spaces in one type, with their continuous maps, form a category</span><code>topology/topology_category.TopologyCategory</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/separation.CompactHausdorffNormal"><span class="what">a compact Hausdorff space is normal</span><code>topology/separation.CompactHausdorffNormal</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/polish_space.CountableProductPolish"><span class="what">a countable product of Polish spaces is Polish</span><code>topology/polish_space.CountableProductPolish</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/baire_category.MycielskiIndependentCantorSet"><span class="what">Mycielski: a meager relation on a perfect Polish space has continuum many pairwise independent points</span><code>topology/baire_category.MycielskiIndependentCantorSet</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/product_topology.CompactProduct"><span class="what">the product of two compact sets is compact, by the tube lemma</span><code>topology/product_topology.CompactProduct</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/real_valued.Urysohn"><span class="what">Urysohn's lemma: disjoint closed sets of a normal space are separated by a continuous function</span><code>topology/real_valued.Urysohn</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/real_valued.Tietze"><span class="what">Tietze's extension theorem</span><code>topology/real_valued.Tietze</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/complete_metric.BaireCategory"><span class="what">Baire's category theorem</span><code>topology/complete_metric.BaireCategory</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/complete_metric.BanachFixedPoint"><span class="what">Banach's fixed point theorem</span><code>topology/complete_metric.BanachFixedPoint</code></a></li>
+        <li><a href="../corpus/proof.html?m=vector/euclidean_topology.BrouwerCube"><span class="what">Brouwer's fixed point theorem: a continuous map of the cube ⟦0, 1⟧ⁿ into itself has a fixed point</span><code>vector/euclidean_topology.BrouwerCube</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/presheaf.PresheafIffFunctor"><span class="what">a presheaf is a set-valued functor on the opens ordered by reverse inclusion</span><code>topology/presheaf.PresheafIffFunctor</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/presheaf.GermsDetermineSection"><span class="what">on a sheaf, sections with the same germ at every point are equal</span><code>topology/presheaf.GermsDetermineSection</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="groups-on-a-set">
+      <h2>Groups on a set</h2>
+      <p>A structure is a predicate on its explicit components over a carrier set, group_on(mul, one, inv, c); the whole-type law is its view at 𝕌, a subgroup is a group on its set, a quotient group a group on a set of cosets. Homomorphisms and kernels, quotients, the isomorphism theorems and the butterfly lemma, Schreier and Jordan–Hölder; the order of an element and cyclic groups; group actions, their orbits and stabilizers; the symmetric and free groups as instances.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/group/group_isomorphism.Zassenhaus"><span class="what">the butterfly lemma</span><code>algebra/group/group_isomorphism.Zassenhaus</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/group/subnormal_series.JordanHolder"><span class="what">the Jordan–Hölder theorem: two composition series are equivalent</span><code>algebra/group/subnormal_series.JordanHolder</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/group/free_group.Group"><span class="what">the free group over an alphabet: words modulo cancellation form a group</span><code>algebra/group/free_group.Group</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="commutative-algebra-on-a-set">
+      <h2>Commutative algebra on a set</h2>
+      <p>Rings, domains and fields as structures on a carrier set, the ring tower the package imports draw; ideals, prime and maximal ideals through Zorn's lemma, quotient rings, rings of fractions and localization, local rings and residue fields, polynomials over a ring on a set with coprimality by Bézout's identity and the Mason–Stothers theorem; a subfield is a field on its set; integral elements and common denominators, the factorization of ideals of finite height into invertible maximal ideals, the group of fractional ideals and the ideal class group.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/module/int_lattice.IntegerRingPrincipalIdealDomain"><span class="what">ℤ is a principal ideal domain</span><code>algebra/module/int_lattice.IntegerRingPrincipalIdealDomain</code></a></li>
+        <li><a href="../corpus/proof.html?m=complex/gaussian_integer.PrincipalIdealDomain"><span class="what">the Gaussian integers ℤ[i] are a Euclidean domain under the norm, hence a principal ideal domain</span><code>complex/gaussian_integer.PrincipalIdealDomain</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/characteristic_zero.RationalEmbedding"><span class="what">the rational numbers embed in every field of characteristic zero, as the fractions of its integer image</span><code>algebra/ring/characteristic_zero.RationalEmbedding</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/ring_ideal.ExistsMaximalAbove"><span class="what">a proper ideal lies in a maximal ideal, by Zorn's lemma</span><code>algebra/ring/ring_ideal.ExistsMaximalAbove</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/local_ring.Nakayama"><span class="what">Nakayama's lemma: an ideal N finitely generated modulo J with N ⊆ J + I·N has some s ≡ 1 mod I with s·N ⊆ J</span><code>algebra/ring/local_ring.Nakayama</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/ring_localization.LocalizationUniversal"><span class="what">a homomorphism sending the denominators to units extends uniquely to the localization</span><code>algebra/ring/ring_localization.LocalizationUniversal</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/ring_localization.FractionFieldLift"><span class="what">a one-to-one ring map into a field extends to the field of fractions</span><code>algebra/ring/ring_localization.FractionFieldLift</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/integral_element.IntegralElementsSubring"><span class="what">the elements of a field integral over a subring form a subring: the integral closure is a ring</span><code>algebra/ring/integral_element.IntegralElementsSubring</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/principal_ideal_domain.PrincipalIdealDomainIntegrallyClosed"><span class="what">a principal ideal domain is integrally closed in its field of fractions</span><code>algebra/module/principal_ideal_domain.PrincipalIdealDomainIntegrallyClosed</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/projective_form_pair.GradedNullstellensatz"><span class="what">the projective Nullstellensatz: over an algebraically closed field, a homogeneous ideal with no zero in projective space holds every form of large degree</span><code>scheme/projective_form_pair.GradedNullstellensatz</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/polynomial/separable_polynomial.MasonStothers"><span class="what">the Mason–Stothers theorem: for coprime p and q, divisors of p, q and p + q sharing their derivatives have total degree below each pairwise degree sum</span><code>algebra/ring/polynomial/separable_polynomial.MasonStothers</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/polynomial/separable_polynomial.FermatPolynomial"><span class="what">Fermat's equation for polynomials: for n ≥ 3 not zero in the field, xⁿ + yⁿ = zⁿ with x, y coprime forces x, y, z to have zero derivative</span><code>algebra/ring/polynomial/separable_polynomial.FermatPolynomial</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/ideal_factorization.IdealFactorizationUnique"><span class="what">the factorization into invertible maximal ideals is unique</span><code>algebra/ring/ideal_factorization.IdealFactorizationUnique</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/ideal_factorization.FractionalIdealsFreeAbelian"><span class="what">the fractional ideals form the free abelian group on the nonzero maximal ideals, by their exponents</span><code>algebra/ring/ideal_factorization.FractionalIdealsFreeAbelian</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/ideal_class_group.InvertibleIdealClassGroupAbelian"><span class="what">the ideal class group: the invertible fractional ideals modulo the principal ones, an abelian group</span><code>algebra/ring/ideal_class_group.InvertibleIdealClassGroupAbelian</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="modules-over-a-ring-on-a-set">
+      <h2>Modules over a ring on a set</h2>
+      <p>Linear algebra with the ring and the module held as records on carrier sets: submodules, quotients and spans; homomorphisms, kernels and exactness; the free module on a set with its lift, the mechanism every universal property above is built from; bases and dimension over a field by Zorn's lemma and replacement; the trace and the determinant of an endomorphism, read in a finite basis; nondegenerate pairings and the dual; the tensor product and Hom; modules over a principal ideal domain, free when finitely generated and torsion-free, and the index of a sublattice of ℤⁿ.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/module/free_module.FreeLiftUnique"><span class="what">homomorphisms out of the free module agreeing on the generators agree: its universal property</span><code>algebra/module/free_module.FreeLiftUnique</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/linear_independence.BasisExists"><span class="what">every module over a field has a basis, by Zorn's lemma</span><code>algebra/module/linear_independence.BasisExists</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/tensor_product.TensorUniversal"><span class="what">a bilinear map factors through the tensor product</span><code>algebra/module/tensor_product.TensorUniversal</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/tensor_product.TensorRightExact"><span class="what">tensoring is right exact</span><code>algebra/module/tensor_product.TensorRightExact</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/hom_module.HomLeftExact"><span class="what">Hom is left exact</span><code>algebra/module/hom_module.HomLeftExact</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/principal_ideal_domain.SubmoduleFree"><span class="what">over a principal ideal domain, a submodule of a free module of finite rank is free, of no larger rank</span><code>algebra/module/principal_ideal_domain.SubmoduleFree</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/principal_ideal_domain.FiniteTorsionFreeFree"><span class="what">a finitely generated torsion-free module over a principal ideal domain is free</span><code>algebra/module/principal_ideal_domain.FiniteTorsionFreeFree</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/int_lattice.FullRankIffFiniteIndex"><span class="what">a subgroup of a full integer lattice has finite index exactly when it has full rank</span><code>algebra/module/int_lattice.FullRankIffFiniteIndex</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="polish-covers-and-definable-cohomology">
+      <h2>Polish covers and definable cohomology</h2>
+      <p>Representative spaces supply regularity to existing quotient carriers: continuous and Borel lifts descend, continuous images give Polishable subgroups, and a Polish cochain model supplies covered cohomology, comparison isomorphisms and connecting maps. Countable Ext resolutions, polynomial cotangent resolutions and countable-cover Čech complexes with Polish section groups enter the same mechanism. Baire category then decides the size of the quotient: a Borel subgroup has countable index or continuum many cosets, so such a cohomology is countable or of the size of the continuum; lim¹ of a tower of Polish abelian groups is the two-term case, and Milnor's sequence reads a tower of complexes.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/group/polish_group.ContinuousHomImagePolishable"><span class="what">a continuous homomorphism of Polish groups has a Polishable Borel image</span><code>algebra/group/polish_group.ContinuousHomImagePolishable</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/polish_cohomology.CohomologyDefinableFunctor"><span class="what">a Polish cochain model equips ordinary cohomology and its maps with Polish covers and Borel lifts</span><code>algebra/module/polish_cohomology.CohomologyDefinableFunctor</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/polish_cohomology.HomotopyEquivalenceDefinableIso"><span class="what">a continuous cochain homotopy equivalence of Polish models gives Borel-isomorphic covers in every degree</span><code>algebra/module/polish_cohomology.HomotopyEquivalenceDefinableIso</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/polish_cohomology.ConnectingMapDefinable"><span class="what">connecting homomorphisms of a short exact sequence of Polish complexes have Borel lifts</span><code>algebra/module/polish_cohomology.ConnectingMapDefinable</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/group/borel_subgroup.BorelSubgroupIndexDichotomy"><span class="what">a Borel subgroup of a Polish abelian group has countable index or at least continuum many cosets</span><code>algebra/group/borel_subgroup.BorelSubgroupIndexDichotomy</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/polish_cohomology.CohomologyCountableOrContinuum"><span class="what">the cohomology of a Polish cochain model is countable or has at least continuum many classes</span><code>algebra/module/polish_cohomology.CohomologyCountableOrContinuum</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/derived_limit.PolishDerivedLimitZeroOrContinuum"><span class="what">lim¹ of a tower of Polish abelian groups with continuous homomorphisms is zero or has continuum many classes</span><code>algebra/module/derived_limit.PolishDerivedLimitZeroOrContinuum</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/milnor_sequence.MilnorDerivedLimitKernel"><span class="what">Milnor: lim¹ of the cohomology tower injects into the next cohomology of the limit complex</span><code>algebra/module/milnor_sequence.MilnorDerivedLimitKernel</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/definable_ext.ExtHasPolishCover"><span class="what">Ext of countable modules over a countable ring with its canonical Polish cover</span><code>algebra/module/definable_ext.ExtHasPolishCover</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/definable_andre_quillen.AndreQuillenHasPolishCover"><span class="what">the standard André–Quillen cochain model of countable rings and coefficients supplies Polish covers</span><code>algebra/cotangent/definable_andre_quillen.AndreQuillenHasPolishCover</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/definable_andre_quillen.ResolutionComparisonDefinableIso"><span class="what">comparison of polynomial resolutions with countable names gives Borel-isomorphic AQ covers</span><code>algebra/cotangent/definable_andre_quillen.ResolutionComparisonDefinableIso</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/cech_cohomology.PolishCechModel"><span class="what">a countable cover with Polish section groups and continuous restrictions gives a Polish Čech cochain model</span><code>topology/cech_cohomology.PolishCechModel</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="homological-algebra">
+      <h2>Homological algebra</h2>
+      <p>Chain and cochain complexes of modules on sets, homology and the long exact sequences by the diagram chase; the canonical free resolution of a module on one index type; Tor and Ext as the homology and cohomology of the canonical complexes, their long exact sequences and the balance of Tor; based complexes and the transpose, which carries the chain-level facts to cohomology; extensions classified by Ext¹; flatness through Tor.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/module/chain_complex.FiveLemma"><span class="what">the five lemma</span><code>algebra/module/chain_complex.FiveLemma</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/chain_complex.LongExactMiddle"><span class="what">the long exact homology sequence of a short exact sequence of complexes, exact at the middle</span><code>algebra/module/chain_complex.LongExactMiddle</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/chain_complex.HomotopicSameHomologyMap"><span class="what">homotopic chain maps agree on homology</span><code>algebra/module/chain_complex.HomotopicSameHomologyMap</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/resolution.CanonicalResolution"><span class="what">every module has a canonical free resolution on one fixed index type</span><code>algebra/module/resolution.CanonicalResolution</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/resolution.ResolutionComparison"><span class="what">a module map lifts to a chain map of resolutions, unique up to homotopy</span><code>algebra/module/resolution.ResolutionComparison</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/tor_ext.TorAsHomology"><span class="what">Tor and Ext are the homology and cohomology of the canonical complexes</span><code>algebra/module/tor_ext.TorAsHomology</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/tor_ext.TorIndependent"><span class="what">any free resolution computes Tor</span><code>algebra/module/tor_ext.TorIndependent</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/tor_ext.TorLongExactMiddle"><span class="what">a short exact sequence of modules induces the Tor long exact sequence</span><code>algebra/module/tor_ext.TorLongExactMiddle</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/tor_ext.TorBalance"><span class="what">interchanging the two modules gives an isomorphic Tor module</span><code>algebra/module/tor_ext.TorBalance</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/yoneda_ext.YonedaIsoIffSameClass"><span class="what">extensions of M by N are classified up to isomorphism by Ext¹(M, N)</span><code>algebra/module/yoneda_ext.YonedaIsoIffSameClass</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/flat_module.FlatIdealCriterion"><span class="what">a module is flat exactly when tensoring with every ideal is injective</span><code>algebra/module/flat_module.FlatIdealCriterion</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/module/flat_module.FlatTorVanishes"><span class="what">a flat module has vanishing Tor in every positive degree</span><code>algebra/module/flat_module.FlatTorVanishes</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="field-theory-and-the-galois-correspondence">
+      <h2>Field theory and the Galois correspondence</h2>
+      <p>Everything inside one field on a set, the ambient field a bundle: a subfield above another is a vector space over it, with the tower law; algebraic elements and their minimal polynomials, K(a) = K[a]; the automorphisms fixing a subfield as a group on a set of permutations, Dedekind and Artin; the correspondence for a finite Galois extension; the field trace of a simple separable extension, nondegenerate with Euler's dual basis, and the field norm; the trace dual of a lattice, the codifferent of a subring and its different; function fields of one variable and their separating parameters; the algebraic closure of a field, built once in a host type fixed by the field's, and the splitting fields inside a closed field; finite fields, their Frobenius, their cyclic group of units, the count of a vector space over one, the field of p elements and the fields of q^m elements inside a closed field.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/field/field_extension.TowerLaw"><span class="what">the tower law: [N : K] = [N : M] · [M : K]</span><code>algebra/field/field_extension.TowerLaw</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/algebraic_element.AlgebraicIffFinite"><span class="what">a is algebraic over K exactly when K(a) is finite over K</span><code>algebra/field/algebraic_element.AlgebraicIffFinite</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/algebraic_element.AlgebraicElementsSubfield"><span class="what">the elements algebraic over K form a subfield</span><code>algebra/field/algebraic_element.AlgebraicElementsSubfield</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/polynomial/separable_polynomial.SeparableIffDerivative"><span class="what">an irreducible polynomial is separable exactly when its derivative is not zero</span><code>algebra/ring/polynomial/separable_polynomial.SeparableIffDerivative</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/field_automorphism.Dedekind"><span class="what">Dedekind's lemma: distinct automorphisms are independent</span><code>algebra/field/field_automorphism.Dedekind</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/field_automorphism.ArtinFixedField"><span class="what">Artin's theorem: [M : M^H] = |H| for a finite group H of automorphisms</span><code>algebra/field/field_automorphism.ArtinFixedField</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/galois_correspondence.GaloisIffFixed"><span class="what">a finite extension is Galois exactly when Aut_K(M) fixes nothing but K</span><code>algebra/field/galois_correspondence.GaloisIffFixed</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/galois_correspondence.CorrespondenceFixed"><span class="what">the fundamental theorem, one way: an intermediate field is the field its group fixes</span><code>algebra/field/galois_correspondence.CorrespondenceFixed</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/galois_correspondence.CorrespondenceAutomorphisms"><span class="what">the other way: a subgroup is the group of its fixed field</span><code>algebra/field/galois_correspondence.CorrespondenceAutomorphisms</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/galois_correspondence.NormalIffNormalSubgroup"><span class="what">an intermediate field is normal exactly when its group is a normal subgroup</span><code>algebra/field/galois_correspondence.NormalIffNormalSubgroup</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/field_trace.TraceNondegenerate"><span class="what">the trace pairing of a simple separable extension is nondegenerate</span><code>algebra/field/field_trace.TraceNondegenerate</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/field_trace.TraceDualBasis"><span class="what">Euler's dual basis: the scaled cofactor coefficients of the minimal polynomial are trace-dual to the power basis</span><code>algebra/field/field_trace.TraceDualBasis</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/finite_field.FrobeniusFixedField"><span class="what">inside any field above k, the roots of X^q − X are exactly k</span><code>algebra/field/finite_field.FrobeniusFixedField</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/roots_of_unity.FiniteFieldUnitsCyclic"><span class="what">the multiplicative group of a finite field is cyclic</span><code>algebra/field/roots_of_unity.FiniteFieldUnitsCyclic</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/trace_dual.CodifferentInvertible"><span class="what">the codifferent of a finite free subring is an invertible fractional ideal whose inverse, the different, is a nonzero ideal</span><code>algebra/field/trace_dual.CodifferentInvertible</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/trace_dual.MonogenicCodifferent"><span class="what">Euler: for B = A[y] with separable minimal polynomial f over A, the codifferent is B / f′(y) and the different is f′(y) · B</span><code>algebra/field/trace_dual.MonogenicCodifferent</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/separating_parameter.SeparatingParameterExists"><span class="what">a function field of one variable over a perfect field has a separating parameter</span><code>algebra/field/separating_parameter.SeparatingParameterExists</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/algebraic_closure.AlgebraicClosureFieldOn"><span class="what">every field has an algebraic closure, built in the host set(prod(num, num → A)) over its type A</span><code>algebra/field/algebraic_closure.AlgebraicClosureFieldOn</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/algebraic_closure.SplittingFieldInClosed"><span class="what">inside a closed field the roots of a polynomial over K generate its splitting field, finite over K</span><code>algebra/field/algebraic_closure.SplittingFieldInClosed</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="number-fields">
+      <h2>Number fields</h2>
+      <p>A number field is a finite field of characteristic zero over its rational image, and its ring of integers the elements integral over the integer image: a full lattice, free over ℤ with an integral basis of [K : ℚ] members; nonzero ideals are invertible and factor uniquely into primes, so the fractional ideals form a group; the norm of an ideal is its index, multiplicative and the absolute field norm on a principal ideal; every ideal class holds an integral ideal of bounded norm, so the class group is finite; the discriminant of an integral basis and the different, with Euler's derivative formula for a monogenic ring of integers.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/field/number_field/ring_of_integers.RingOfIntegersFreeRankN"><span class="what">the ring of integers is a full lattice: free over ℤ with an integral basis of [K : ℚ] members</span><code>algebra/field/number_field/ring_of_integers.RingOfIntegersFreeRankN</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/number_field/number_ideals.NumberRingFactorization"><span class="what">a nonzero ideal of the ring of integers is invertible and factors uniquely into nonzero prime ideals</span><code>algebra/field/number_field/number_ideals.NumberRingFactorization</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/number_field/number_ideals.NumberFractionalIdeals"><span class="what">the invertible fractional ideals are the nonzero bounded ones: a common denominator suffices</span><code>algebra/field/number_field/number_ideals.NumberFractionalIdeals</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/number_field/ideal_norm.IdealNormMultiplicative"><span class="what">the ideal norm, the index of the ideal, is multiplicative</span><code>algebra/field/number_field/ideal_norm.IdealNormMultiplicative</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/number_field/class_number.ClassNumberFinite"><span class="what">the ideal class group of a number field is finite</span><code>algebra/field/number_field/class_number.ClassNumberFinite</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/number_field/discriminant.DiscriminantIndexSquare"><span class="what">the discriminant of a full sublattice of the integers is the field discriminant times the square of its index</span><code>algebra/field/number_field/discriminant.DiscriminantIndexSquare</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/number_field/different.DifferentNormDiscriminant"><span class="what">the norm of the different is the absolute value of the discriminant</span><code>algebra/field/number_field/different.DifferentNormDiscriminant</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/number_field/different.MonogenicDifferent"><span class="what">for a ring of integers ℤ[y], the codifferent is ℤ[y] / f′(y) and the different is f′(y) · ℤ[y], f the minimal polynomial of y</span><code>algebra/field/number_field/different.MonogenicDifferent</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="free-algebras-derivations-and-differentials">
+      <h2>Free algebras, derivations and differentials</h2>
+      <p>The free commutative algebra on a set of variables, modelled on finitely supported functions of monomials and carried into a host type along an embedding; partial derivatives, derivations and the Jacobian of an algebra map; the module of Kähler differentials with its universal property; square-zero extensions of an algebra by a module and their Baer sum. The commutative algebra the cotangent complex is built from.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/ring/polynomial/polynomial_algebra_evaluation.PolynomialAlgebraEvalUnique"><span class="what">a ring map out of the polynomials in a set of variables is determined by its values on the constants and the variables: their universal property</span><code>algebra/ring/polynomial/polynomial_algebra_evaluation.PolynomialAlgebraEvalUnique</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/polynomial/homogeneous_polynomial.EulerIdentity"><span class="what">Euler's identity: Σ xᵢ·∂P/∂Xᵢ = d·P for a form P of degree d</span><code>algebra/ring/polynomial/homogeneous_polynomial.EulerIdentity</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/kaehler.KaehlerUniversalExists"><span class="what">every derivation of S over R factors through the universal derivation into Ω_{S/R}</span><code>algebra/ring/kaehler.KaehlerUniversalExists</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/kaehler.KaehlerFreeAlgebra"><span class="what">the differentials of a free algebra are free on its variables, du ↦ (∂_x u)_x</span><code>algebra/ring/kaehler.KaehlerFreeAlgebra</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/kaehler.KaehlerFirstExact"><span class="what">the first fundamental exact sequence Ω_{S/R} ⊗_S T → Ω_{T/R} → Ω_{T/S} → 0</span><code>algebra/ring/kaehler.KaehlerFirstExact</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/kaehler.MonicEvaluationPresentation"><span class="what">the differentials of a monic presentation B = S[y]/(F) are B/(F′(y)), generated by dy</span><code>algebra/ring/kaehler.MonicEvaluationPresentation</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/ring/square_zero_extension.LiftDifferenceDerivation"><span class="what">two lifts of a presentation into a square-zero extension differ by a derivation</span><code>algebra/ring/square_zero_extension.LiftDifferenceDerivation</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="first-order-formulas-and-polynomial-parameters">
+      <h2>First-order formulas and polynomial parameters</h2>
+      <p>Named-variable formulas with parameterized atoms, finite supports and carrier semantics. Uniform quantifier elimination separates sentence agreement from preservation along specified embeddings; finite coefficient blocks express polynomials in arbitrary finite dimension and bounded degree.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=datatypes/first_order.QuantifierEliminationFromOne"><span class="what">uniform elimination of one existential gives quantifier elimination for all formulas</span><code>datatypes/first_order.QuantifierEliminationFromOne</code></a></li>
+        <li><a href="../corpus/proof.html?m=datatypes/first_order.ElementaryFromCommonEquivalent"><span class="what">uniform quantifier elimination makes atomic embeddings elementary</span><code>datatypes/first_order.ElementaryFromCommonEquivalent</code></a></li>
+        <li><a href="../corpus/proof.html?m=datatypes/first_order.SentenceTransferFromCommonEquivalent"><span class="what">under uniform QE, agreement on closed quantifier-free formulas gives agreement on all sentences</span><code>datatypes/first_order.SentenceTransferFromCommonEquivalent</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="real-closed-fields-and-ordered-sign-tables">
+      <h2>Real closed fields and ordered sign tables</h2>
+      <p>Ordered fields, prescribed-order real closures and the real-number instance. Parameter signs control ordered cells and realizable sign vectors. This gives quantifier elimination without an Archimedean hypothesis, independently of elimination over algebraically closed fields.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/field/real_closure.RootsCharacterization"><span class="what">an ordered field is real closed exactly when positive elements have square roots and odd-degree polynomials have roots</span><code>algebra/field/real_closure.RootsCharacterization</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/real_closure.RealClosureExists"><span class="what">an ordered field has an algebraic real closure preserving its specified order</span><code>algebra/field/real_closure.RealClosureExists</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/uniform_sign_table.ParameterizedSignTable"><span class="what">finite parameter sign data determine an ordered sign table's size and cell sign vectors uniformly over real closed fields</span><code>algebra/field/uniform_sign_table.ParameterizedSignTable</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/uniform_sign_table.RealizableSignControl"><span class="what">realizable polynomial sign vectors are uniformly controlled by finitely many parameter-polynomial signs</span><code>algebra/field/uniform_sign_table.RealizableSignControl</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/real_closed_quantifier_elimination.QuantifierElimination"><span class="what">every ordered-ring formula has a uniform quantifier-free equivalent over real closed fields, with no new free variables</span><code>algebra/field/real_closed_quantifier_elimination.QuantifierElimination</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="algebraically-closed-fields-and-transfer">
+      <h2>Algebraically closed fields and transfer</h2>
+      <p>Uniform elimination for ring formulas in every characteristic, same-characteristic sentence transfer and parameter-preserving elementary embeddings. Lefschetz and Ax–Grothendieck use sentence transfer; descent of polynomial systems with inequations uses a specified embedding.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/field/algebraically_closed_quantifier_elimination.QuantifierElimination"><span class="what">every ring formula has a uniform quantifier-free equivalent over algebraically closed fields, with no new free variables</span><code>algebra/field/algebraically_closed_quantifier_elimination.QuantifierElimination</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/algebraically_closed_field_transfer.SentenceTransfer"><span class="what">algebraically closed fields of the same characteristic satisfy the same ring sentences</span><code>algebra/field/algebraically_closed_field_transfer.SentenceTransfer</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/algebraically_closed_field_transfer.EmbeddingElementary"><span class="what">embeddings of algebraically closed fields preserve all formulas with their parameters</span><code>algebra/field/algebraically_closed_field_transfer.EmbeddingElementary</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/lefschetz.LefschetzPrinciple"><span class="what">complex truth is eventual truth in prime characteristic</span><code>algebra/field/lefschetz.LefschetzPrinciple</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/ax_grothendieck.AxGrothendieck"><span class="what">an injective polynomial self-map of affine space over an algebraically closed field is surjective</span><code>algebra/field/ax_grothendieck.AxGrothendieck</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/polynomial_system_descent.SolutionDescent"><span class="what">solutions of finite polynomial systems with inequations descend along algebraically closed embeddings</span><code>algebra/field/polynomial_system_descent.SolutionDescent</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/polynomial_system_descent.FormIdealPrimeDescent"><span class="what">the ideal finitely many forms generate is prime over one algebraically closed field exactly when its image is prime over a larger one</span><code>algebra/field/polynomial_system_descent.FormIdealPrimeDescent</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="real-closed-transfer-and-polynomial-applications">
+      <h2>Real closed transfer and polynomial applications</h2>
+      <p>Quantifier elimination via ordered sign tables supplies sentence transfer and elementary ordered embeddings. Universally quantified coefficients give polynomial extrema and cube fixed points. Artin's rational sums of squares use order separation, real closure and existential descent along the given embedding.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/field/real_closed_field_transfer.SentenceTransfer"><span class="what">real closed fields satisfy the same ordered-ring sentences</span><code>algebra/field/real_closed_field_transfer.SentenceTransfer</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/real_closed_field_transfer.EmbeddingElementary"><span class="what">ordered embeddings of real closed fields preserve all formulas with their parameters</span><code>algebra/field/real_closed_field_transfer.EmbeddingElementary</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/polynomial_optimization.ClosedIntervalExtrema"><span class="what">a polynomial attains its minimum and maximum on every nonempty closed interval of a real closed field</span><code>algebra/field/polynomial_optimization.ClosedIntervalExtrema</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/polynomial_optimization.LexicographicMinimum"><span class="what">bounded nonempty closed polynomial constraints over a real closed field admit a primary and secondary minimizer</span><code>algebra/field/polynomial_optimization.LexicographicMinimum</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/polynomial_brouwer.PolynomialBrouwer"><span class="what">a polynomial self-map of the cube over a real closed field has a fixed point</span><code>algebra/field/polynomial_brouwer.PolynomialBrouwer</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/artin.Artin"><span class="what">a nonnegative polynomial over a real closed field is a sum of rational squares</span><code>algebra/field/artin.Artin</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="category-theory">
+      <h2>Category theory</h2>
+      <p>Categories as records on two carrier sets and their functors, every category the corpus builds assembled from its hom data by one construction whose laws are proved once: the sets of a type, the preorders, the simplex category. The Yoneda lemma with presheaves valued in the sets of any type: universe levels are type parameters.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=category/category.CategoryFromHom"><span class="what">a category from its hom data: objects, hom sets, identities and a composition satisfying the laws on the data assemble to a category, the bookkeeping of ends proved once</span><code>category/category.CategoryFromHom</code></a></li>
+        <li><a href="../corpus/proof.html?m=category/set_category.SetCategory"><span class="what">the subsets of a type form a category, one per type</span><code>category/set_category.SetCategory</code></a></li>
+        <li><a href="../corpus/proof.html?m=category/yoneda.YonedaLemma"><span class="what">the Yoneda lemma: natural families on the hom sets into c are the elements of P(c)</span><code>category/yoneda.YonedaLemma</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="combinatorial-homotopy">
+      <h2>Combinatorial homotopy</h2>
+      <p>Simplicial sets with the dimension a term and every index condition arithmetic, and the action of the monotone maps on their simplices: ∂∂ = 0, the homotopy groups of a Kan complex, the long exact sequence of a fibration, the Kan condition as extension along the standard horns; simplicial modules with the Moore complex, Kan by Moore's theorem, and the Alexander–Whitney map — the simplicial algebra the cotangent complex reads.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=simplicial/simplicial_chain.ChainComplex"><span class="what">the alternating face map complex: two boundaries in a row are zero</span><code>simplicial/simplicial_chain.ChainComplex</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/homotopy_group.GroupOn"><span class="what">πₙ of a Kan complex at a vertex is a group for 0 &lt; n</span><code>simplicial/homotopy_group.GroupOn</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/kan_fibration.ExactAtTotal"><span class="what">the long exact sequence of a Kan fibration, exact at the total space</span><code>simplicial/kan_fibration.ExactAtTotal</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/simplicial_operator.SimplicialOperatorCompose"><span class="what">the action of the monotone maps on the simplices is functorial</span><code>simplicial/simplicial_operator.SimplicialOperatorCompose</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/simplicial_operator.SimplexYoneda"><span class="what">the n-simplices are the maps out of the standard simplex Δⁿ</span><code>simplicial/simplicial_operator.SimplexYoneda</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/simplicial_homotopy.ExtraDegeneracyHomotopyEquivalence"><span class="what">an extra degeneracy makes the augmentation a homotopy equivalence onto the constant simplicial set</span><code>simplicial/simplicial_homotopy.ExtraDegeneracyHomotopyEquivalence</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/simplicial_module.HornFillerExists"><span class="what">Moore's theorem: a simplicial module is a Kan complex</span><code>simplicial/simplicial_module.HornFillerExists</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/simplicial_group.HomotopyGroupMooreHomology"><span class="what">the homotopy groups of a simplicial module are the homology of its Moore complex</span><code>simplicial/simplicial_group.HomotopyGroupMooreHomology</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/simplicial_module.AlexanderWhitneyChainMap"><span class="what">the Alexander–Whitney map is a chain map from the diagonal of a bisimplicial module to the total complex</span><code>simplicial/simplicial_module.AlexanderWhitneyChainMap</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="algebraic-topology">
+      <h2>Algebraic topology</h2>
+      <p>Homotopy of maps and of paths with their ends held; the fundamental group of a space at a point, the homomorphisms continuous maps induce and the Seifert–van Kampen theorem as a universal property; covering spaces, path and homotopy lifting, and π₁(S¹) ≅ ℤ with the disc and Borsuk–Ulam in the plane; Brouwer's theorem on compact convex sets and the Jordan curve theorem; the singular simplicial set of a space, a Kan complex whose homotopy groups are combinatorial homotopy's, and singular homology with homotopy invariance, small simplices, Mayer–Vietoris and Hₙ(Sⁿ).</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=topology/fundamental_group.FundamentalGroupOn"><span class="what">the fundamental group: the classes of the loops at a point under homotopy with the ends held form a group</span><code>topology/fundamental_group.FundamentalGroupOn</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/fundamental_group.VanKampenExtension"><span class="what">Seifert–van Kampen: the group of a union of two open sets is the pushout of their groups over the group of the intersection</span><code>topology/fundamental_group.VanKampenExtension</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/covering_space.PathHomotopyLifting"><span class="what">the monodromy theorem: homotopic paths lift from one point to homotopic paths</span><code>topology/covering_space.PathHomotopyLifting</code></a></li>
+        <li><a href="../corpus/proof.html?m=vector/circle.CircleFundamentalGroup"><span class="what">π₁(S¹) ≅ ℤ, the integer k going to the loop that winds k times</span><code>vector/circle.CircleFundamentalGroup</code></a></li>
+        <li><a href="../corpus/proof.html?m=vector/circle.BorsukUlamPlane"><span class="what">Borsuk–Ulam in dimension two: a continuous map of S² to the plane agrees at some pair of antipodal points</span><code>vector/circle.BorsukUlamPlane</code></a></li>
+        <li><a href="../corpus/proof.html?m=vector/convex_topology.CompactConvexFixedPoint"><span class="what">Brouwer's fixed point theorem on a nonempty compact convex set of ℝⁿ</span><code>vector/convex_topology.CompactConvexFixedPoint</code></a></li>
+        <li><a href="../corpus/proof.html?m=vector/jordan_curve.JordanCurve"><span class="what">the Jordan curve theorem</span><code>vector/jordan_curve.JordanCurve</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/singular_set.SingularKan"><span class="what">the singular simplicial set of a space is a Kan complex</span><code>simplicial/singular_set.SingularKan</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/singular_set.FundamentalGroupSingular"><span class="what">and its first homotopy group is the fundamental group</span><code>simplicial/singular_set.FundamentalGroupSingular</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/singular_homology.SingularHomotopyChainHomotopy"><span class="what">homotopic maps induce chain homotopic maps of singular chains</span><code>simplicial/singular_homology.SingularHomotopyChainHomotopy</code></a></li>
+        <li><a href="../corpus/proof.html?m=vector/sphere.SphereTopHomology"><span class="what">Hₙ(Sⁿ) ≅ R for n ≥ 1, by Mayer–Vietoris</span><code>vector/sphere.SphereTopHomology</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="quasi-categories">
+      <h2>Quasi-categories</h2>
+      <p>Quasi-categories and their homotopy categories, equivalences represented by inverse triangles, and left fibrations that reflect equivalences and lift them to prescribed targets. Fixed-prefix cones and extension through partial prefix horns give Joyal's special outer horn theorem, hence the characterization of Kan complexes by groupoid homotopy categories. Mapping complexes are Kan, and the nerve is full and faithful and right adjoint to the homotopy category.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=simplicial/quasi_category.NerveQuasi"><span class="what">the nerve of a category is a quasi-category</span><code>simplicial/quasi_category.NerveQuasi</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/segal.SegalCharacterization"><span class="what">a simplicial set has unique inner fillers exactly when it is isomorphic to the nerve of a category</span><code>simplicial/segal.SegalCharacterization</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/quasi_category.HomotopyCategory"><span class="what">the homotopy category of a quasi-category</span><code>simplicial/quasi_category.HomotopyCategory</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/nerve.NerveFullyFaithful"><span class="what">the functors between two categories are the simplicial maps between their nerves</span><code>simplicial/nerve.NerveFullyFaithful</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/quasi_category.HomotopyNerveAdjunction"><span class="what">the homotopy category is left adjoint to the nerve on quasi-categories</span><code>simplicial/quasi_category.HomotopyNerveAdjunction</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/quasi_category.RightSpecialHornFill"><span class="what">Joyal's lifting: an outer horn whose last edge is an equivalence fills</span><code>simplicial/quasi_category.RightSpecialHornFill</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/quasi_category.KanIffHomotopyGroupoid"><span class="what">Joyal's theorem: a quasi-category is a Kan complex exactly when its homotopy category is a groupoid</span><code>simplicial/quasi_category.KanIffHomotopyGroupoid</code></a></li>
+        <li><a href="../corpus/proof.html?m=simplicial/mapping_complex.MappingComplexKan"><span class="what">the mapping complex between two objects of a quasi-category is a Kan complex</span><code>simplicial/mapping_complex.MappingComplexKan</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="differential-topology-and-de-rham-cohomology">
+      <h2>Differential topology and de Rham cohomology</h2>
+      <p>Smooth manifolds on atlases, their tangent and cotangent bundles, differential forms and their integrals, and de Rham cohomology with its Mayer–Vietoris and Künneth sequences, compared with real singular cohomology.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=manifold/form_integral.ManifoldStokes"><span class="what">Stokes's theorem on a manifold without boundary: an exact top form of compact support integrates to zero</span><code>manifold/form_integral.ManifoldStokes</code></a></li>
+        <li><a href="../corpus/proof.html?m=manifold/de_rham_comparison.DeRhamTheorem"><span class="what">de Rham's theorem: integration identifies de Rham cohomology with real singular cohomology</span><code>manifold/de_rham_comparison.DeRhamTheorem</code></a></li>
+        <li><a href="../corpus/proof.html?m=manifold/thom_form.GaussBonnetChern"><span class="what">the Gauss–Bonnet–Chern theorem: the integral of the Euler form is the Euler characteristic</span><code>manifold/thom_form.GaussBonnetChern</code></a></li>
+        <li><a href="../corpus/proof.html?m=manifold/manifold_critical_point.ManifoldSard"><span class="what">Sard's theorem: the critical values of a smooth map of manifolds form a null set</span><code>manifold/manifold_critical_point.ManifoldSard</code></a></li>
+        <li><a href="../corpus/proof.html?m=manifold/manifold_embedding.WhitneyImmersion"><span class="what">Whitney's immersion theorem: a compact n-manifold immerses smoothly in ℝ²ⁿ</span><code>manifold/manifold_embedding.WhitneyImmersion</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="index-theory-and-k-theory">
+      <h2>Index theory and K-theory</h2>
+      <p>Complex K-theory of projection bundles, with compact supports, Bott periodicity and the Thom isomorphism; Fredholm operators and their index, and Toeplitz operators; pseudo-differential operators on closed manifolds, and the index theorem in its topological and cohomological forms.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=topology/bott_periodicity.BottPeriodicity"><span class="what">Bott periodicity: over a compact base, the external product with the Bott class is an isomorphism in complex K-theory</span><code>topology/bott_periodicity.BottPeriodicity</code></a></li>
+        <li><a href="../corpus/proof.html?m=topology/k_thom.ThomIsomorphism"><span class="what">the Thom isomorphism in K-theory with compact supports</span><code>topology/k_thom.ThomIsomorphism</code></a></li>
+        <li><a href="../corpus/proof.html?m=analysis/toeplitz_operator.ToeplitzIndex"><span class="what">the Toeplitz index theorem: a nonvanishing piecewise smooth symbol gives a Fredholm operator of index minus its winding number</span><code>analysis/toeplitz_operator.ToeplitzIndex</code></a></li>
+        <li><a href="../corpus/proof.html?m=manifold/index_comparison.AtiyahSingerIndex"><span class="what">the Atiyah–Singer index theorem: the analytic and the topological index agree</span><code>manifold/index_comparison.AtiyahSingerIndex</code></a></li>
+        <li><a href="../corpus/proof.html?m=manifold/cohomological_index.AtiyahSingerCohomological"><span class="what">the index theorem in cohomological form: the analytic index is a signed Chern–Todd integral</span><code>manifold/cohomological_index.AtiyahSingerCohomological</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="the-cotangent-complex-and-andr-quillen-homology">
+      <h2>The cotangent complex and André–Quillen homology</h2>
+      <p>Polynomial simplicial algebras in one host type; the standard resolution of an algebra and the comparison of resolutions; the cotangent complex as the differentials of a resolution, with coefficients in a module, and the homology D_n and cohomology D^n it carries; the transitivity triangle of a tower with its long exact sequences; the complex computed on polynomial algebras, regular quotients, plane curves, étale hypersurfaces, localizations and separable extensions; D¹ as conormal maps modulo derivations, classifying the square-zero extensions.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/standard_resolution.StandardResolution"><span class="what">the standard free resolution of an algebra is a polynomial resolution</span><code>algebra/cotangent/standard_resolution.StandardResolution</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/resolution_comparison.ComparisonHomotopyEquivalence"><span class="what">two resolutions of one algebra are homotopy equivalent over its identity</span><code>algebra/cotangent/resolution_comparison.ComparisonHomotopyEquivalence</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/cotangent_complex.CotangentResolutionIndependence"><span class="what">any polynomial resolution of an algebra computes its cotangent complex, up to chain homotopy equivalence</span><code>algebra/cotangent/cotangent_complex.CotangentResolutionIndependence</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/cotangent_complex.CotangentDegreeZero"><span class="what">André–Quillen homology in degree 0 is the module of Kähler differentials, D₀(S/R, S) ≅ Ω_{S/R}</span><code>algebra/cotangent/cotangent_complex.CotangentDegreeZero</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/transitivity.TransitivityExactAtMiddle"><span class="what">the transitivity long exact sequence of a tower R → S → T, exact at D_n(T/R, N)</span><code>algebra/cotangent/transitivity.TransitivityExactAtMiddle</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/cotangent_examples.ConormalModule"><span class="what">for a ring map onto S with kernel I, D₁(S/R, S) is the conormal module I/I²</span><code>algebra/cotangent/cotangent_examples.ConormalModule</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/cotangent_examples.RegularQuotientCotangent"><span class="what">for g no zero divisor, D_n(R/(g) / R, N) is N in degree 1 and zero in every other degree</span><code>algebra/cotangent/cotangent_examples.RegularQuotientCotangent</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/cotangent_examples.PlaneCurveCotangentComplex"><span class="what">the cotangent complex of a plane curve R[x, y]/(F) is the two-term complex A → A², 1 ↦ (F_x, F_y)</span><code>algebra/cotangent/cotangent_examples.PlaneCurveCotangentComplex</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/cotangent_examples.EtaleHypersurfaceVanishes"><span class="what">an étale hypersurface R[x]/(g), g no zero divisor and separable, has no André–Quillen homology over R</span><code>algebra/cotangent/cotangent_examples.EtaleHypersurfaceVanishes</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/square_zero_classification.ExtensionIsoIffSameClass"><span class="what">square-zero extensions of S by N over R are classified up to isomorphism by D¹(S/R, N)</span><code>algebra/cotangent/square_zero_classification.ExtensionIsoIffSameClass</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="spectra-structure-sheaves-and-affine-morphisms">
+      <h2>Spectra, structure sheaves and affine morphisms</h2>
+      <p>The prime spectrum of a ring on a set with its Zariski topology; the structure sheaf, its sections over a basic open and its stalks as localizations; locally ringed spaces and schemes; Spec on ring maps and the correspondence between maps to a spectrum and maps on global sections. Every object is a set of one type built from the ring's carrier type, and no equality between types is ever asked.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=scheme/structure_sheaf.StructureSheafOfRings"><span class="what">the sections form a sheaf of rings on the spectrum</span><code>scheme/structure_sheaf.StructureSheafOfRings</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/structure_sheaf.GlobalSections"><span class="what">the global sections of the structure sheaf are the ring</span><code>scheme/structure_sheaf.GlobalSections</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/structure_sheaf.StalkAtPrime"><span class="what">the stalk at a prime is the localization at it</span><code>scheme/structure_sheaf.StalkAtPrime</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/scheme.SpecScheme"><span class="what">the prime spectrum of a commutative ring is a scheme</span><code>scheme/scheme.SpecScheme</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/spec_functor.BasicOpenAffine"><span class="what">a basic open is the spectrum of the corresponding localization</span><code>scheme/spec_functor.BasicOpenAffine</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/gamma_spec.AdjunctionLeft"><span class="what">a ring map to global sections is recovered from its induced point and section assignments</span><code>scheme/gamma_spec.AdjunctionLeft</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/gamma_spec.AffineMorphisms"><span class="what">every affine morphism comes from a ring homomorphism</span><code>scheme/gamma_spec.AffineMorphisms</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="curves-held-by-two-charts">
+      <h2>Curves held by two charts</h2>
+      <p>A curve is the coordinate rings of two affine charts inside its function field, and a module on it a lattice pair with two-term Čech cohomology, nothing glued by an isomorphism; the projective line and its O(n); finiteness, degree, Serre duality and Riemann–Roch for curves finite over the line; the elliptic curve with its canonical bundle and its group law; finite separable covers of curves, the inverse different and Riemann–Hurwitz; orders at regular points, closed divisors and Riemann–Roch for them on a smooth curve over a finite field; plane equations and smooth projective curves presented by two charts, the Hilbert function of a plane curve of degree e and its genus (e − 1)(e − 2)/2, and the Weierstrass cubic as a smooth projective curve; and the scheme two charts glue to, bridging to the spectra.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=scheme/invertible_lattice_pair.InvertibleLatticeInverse"><span class="what">the invertible lattice pairs form a group under the chartwise product, M⁻¹ the inverse</span><code>scheme/invertible_lattice_pair.InvertibleLatticeInverse</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/projective_line.LineH1Dim"><span class="what">on the line, h¹(O(n)) = max(−n − 1, 0)</span><code>scheme/projective_line.LineH1Dim</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/algebraic_curve.InvertibleFinite"><span class="what">every invertible lattice pair of a curve has finite-dimensional cohomology</span><code>scheme/algebraic_curve.InvertibleFinite</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/serre_duality.SerreDuality"><span class="what">Serre duality: dim H¹(M) = dim Hom(M, ω) for an invertible pair M</span><code>scheme/serre_duality.SerreDuality</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/serre_duality.RiemannRoch"><span class="what">Riemann–Roch: ℓ(M) − dim Hom(M, ω) = deg M + 1 − g</span><code>scheme/serre_duality.RiemannRoch</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/serre_duality.RiemannRochDivisor"><span class="what">Riemann–Roch for a divisor: ℓ(D) − dim Hom(O(D), ω) = deg D + 1 − g</span><code>scheme/serre_duality.RiemannRochDivisor</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/algebraic_curve.GenusZeroLine"><span class="what">the projective line has genus zero</span><code>scheme/algebraic_curve.GenusZeroLine</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/elliptic_curve.GenusOne"><span class="what">the Weierstrass cubic has genus one</span><code>scheme/elliptic_curve.GenusOne</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/elliptic_curve.AbelJacobiBijection"><span class="what">the rational points of a smooth Weierstrass cubic are in bijection with Pic⁰, by P ↦ O(P − O)</span><code>scheme/elliptic_curve.AbelJacobiBijection</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/elliptic_curve.GroupLawFormulas"><span class="what">the group carried from Pic⁰ is the chord-and-tangent law, in coordinates</span><code>scheme/elliptic_curve.GroupLawFormulas</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/curve_cover.RiemannHurwitz"><span class="what">Riemann–Hurwitz: 2g_X − 2 = n(2g_Y − 2) + the ramification degree, for the arithmetic genus</span><code>scheme/curve_cover.RiemannHurwitz</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/divisor_lattice_correspondence.WeightedDivisorLatticeCorrespondence"><span class="what">on a smooth curve over a finite field, closed divisors and invertible lattice pairs correspond, degree to degree, with div f principal</span><code>scheme/divisor_lattice_correspondence.WeightedDivisorLatticeCorrespondence</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/smooth_curve_riemann_roch.RiemannRochClosedDivisors"><span class="what">Riemann–Roch for closed divisors: ℓ(D) − ℓ(K − D) = deg D + 1 − g, with the canonical divisor K</span><code>scheme/smooth_curve_riemann_roch.RiemannRochClosedDivisors</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/smooth_curve_riemann_roch.DegreeZeroClassGroupFinite"><span class="what">Pic⁰ of a smooth curve over a finite field is finite</span><code>scheme/smooth_curve_riemann_roch.DegreeZeroClassGroupFinite</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/plane_model.PlaneEquationBiaffineCurve"><span class="what">an integral plane equation, monic in one variable, is a curve held by two charts, free over k[t] on the short powers of the other variable</span><code>scheme/plane_model.PlaneEquationBiaffineCurve</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/projective_curve.CurveHilbertEventuallyLinear"><span class="what">the Hilbert function of a smooth projective equation curve is eventually e·d + 1 − g</span><code>scheme/projective_curve.CurveHilbertEventuallyLinear</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/projective_curve.PlaneCurveHilbertFunction"><span class="what">a plane curve of degree e has Hilbert function e·d + 1 − (e − 1)(e − 2)/2 from degree e on</span><code>scheme/projective_curve.PlaneCurveHilbertFunction</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/projective_affine_piece.AffinePiecesIntegrallyClosed"><span class="what">the Jacobian criterion: the affine pieces of a smooth projective equation curve are integrally closed</span><code>scheme/projective_affine_piece.AffinePiecesIntegrallyClosed</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/projective_presentation.SmoothProjectiveBiaffinePresentation"><span class="what">a smooth projective equation curve over a finite field is presented by two charts, with the same genus and the same points over every extension</span><code>scheme/projective_presentation.SmoothProjectiveBiaffinePresentation</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/biaffine_scheme.BiaffineScheme"><span class="what">two charts glue to a scheme</span><code>scheme/biaffine_scheme.BiaffineScheme</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="the-riemann-hypothesis-for-elliptic-curves">
+      <h2>The Riemann hypothesis for elliptic curves</h2>
+      <p>Over a finite field k with q elements, a smooth Weierstrass cubic is a smooth finite curve of genus one, read inside its own function field: its two charts are integrally closed, and its closed points and their residue degrees are those of a smooth curve at the Weierstrass charts. The Hasse–Weil bound of the Weil conjectures, read at the closed points of the curve inside a closed field holding its function field, gives the Riemann hypothesis for every extension degree at once, and m = 1 is Hasse's theorem.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=scheme/closed_point.WeierstrassSmoothFiniteCurve"><span class="what">the Weierstrass datum is a smooth finite curve over k with coordinate x</span><code>scheme/closed_point.WeierstrassSmoothFiniteCurve</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/elliptic_hasse_weil.RiemannHypothesisElliptic"><span class="what">the Riemann hypothesis for elliptic curves: (q^m + 1 − N_m)² ≤ 4q^m for every m ≥ 1, the genus-one case</span><code>scheme/elliptic_hasse_weil.RiemannHypothesisElliptic</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/elliptic_hasse_weil.HasseTheorem"><span class="what">Hasse's theorem: (q + 1 − N)² ≤ 4q, the case m = 1</span><code>scheme/elliptic_hasse_weil.HasseTheorem</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="the-weil-conjectures-for-curves-over-finite-fields">
+      <h2>The Weil conjectures for curves over finite fields</h2>
+      <p>For a smooth, projective, geometrically irreducible curve of genus g over a field with q elements, held by two charts: the effective-divisor series is the Euler product over the closed points and has the extension counts N_m as its logarithmic derivative; Riemann–Roch makes it P(T)/((1 − T)(1 − qT)) with P an integer polynomial of degree 2g, P(0) = 1, the functional equation q^g pₙ = qⁿ p₂g₋ₙ, and a divisor of degree one; Bombieri's bound from one-point pole spaces and a Frobenius tensor map, carried to every extension through constant twists and good fibres, bounds every reciprocal root of P by √q, which is the Riemann hypothesis for curves and the Hasse–Weil bound |N_m − qᵐ − 1| ≤ 2g · q^(m/2); the same for a smooth projective curve cut out by homogeneous equations over any finite subfield k of any algebraically closed field M, with no hypothesis but M and the curve's own. Such a curve is carried along M into the algebraic closure of M(x), where its two-chart presentation lives: its genus, its point counts and the size of k are read over k and kept, and its geometric conditions (a prime ideal, a point, the Jacobian rank) cross by elementarity. The line X₂ = 0 of the projective plane is a proved instance; the Weierstrass cubic is a stated one. The complex numbers enter only to split P.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=scheme/curve_zeta.ZetaEulerProductAndLogDerivative"><span class="what">the effective-divisor series is the Euler product over the closed points, and the extension point counts N_m are its logarithmic derivative</span><code>scheme/curve_zeta.ZetaEulerProductAndLogDerivative</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/curve_zeta.DegreeOneDivisorExists"><span class="what">every smooth curve over a finite field has a divisor of degree one</span><code>scheme/curve_zeta.DegreeOneDivisorExists</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/curve_zeta.ZetaNumeratorRationality"><span class="what">rationality: (1 − T)(1 − qT) Σ Aₙ Tⁿ is an integer polynomial P of degree at most 2g with P(0) = 1 and P(1) = #Pic⁰</span><code>scheme/curve_zeta.ZetaNumeratorRationality</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/curve_zeta.CurveZetaFunctionalEquation"><span class="what">the functional equation: P has degree 2g and top coefficient q^g, and q^g · pₙ = qⁿ · p₂g₋ₙ</span><code>scheme/curve_zeta.CurveZetaFunctionalEquation</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/curve_zeta.CurvePointCountTraceFormula"><span class="what">the trace formula: N_m = qᵐ + 1 − Σ αᵢᵐ over the 2g reciprocal roots of P, whose product is q^g</span><code>scheme/curve_zeta.CurvePointCountTraceFormula</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/rational_point_bound.BombieriUpperRegularPoints"><span class="what">Bombieri's bound from one-point pole spaces: over a field with s² elements and s &gt; g² + 3g + 1, at most s² + (2g + 1)s regular rational points</span><code>scheme/rational_point_bound.BombieriUpperRegularPoints</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/weil_curve.RiemannHypothesisGeneralCurves"><span class="what">the Riemann hypothesis for curves: every reciprocal root of P has modulus √q, every zero of P modulus 1/√q</span><code>scheme/weil_curve.RiemannHypothesisGeneralCurves</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/weil_curve.HasseWeilAllExtensions"><span class="what">the Hasse–Weil bound |N_m − qᵐ − 1| ≤ 2g · q^(m/2) for every m</span><code>scheme/weil_curve.HasseWeilAllExtensions</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/field/rational_function_field.FunctionFieldClosure"><span class="what">the closed field a curve is carried into: every field embeds in a closed field holding a point transcendental over it</span><code>algebra/field/rational_function_field.FunctionFieldClosure</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/projective_transfer.CarriedSmoothCurve"><span class="what">along an embedding of algebraically closed fields, a set of forms cuts out a smooth projective equation curve exactly when its carried forms do</span><code>scheme/projective_transfer.CarriedSmoothCurve</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/projective_curve.PlaneLineCurve"><span class="what">the line X₂ = 0 of the projective plane is a smooth projective equation curve of genus zero: the predicate has an instance</span><code>scheme/projective_curve.PlaneLineCurve</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/weil_curve.WeilConjecturesOverFiniteFields"><span class="what">the Weil conjectures for every smooth projective curve over every finite field</span><code>scheme/weil_curve.WeilConjecturesOverFiniteFields</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="deformations-of-algebras-and-curves">
+      <h2>Deformations of algebras and curves</h2>
+      <p>The cotangent cohomology at work: lifting an algebra map is obstructed in D¹ and the lifts are a torsor under the derivations; deformations of an algebra over a square-zero thickening are obstructed in D² and form a torsor under D¹, and are the flat algebras over the thickening; deformations of a curve held by two charts, obstructed in two levels, with the projective line rigid and the elliptic curve deforming in one dimension.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/algebra_deformation.LiftExistsIffObstructionZero"><span class="what">a map lifts to a square-zero extension exactly when the class of the pulled-back extension in D¹ vanishes</span><code>algebra/cotangent/algebra_deformation.LiftExistsIffObstructionZero</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/algebra_deformation.DeformationObstruction"><span class="what">an algebra has a deformation over a square-zero thickening exactly when its obstruction in D² vanishes</span><code>algebra/cotangent/algebra_deformation.DeformationObstruction</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/algebra_deformation.DeformationsTorsor"><span class="what">the deformations of an algebra are a torsor under D¹</span><code>algebra/cotangent/algebra_deformation.DeformationsTorsor</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/algebra_deformation.DeformationIffFlat"><span class="what">a deformation of a flat algebra is the same as a flat algebra over the thickening reducing to it</span><code>algebra/cotangent/algebra_deformation.DeformationIffFlat</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/biaffine_deformation.BiaffineDeformationTheorem"><span class="what">a curve held by two charts deforms exactly when the local obstructions in D² and the gluing obstruction vanish</span><code>scheme/biaffine_deformation.BiaffineDeformationTheorem</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/biaffine_deformation.ProjectiveLineRigid"><span class="what">the projective line is rigid</span><code>scheme/biaffine_deformation.ProjectiveLineRigid</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/biaffine_deformation.EllipticDeformationsDimOne"><span class="what">the first-order deformations of a smooth Weierstrass cubic form a space of dimension one</span><code>scheme/biaffine_deformation.EllipticDeformationsDimOne</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="definable-extensions-and-countable-cover-deformations">
+      <h2>Definable extensions and countable-cover deformations</h2>
+      <p>Marked square-zero extensions have factor-set codes in a closed Polish group, with changes of section giving the actual boundary subgroup and the same quotient cover as D¹. Algebra deformations impose affine conditions on these codes. Increasing unions of algebras give AQ Milnor sequences and phantom extensions. On a fixed countable affine intersection diagram with principal localization arrows, actual extension maps give gluing codes, a low-degree exact sequence with definable maps, and three successive deformation obstructions: local existence, matching local classes, and the final triple class modulo the image of d₂. The objects are cover data with gluing, without asserting a scheme glued from them or independence of the cover.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/definable_deformation.FactorSetAQDefinableIso"><span class="what">factor-set extension codes modulo section changes and D¹ have Borel-isomorphic Polish covers</span><code>algebra/cotangent/definable_deformation.FactorSetAQDefinableIso</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/definable_deformation.CountableRingCodeClassification"><span class="what">marked extensions coded on the natural numbers are isomorphic exactly when their extracted factor sets differ by a boundary</span><code>algebra/cotangent/definable_deformation.CountableRingCodeClassification</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/definable_deformation.DeformationCodesCoset"><span class="what">deformation codes, when nonempty, form a closed affine coset in the extension code group</span><code>algebra/cotangent/definable_deformation.DeformationCodesCoset</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/definable_andre_quillen.AQMilnorSequence"><span class="what">AQ cohomology of an increasing union fits into Milnor's exact sequence with definable maps</span><code>algebra/cotangent/definable_andre_quillen.AQMilnorSequence</code></a></li>
+        <li><a href="../corpus/proof.html?m=algebra/cotangent/definable_deformation.DyadicPhantomExtensions"><span class="what">the union of Z[x_k] with x_k = 2x_(k+1) has continuum many phantom extension classes, modeled by Z₂/Z</span><code>algebra/cotangent/definable_deformation.DyadicPhantomExtensions</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/cover_deformation.CoverExtensionExactSequence"><span class="what">0 → H¹(Der) → Exal → H⁰(T¹) → H²(Der): compatible local extension classes glue exactly when their triple defect vanishes</span><code>scheme/cover_deformation.CoverExtensionExactSequence</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/cover_deformation.CoverSequenceDefinable"><span class="what">the three maps of the cover extension sequence admit Borel lifts between their Polish covers</span><code>scheme/cover_deformation.CoverSequenceDefinable</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/cover_deformation.CoverThirdObstruction"><span class="what">after local existence and matching, the choice-independent gluing obstruction lies in H²(Der) modulo image(d₂)</span><code>scheme/cover_deformation.CoverThirdObstruction</code></a></li>
+        <li><a href="../corpus/proof.html?m=scheme/cover_deformation.CoverDeformationsTorsor"><span class="what">nonempty deformation classes of the cover data form a torsor under the reduced-base extension group</span><code>scheme/cover_deformation.CoverDeformationsTorsor</code></a></li>
+      </ul>
+    </section>
+    <section class="topic" id="causal-inference">
+      <h2>Causal inference</h2>
+      <p>Structural causal models on measurable carriers, their interventions, and the do-calculus: its three rules from separation in a graph with edges deleted, the back-door adjustment in kernel form, and identifiability, decided by the hedge criterion.</p>
+      <ul class="rows">
+        <li><a href="../corpus/proof.html?m=causal/do_calculus.DoObserve"><span class="what">rule 1 of the do-calculus: inserting and deleting observations</span><code>causal/do_calculus.DoObserve</code></a></li>
+        <li><a href="../corpus/proof.html?m=causal/do_calculus.DoExchange"><span class="what">rule 2 of the do-calculus: exchanging actions and observations</span><code>causal/do_calculus.DoExchange</code></a></li>
+        <li><a href="../corpus/proof.html?m=causal/do_calculus.DoDelete"><span class="what">rule 3 of the do-calculus: inserting and deleting actions</span><code>causal/do_calculus.DoDelete</code></a></li>
+        <li><a href="../corpus/proof.html?m=causal/kernel_do_calculus.BackdoorAdjustmentKernel"><span class="what">the back-door adjustment: under the back-door criterion and overlap, an interventional distribution is the adjusted kernel integral</span><code>causal/kernel_do_calculus.BackdoorAdjustmentKernel</code></a></li>
+        <li><a href="../corpus/proof.html?m=causal/hedge_criterion.HedgeCriterion"><span class="what">the hedge criterion: a causal effect is identifiable exactly when there is no hedge for it</span><code>causal/hedge_criterion.HedgeCriterion</code></a></li>
+      </ul>
+    </section>
+    <!-- end landmarks topics -->
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>XuGo · Apache License 2.0</span>
+    <nav>
+      <a href="../corpus/">全库</a>
+      <a href="landmarks.html" aria-current="page">重要定理</a>
+      <a href="./#faq">常见问题</a>
+      <a href="architecture.html">架构</a>
+      <a href="practice.html">实践</a>
+      <a href="https://github.com/euc-ai/xugo">GitHub</a>
+      <a href="../landmarks.html" lang="en">EN</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="../toc.js"></script>
+<script>
+(function () {
+  "use strict";
+  const input = document.getElementById("filter");
+  const none = document.getElementById("none");
+  const topics = [...document.querySelectorAll(".topic")];
+  const links = new Map(topics.map(t => [t.id, document.querySelector(`.toc a[href="#${t.id}"]`).parentElement]));
+
+  // The filter keeps the rows whose reading or id holds every word typed,
+  // a row's mark aside, and the subjects that keep a row or whose own
+  // name holds them.
+  input.addEventListener("input", () => {
+    const words = input.value.toLowerCase().split(/\s+/).filter(Boolean);
+    const holds = text => words.every(w => text.includes(w));
+    let shown = 0;
+    for (const t of topics) {
+      const whole = holds(t.querySelector("h2").textContent.toLowerCase());
+      let kept = 0;
+      for (const li of t.querySelectorAll(".rows li")) {
+        const text = `${li.querySelector(".what").firstChild.textContent} ${li.querySelector("code").textContent}`;
+        const keep = whole || holds(text.toLowerCase());
+        li.classList.toggle("hidden", !keep);
+        if (keep) kept++;
+      }
+      t.classList.toggle("hidden", kept === 0);
+      links.get(t.id).classList.toggle("hidden", kept === 0);
+      shown += kept;
+    }
+    none.classList.toggle("hidden", shown > 0);
+  });
+
+  // A row not proved outright, a card or a theorem standing on one, is
+  // marked on cards, read from its family's file in the corpus browser
+  // published beside this page (corpus/data/family/<family>.json): a
+  // subject's families are read when the subject comes near the screen.
+  // A family's file is asked for once while the asking holds; one that
+  // could not be read — a server restarting, a network gone — is asked
+  // for again when its subject next comes near.
+  const MARK = { card: "on_cards", on_cards: "on_cards", postulate: "postulate" };
+  const LABEL = { on_cards: "on cards", postulate: "postulate" };
+  const families = new Map();
+  function family(name) {
+    if (!families.has(name)) {
+      const path = `../corpus/data/family/${name.split("/").map(encodeURIComponent).join("/")}.json`;
+      const reading = fetch(path).then(answer => {
+        if (!answer.ok) throw new Error(`${path}: ${answer.status}`);
+        return answer.json();
+      }).then(said => new Map(said.units.map(u => [u.name, u.status])));
+      families.set(name, reading);
+      reading.catch(() => { if (families.get(name) === reading) families.delete(name); });
+    }
+    return families.get(name);
+  }
+  function rows(topic) {
+    return [...topic.querySelectorAll(".rows li")].map(li => {
+      const id = li.querySelector("code").textContent, dot = id.lastIndexOf(".");
+      return { li, id, family: id.slice(0, dot), name: id.slice(dot + 1) };
+    });
+  }
+  async function read(topic) {
+    const names = [...new Set(rows(topic).map(r => r.family))];
+    return new Map(await Promise.all(names.map(async name => [name, await family(name)])));
+  }
+  function mark(topic, read) {
+    for (const { li, id, family: of, name } of rows(topic)) {
+      const status = read.get(of).get(name);
+      if (status === undefined) throw new Error(`${id}: no such unit in its family's file`);
+      if (status === "proved") continue;
+      const mark = MARK[status];
+      if (!mark) console.error(`${id}: a stratum this page does not name, ${status}`);
+      const badge = document.createElement("span");
+      badge.className = `status ${mark || status}`;
+      badge.textContent = LABEL[mark] || status;
+      li.querySelector(".what").append(" ", badge);
+    }
+  }
+  const near = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const topic = entry.target;
+      near.unobserve(topic);
+      read(topic).then(said => mark(topic, said), err => {
+        console.error(err);
+        setTimeout(() => near.observe(topic), 3000);
+      });
+    }
+  }, { rootMargin: "600px 0px" });
+  for (const t of topics) near.observe(t);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package clause;
+
+option go_package = "github.com/euc-ai/xugo/ext/clause";
+
+// Regenerate from the repository root, with the protoc and protoc-gen-go
+// versions the generated file's header names:
+//   protoc -I . ext/clause/clause.proto --go_out=. --go_opt=paths=source_relative
+
+// Pooled: term/var fields are indices into the enclosing blob's ext.PoolProto
+// (a clause is only ever serialized inside a CNFRefuteProofProto, which owns the
+// pool). Within a blob every shared subterm/type is stored once.
+message DisjunctClauseProto {
+    repeated uint32 lits = 1;   // node indices into the container pool
+    repeated uint32 univ = 2;   // node indices (var nodes)
+}
+
+message ClauseThmProto {
+    // If concl is missing it means the conclusion is ⊥.
+    DisjunctClauseProto concl = 1;
+    // Field 2 was `repeated DisjunctClauseProto hyps`. The recipe carries its own
+    // input clauses and fully subsumes hyps, so the field was retired once all
+    // stored certificates became recipe-bearing.
+    reserved 2;
+    reserved "hyps";
+    // The inference recipe that produced this clause thm. REQUIRED: reconstruction
+    // replays it directly (search-free, deterministic); DeserializeClauseThm
+    // panics on a proto without a recipe.
+    DeduceRecipeProto recipe = 3;
+}
+
+// One term substitution: var ↦ term. Both are node indices into the pool.
+message TermSubstProto {
+    uint32 var = 1;
+    uint32 term = 2;
+}
+
+// DeduceRecipeProto records exactly how a clause inference was produced during
+// proof search, so replay can reproduce it directly instead of re-discovering
+// it. Every clause-thm-producing inference is recorded, so a recipe fully
+// determines the thm and subsumes the (legacy) hyps field: the unification-based
+// ones (factor, resolution, diff-resolution, contradiction, self-contradiction)
+// record the unifier so replay skips the search; the search-free ones
+// (simplification, bool-specialize, the factor simplification bridge) record
+// just their inputs and are simply re-run.
+message DeduceRecipeProto {
+    enum Rule {
+        RULE_UNSPECIFIED = 0;
+        FACTOR = 1;
+        RESOLVE = 2;
+        DIFF_RESOLVE = 3;
+        CONTRADICTS = 4;
+        SELF_CONTRADICT = 5;
+        SIMPLIFIES = 6;
+        BOOL_SPECIALIZE = 7;
+        SIMPLIFY_BRIDGE = 8;
+        // FUNEXT: function-typed equality derived from its pointwise clause
+        // form(s) — inputs = [c] (unit ∀-equality contraction) or [c0, c1]
+        // (complementary iff-pair recombination). Search-free deterministic
+        // builders; no unifier fields used.
+        FUNEXT = 9;
+        // EQ_APPLY: partial-application paramodulation for the nested
+        // ALPHA-MERGE canonicalization (ext/clause/alpha_bridge.go) —
+        // inputs = [eq, target] where eq is a ground λ-sided function
+        // equality `(λx⃗. body) = f`; substs pins a PREFIX of the λ-binders,
+        // the equality is applied at the pinned args and β-reduced (so the
+        // shrunken side becomes the partial application f(a⃗), which CAN
+        // occur in the target where the λ-form cannot), then flipped and
+        // EqRewritten through the target. Deterministic; no search.
+        EQ_APPLY = 10;
+    }
+    Rule rule = 1;
+    // The exact input clauses fed to the deterministic builder:
+    // FACTOR / SELF_CONTRADICT: [c];
+    // RESOLVE / DIFF_RESOLVE / CONTRADICTS: [c0, c1] (already collision-renamed).
+    repeated DisjunctClauseProto inputs = 2;
+    // Literal index in c0 (the `ind` argument to factorClause/resolveClause).
+    int32 lit_index = 3;
+    // _EqRewriteType for RESOLVE / DIFF_RESOLVE.
+    int32 rewrite_type = 4;
+    // The recorded unifier substitution group.
+    repeated TermSubstProto substs = 5;
+    // DIFF_RESOLVE only: the c1 subterm that was diff-resolved against (a node
+    // index into the pool). optional so absence is distinct from node 0.
+    optional uint32 c1_subterm = 6;
+    // CONTRADICTS only: whether the equality was commuted (the switchSide path).
+    bool switch_side = 7;
+}

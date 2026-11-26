@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package ext;
+
+option go_package = "github.com/euc-ai/xugo/ext";
+
+// Regenerate from the repository root, with the protoc and protoc-gen-go
+// versions the generated file's header names:
+//   protoc -I . ext/hol.proto --go_out=. --go_opt=paths=source_relative
+
+// ---------------------------------------------------------------------------
+// Pooled (content-addressed DAG) encoding of HOL terms / types / props.
+//
+// A term is naturally a DAG: subterms, types and names recur heavily. The pool
+// stores each distinct string / type-node / term-node once; children are
+// integer indices. Topologically sorted (a node references only strictly
+// smaller indices), so a reader rebuilds bottom-up in one linear pass,
+// reconstructing the in-memory DAG (shared pointers) for free.
+//
+// The messages below fall into three groups:
+//
+//   1. PoolProto — the bare shared pool (strings + type nodes + term nodes).
+//   2. In-pool representations — types, terms and props expressed as integer
+//      indices into an ambient PoolProto. These carry NO pool of their own;
+//      they are the entries stored in a pool, or props embedded in a pooled
+//      container (CNF proofs, decompositions) that owns the surrounding pool.
+//   3. Standalone blobs — a self-contained {pool, root} wrapper for a single
+//      term / type / prop, used where a value is stored on its own (e.g. a DB
+//      column) rather than inside a larger pooled container.
+
+// ===========================================================================
+// 1. The shared pool.
+// ===========================================================================
+
+message PoolProto {
+    repeated string strings = 1;
+    repeated HolTypeProto types = 2;   // each references only smaller type indices
+    repeated HolTermProto nodes = 3;   // each references only smaller node indices
+}
+
+// ===========================================================================
+// 2. In-pool representations: indices into an ambient PoolProto.
+// ===========================================================================
+
+// One node of the type pool: a type var (name index) or a composite
+// (meta-name index + child type indices).
+message HolTypeProto {
+    oneof node {
+        uint32 var = 1;             // index into strings
+        CompositeTypeProto comp = 2;
+    }
+}
+
+message CompositeTypeProto {
+    uint32 meta_name = 1;           // index into strings
+    repeated uint32 args = 2;       // indices into types
+}
+
+// One node of the term pool.
+message HolTermProto {
+    oneof node {
+        VarTermProto var = 1;
+        ConstTermProto cnst = 2;
+        AppliedTermProto app = 3;
+        AbsTermProto abs = 4;
+    }
+}
+
+message VarTermProto {
+    uint32 name = 1;                // index into strings
+    uint32 type = 2;               // index into types
+}
+
+message ConstTermProto {
+    uint32 name = 1;               // index into strings
+    uint32 abs_type = 2;          // index into types (the const meta's abstract type)
+    // Instance type index into types; equals abs_type for a non-instantiated
+    // const (then it references the same pooled type node — no extra node).
+    uint32 type = 3;
+}
+
+message AppliedTermProto {
+    uint32 fun = 1;                // index into nodes
+    uint32 arg = 2;               // index into nodes
+    // No type: an application's type is determined by fun + arg, recomputed on read.
+}
+
+message AbsTermProto {
+    uint32 var = 1;               // index into nodes (must be a var node)
+    uint32 body = 2;              // index into nodes
+    // No type: determined by var + body, recomputed on read.
+}
+
+// A prop expressed as indices into an ambient (container-owned) pool — carries
+// no pool of its own. Used wherever a prop is embedded in a pooled container.
+message HolPropProto {
+    uint32 concl = 1;             // index into the container pool's nodes
+    repeated uint32 hyps = 2;     // indices into the container pool's nodes
+    bool claim_proved = 3;
+}
+
+// ===========================================================================
+// 3. Standalone blobs: self-contained (carry their own pool).
+// ===========================================================================
+
+// Standalone term blob: a pool plus the root node index.
+message TermBlobProto {
+    PoolProto pool = 1;
+    uint32 root = 2;               // index into pool.nodes
+}
+
+// Standalone prop blob: a pool plus conclusion / hyp node indices.
+message PropBlobProto {
+    PoolProto pool = 1;
+    uint32 concl = 2;             // index into pool.nodes
+    repeated uint32 hyps = 3;     // indices into pool.nodes
+    bool claim_proved = 4;
+}

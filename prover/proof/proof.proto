@@ -1,0 +1,1163 @@
+syntax="proto3";
+package prover;
+
+option go_package = "github.com/euc-ai/xugo/prover/proof";
+
+import "google/protobuf/empty.proto";
+import "ext/hol.proto";
+import "prover/solver/refuter/proof.proto";
+
+// Regenerate from the repository root, with the protoc and protoc-gen-go
+// versions the generated file's header names:
+//   protoc -I . prover/proof/proof.proto --go_out=. --go_opt=paths=source_relative
+
+message AxiomDefProto {
+    oneof type {
+        string axiom = 1;
+        // const is a node index into the enclosing section's pool (a const node).
+        uint32 const = 2;
+    }
+}
+
+message KnownThmProto {
+    ext.HolPropProto stronger_goal = 1;
+    ext.HolPropProto equivalent_thm = 2;
+    // reading says what the closing theorem was read from when it is
+    // a structure law read at an instance (ReadingRecord), which no
+    // entry states: the session's `lemma {key, read_at}` records it on
+    // the close of a goal the reading states and on the claim child of
+    // the reading's install. Emit spells the cite
+    // `Cite(Law.Read(instance))` from it; no executor consults it.
+    ReadingProto reading = 3;
+}
+
+// AutoDenoteProto carries the `denote` ministep payload — "let <name> =
+// <term>", the abbreviation move.
+//
+// Two modes, discriminated by `term`:
+//
+//   - EXPLICIT (term != 0): the step names THAT subterm by THAT variable.
+//     This is a record of a decision, so replay reproduces the decision
+//     instead of re-deriving it. A term the replayed goal does not
+//     contain panics at the step.
+//   - LEGACY HEURISTIC (term == 0, the proto3 zero): the step re-runs the
+//     selection heuristic (ext.FrequentSubTerms at size_threshold, or
+//     ext.HilbertSubTerm for hilbert) on the goal it lands on. Every
+//     proto recorded before the explicit mode existed decodes into this
+//     mode and replays bit-identically.
+//
+// The heuristic is a RECIPE, not a record: upstream drift can silently
+// steer it to a different subterm, and the divergence only surfaces far
+// downstream as a CNF cache miss. So a LIVE heuristic firing now writes
+// down what it chose — the search behaviour is unchanged, only what is
+// persisted — and the recording replays in explicit mode.
+message AutoDenoteProto {
+    int32 size_threshold = 1;
+    bool hilbert = 2;
+    // term is a node index into the enclosing section's pool: the
+    // subterm being named (for hilbert, the ε-term being abstracted).
+    // 0 = legacy heuristic mode.
+    uint32 term = 3;
+    // name is the variable the term is denoted by — the actual minted
+    // name, post collision-avoidance. Meaningful only with term != 0.
+    string name = 4;
+    // let marks the DEFINITIONAL mode (LetTerm / Argument.Let): the
+    // equation joins the hypotheses and the goal keeps its form, the
+    // term needing no occurrence. Meaningful only with term != 0.
+    bool let = 5;
+}
+
+// SpecializeProto carries the `specialize` ministep payload: a batch of
+// ∀-hyp groundings applied atomically against ONE hyp-list snapshot (the
+// goal this step runs on). Each entry peels the leading ∀-binders of
+// hyps[hyp_index] at the witness terms (in binder order) and adds ONLY
+// the final ground instance as a new hyp — the intermediate partial
+// instantiations never materialize, so there is no index drift and no
+// sweep-ClearHyps afterwards. Unless keep_sources is set, each grounded
+// source ∀-hyp is dropped in the same step (weakening — the Lean
+// `specialize h a b c` semantics). All hyp_index values refer to the
+// same pre-step hyp list, mirroring ClearHypsProto's atomic-set
+// convention. Composite by design (record the agent call, not its
+// expansion): replay re-runs the same driver
+// (tactic.SpecializeTactic), the record/emit/replay-reuse principle.
+message SpecializeProto {
+    message Hyp {
+        int32 hyp_index = 1;
+        repeated uint32 witnesses = 2;  // node indices into the section pool, binder order
+    }
+    repeated Hyp hyps = 1;
+    // keep_sources leaves the grounded ∀-hyps in place (the ematch
+    // contract: only ADD hyps — one source may serve several witness
+    // tuples). Default false: sources are consumed.
+    bool keep_sources = 2;
+}
+
+// CongrArgProto carries the data for the `congr_arg` ministep: the
+// function term f applied to both sides of the equality hyp at
+// hyp_index. Both are needed for deterministic replay (the function is
+// agent-supplied, not derivable from the goal; the index pins which
+// equality hyp).
+message CongrArgProto {
+    uint32 function  = 1;   // node index into the section pool
+    int32  hyp_index = 2;
+}
+
+// CongrFunProto carries the data for the `congr_fun` ministep: the
+// argument term x fed to both sides of the function-equality hyp at
+// hyp_index. Dual of CongrArgProto.
+message CongrFunProto {
+    uint32 argument  = 1;   // node index into the section pool
+    int32  hyp_index = 2;
+}
+
+// HypIndexProto is the shared payload of the hyp-targeted ministeps
+// (`split_disj`, `split_hyp_iff`, `split_hyp_imply`, `strip_quant`).
+// Wire-compatible with the pre-payload `google.protobuf.Empty` form: an
+// empty message decodes as hyp_index unset, which the tactic layer
+// treats as "pick the first matching hyp" — the behavior legacy
+// records were recorded and replayed under.
+message HypIndexProto {
+    // Optional 0-based index of the hyp the step acts on. Absent = pick
+    // the first hyp of the matching shape (∨ / ⇔ / ⇒ / ∃ — and for
+    // strip_quant the conclusion's ∀-prefix comes before any hyp).
+    // Explicit index disambiguates when several hyps share the shape —
+    // the recurring "split_disj ignored my hyp_index and picked hyp 13
+    // instead of hyp 15" navigation defeat this field exists to fix.
+    optional int32 hyp_index = 1;
+}
+
+// RwProto carries the data for the `rw` ministep: the 0-based index of
+// the equality hyp used as the rewrite rule, plus the direction flag.
+// flip=false rewrites left→right (the hyp's written direction);
+// flip=true rewrites right→left. Both are needed for deterministic
+// replay (the agent chooses hyp and direction; neither is derivable
+// from the goal).
+message RwProto {
+    int32 hyp_index = 1;
+    bool  flip      = 2;
+}
+
+// SetTacProto carries the data for the `set_tac` ministep: the set of
+// definitional-constant NAMES the fixpoint unfolder is allowed to expand.
+// Recorded (rather than referencing a global list) so that a later
+// extension of the engine's default set-vocabulary does NOT change the
+// replay behavior of previously recorded steps — replay unfolds exactly
+// the consts record-time did, keeping the post-expansion goals (and
+// hence the CNF cache keys of the closing refutes) byte-stable.
+// Names are sorted at record time; the driver processes them in slice
+// order, so the recorded order IS the deterministic processing order.
+message SetTacProto {
+    repeated string consts = 1;
+    // Executor mode. Recorded verbatim; replay re-runs exactly the
+    // recorded mode's driver, so a later change of the engine's default
+    // mode never touches existing recordings (same contract as consts).
+    //
+    //   - LEGACY (0, the pre-mode wire default): full def-expansion of
+    //     every vocabulary const everywhere + bare CNF refute. Set
+    //     operators become λ-comprehensions; goals whose refute needs a
+    //     composite set witness (`s ∩ ⋃f = ⋃{s ∩ t | t ∈ f}`) cannot close — the
+    //     witness would be a λ-term, outside the first-order refuter.
+    //   - MEMBERSHIP (1): membership-level
+    //     rewriting — set-typed equalities extensionalize pointwise,
+    //     `set_member x (C …)` redexes rewrite to their membership formulas
+    //     (operators stay OPAQUE first-order terms elsewhere), and the
+    //     membership ⇔-rules of operators still present in the residual
+    //     are installed as hyps
+    //     before the closing CNF refute. Set witnesses stay first-order.
+    SetTacMode mode = 2;
+}
+
+enum SetTacMode {
+    SET_TAC_LEGACY = 0;
+    SET_TAC_MEMBERSHIP = 1;
+}
+
+message StepProto {
+    ext.HolPropProto goal = 1;
+    // field tag 2 = proved_thm (removed; never read in production, only
+    // ever consumed by the deleted ReconstructProofSection /
+    // reconstructFromDetailedProof self-check). Reserved so a future
+    // schema change doesn't accidentally reuse the tag against old
+    // serialized blobs.
+    reserved 2;
+    reserved "proved_thm";
+    // Retired step arms, reserved against reuse: instantiate (24) and
+    // instantiate_at (35) — grounding records as `specialize`; clear_hyp
+    // (44) — clearing records as `clear_hyps`; word_arith (56) — the
+    // machine-word kit retired.
+    reserved 24, 35, 44, 56;
+    reserved "instantiate", "instantiate_at", "clear_hyp", "word_arith";
+    repeated ext.HolPropProto sub_goals = 3;
+    oneof step {
+        AxiomDefProto axiom_def = 4;
+        KnownThmProto known_thm = 5;
+        google.protobuf.Empty cnf_refute = 6;
+        google.protobuf.Empty trivial_simplify = 7;
+        google.protobuf.Empty basic = 8;
+        AutoDenoteProto denote = 9;
+        ext.HolPropProto lemma = 10;
+        // type_inst stores the polymorphic source Prop. At apply time,
+        // PropTypeMatch recovers the type substitution against the current
+        // goal, then core.PropTypeInst produces the ground thm.
+        ext.HolPropProto type_inst = 11;
+        // by_case stores the boolean term to case-split on. Produces two
+        // subgoals on the term under one leading ¬ — p for the term ¬p:
+        // child 0 with p as hypothesis, child 1 with ¬p.
+        uint32 by_case = 12;            // node index into the section pool
+        // induction stores the induction variable (type num). Produces
+        // two subgoals: base case P(_0) and inductive step P(n) ⊢ P(suc(n)).
+        uint32 induction = 13;          // node index into the section pool
+        // cond_rewrite normalizes COND subterms: at bool level, expand into
+        // (c ⇒ P(x)) ∧ (¬c ⇒ P(y)); at non-bool level, push outward as
+        // Cond(c, P(x), P(y)). Includes basic rewrites for cleanup.
+        google.protobuf.Empty cond_rewrite = 14;
+        // Structural sub-tactics (individual components of BasicTactics)
+        // exposed as first-class agent moves via the session-mode `apply`
+        // RPC. Each is a deterministic pure function of the input goal:
+        // SubGoals are entirely determined by the goal's syntactic shape,
+        // so the proto carries no parameters. Replay re-runs the function
+        // and the existing goal/proved_thm/sub_goals fields verify the
+        // output matches what was originally recorded.
+        // rewrite: applies BasicRewrite (canonicalize boolean ops, simplify
+        // trivial conjunctions/disjunctions, etc.) — same pure goal-to-goal
+        // rewrite step that runs inside BasicTactic.
+        google.protobuf.Empty rewrite     = 15;
+        // split_conj: concl A ∧ B → subgoals ⊢ A and ⊢ B.
+        google.protobuf.Empty split_conj  = 16;
+        // split_conj_all: concl A ∧ B ∧ … ∧ Z → N FLAT subgoals
+        // ⊢ A, ⊢ B, …, ⊢ Z in one step. Unlike split_conj (strictly
+        // binary), this flattens the entire ∧-spine (any associativity).
+        // Carries no payload for the same reason split_conj doesn't: the
+        // N children are recorded in sub_goals (field 3) and replay
+        // re-derives the flatten from the goal's shape. Field number is
+        // 45 (next free); declared here next to split_conj for locality.
+        google.protobuf.Empty split_conj_all = 45;
+        // split_disj: hyp A ∨ B ⊢ C → subgoals A ⊢ C and B ⊢ C
+        // (case analysis on the disjunctive hypothesis).
+        //
+        // Payload is HypIndexProto: an optional 0-based hyp_index picking
+        // WHICH disjunctive hyp to split. Absent = pick the first matching
+        // hyp (the pre-payload default; also the byte encoding old records
+        // carrying `google.protobuf.Empty` decode as, so replay of legacy
+        // rows keeps its semantics without any migration).
+        HypIndexProto split_disj  = 17;
+        // strip_imp: concl A ⇒ B → A ⊢ B (move antecedent to hypotheses).
+        google.protobuf.Empty strip_imp   = 18;
+        // split_iff: concl A ⇔ B → subgoals A ⊢ B and B ⊢ A.
+        google.protobuf.Empty split_iff       = 20;
+        // split_hyp_iff: hyp A ⇔ B ⊢ C → A,B ⊢ C and ¬A,¬B ⊢ C
+        // (case analysis on the biconditional hypothesis). Optional
+        // HypIndexProto.hyp_index — same semantics as split_disj.
+        HypIndexProto split_hyp_iff   = 21;
+        // split_hyp_imply: hyp A ⇒ B ⊢ C → ¬A ⊢ C and B ⊢ C
+        // (case analysis: either the antecedent fails or the consequent
+        // holds outright). Optional HypIndexProto.hyp_index — same
+        // semantics as split_disj.
+        HypIndexProto split_hyp_imply = 22;
+        // strip_quant: concl ∀x.P(x) → ⊢ P(x) with x freshened (the
+        // whole leading ∀-prefix), else hyp ∃x.P(x) ⊢ C → P(x) ⊢ C on
+        // the first ∃-hyp.
+        //
+        // Payload is HypIndexProto: with hyp_index set, the step is
+        // ∃-elimination on THAT hyp alone and the conclusion is not
+        // touched. Absent = the strip-everything form above (also the
+        // byte encoding old records carrying `google.protobuf.Empty`
+        // decode as, so legacy rows replay unchanged).
+        HypIndexProto strip_quant = 19;
+        // strip_quant1: bounded sibling of strip_quant — peel EXACTLY
+        // ONE leading conclusion ∀-binder (Skolemizing that binder to a
+        // fixed var), leaving every inner quantifier intact. Conclusion
+        // side only; ∃-hyps are never touched (that Skolemization stays
+        // with strip_quant). Parameterless, like strip_quant's pick-first
+        // form: the transition is determined by the goal's shape, so
+        // replay re-runs the same tactic. Exists so binder-counting sugar
+        // (StripQuantN) records as n plain replayable
+        // nodes instead of relying on strip_quant's strip-everything
+        // semantics.
+        google.protobuf.Empty strip_quant1 = 54;
+        // witness: concl ⊢ ∃x.P(x) → subgoal ⊢ P(t); concl ⊢ ∃!x.P(x) →
+        // subgoal ⊢ P(t) ∧ (∀y. P(y) ⇒ y = t). The HolTermProto carries the
+        // witness term t. Single-use: the quantifier is consumed.
+        uint32 witness     = 23;        // node index into the section pool
+        // LEAN-style additions (tier 1): pure surface, kernel already
+        // has everything. Each is a deterministic pure function of the
+        // input goal (no parameters, no environment), so its proto is
+        // just the oneof tag.
+        // assumption: closes goal when concl α-equals some hyp.
+        google.protobuf.Empty assumption = 25;
+        // refl: closes goal when concl is `t = t`.
+        google.protobuf.Empty refl = 26;
+        // membership_read: every membership in an identity-form
+        // set-builder the leaf spells, in the conclusion and the
+        // hypotheses, read as its condition at the point (`x ∈ {p | φ}`
+        // as φ[x/p]) — the apply rung's reading, committed through the
+        // kernel's bridge (prover/tactic, MembershipReadTactic).
+        google.protobuf.Empty membership_read = 66;
+        // record_read: every record projection of a packed value the leaf
+        // spells, in the conclusion and the hypotheses, computed to the part
+        // through the record equations — the apply rung's reading beside
+        // membership_read, committed through the kernel's equations
+        // (prover/tactic, InstanceNormalTactic).
+        google.protobuf.Empty record_read = 67;
+        // record_parts: the part equations of the record values the leaf
+        // spells, at the projections it spells, read through the record
+        // equations: the record reading at the refuter's own
+        // instantiations (prover/tactic, RecordPartsTactic).
+        google.protobuf.Empty record_parts = 68;
+        // numeral_read: the leaf read at its numerals, in the conclusion
+        // and the hypotheses — a variable-free numeral term its value, a
+        // variable-free comparison ⊤ or ⊥ — the apply rung's reading
+        // beside membership_read and record_read, committed through the
+        // arithmetic closer's evaluators (prover/tactic,
+        // NumeralReadTactic). It closes a leaf whose conclusion reads ⊤
+        // or one of whose hypotheses reads ⊥.
+        google.protobuf.Empty numeral_read = 71;
+        // left: ⊢ A∨B → ⊢ A (introduce disjunct A).
+        google.protobuf.Empty left = 27;
+        // right: ⊢ A∨B → ⊢ B (introduce disjunct B).
+        google.protobuf.Empty right = 28;
+        // LEAN-style additions (tier 2): light additions on top of
+        // existing kernel utilities.
+        // funext: ⊢ f = g where f, g are function-typed → ⊢ ∀x. f(x) = g(x).
+        google.protobuf.Empty funext = 29;
+        // by_contra: ⊢ G (G ≠ ⊥) → ¬G ⊢ ⊥.
+        google.protobuf.Empty by_contra = 30;
+        // symm: ⊢ a = b → ⊢ b = a.
+        google.protobuf.Empty symm = 31;
+        // subst: substitute using hypothesis i (an equality whose LHS or RHS
+        // is a free variable). The int32 carries the hyp index. Single
+        // ministep, replayable from index alone since the hyp position is
+        // stable for the recorded goal.
+        int32 subst = 32;
+        // trans: ⊢ a = c → ⊢ a = b and ⊢ b = c. The HolTermProto carries
+        // the middle term b supplied by the agent.
+        uint32 trans = 33;              // node index into the section pool
+        // congr: ⊢ s = t → either one subgoal (single-point replacement
+        // via TermDiff) or n subgoals (one per differing argument when
+        // s, t are same-headed AppliedTerm chains).
+        google.protobuf.Empty congr = 34;
+        // trivial_normalized: closes the goal when its normalized form has
+        // conclusion ⊤ (the trivial-true case). Replaces what would otherwise
+        // be a known_thm step pointing at the ⊢ ⊤ entry in the DB — that
+        // lookup is semantically a no-op (no real lemma dependency) and
+        // pollutes proof traces. The replay rebuilds ⊢ ⊤ via DerivesTrue,
+        // weakens to the normalized hyps if any, and reconstructs through
+        // Normalize's reconstruct callback.
+        google.protobuf.Empty trivial_normalized = 36;
+        // lean_rw: explicit equational-rewrite variant of `lemma`. Same wire
+        // payload (the lemma prop), but replay uses LeanRwTactic — only the
+        // rewrite path, with the size-decrease guard inside eqSimplify
+        // bypassed. Required as its own variant because LemmaTactic's
+        // strategies (eqLemma with guard, conclMatch, hypMatch) can produce
+        // different SubGoals than LeanRwTactic for the same lemma+goal —
+        // serializing as `lemma` and replaying through LemmaTactic would
+        // either fail (size guard rejects) or fall through to a different
+        // strategy than the one originally applied.
+        ext.HolPropProto lean_rw = 37;
+        // assert: introduces a hyp-free boolean claim φ as a sub-claim of
+        // the current goal Γ ⊢ G, producing two subgoals in order:
+        //   - [0] Γ ⊢ φ (the asserted claim)
+        //   - [1] Γ, φ ⊢ G (residual goal with φ as a new hyp)
+        //
+        // The payload carries φ as a Prop (must be hyp-free at the wire
+        // layer). Distinct from by_case (which adds the negation on a second
+        // branch) — assert is the single-direction Coq `assert` / Lean
+        // `have h : φ := …` shape.
+        ext.HolPropProto assert = 38;
+        // existential_const_def: for a const `c` whose definition is a
+        // choice `⊢ c = εx.P(x)` (a recursive definition, a
+        // specification, a chapter's choice), read it through
+        // ExistentialConstDef as two subgoals:
+        //   - [0] Γ ⊢ ∃x.P(x) (existence claim — typically a known
+        //     theorem proved at the time of c's definition)
+        //   - [1] Γ, P(c) ⊢ G (residual goal with P(c) as a new hyp,
+        //     ready for split_conj / lemma use)
+        //
+        // Distinct from def_expand, which opens c to its ε-term: here c
+        // stays folded. The chapter step ExistentialConstDefStep records
+        // it; no session command does.
+        uint32 existential_const_def = 39;  // const node index into the section pool
+        // congr_arg: forward congruence on an equality hyp. Given hyp
+        // (a = b) at hyp_index and an agent-supplied function term f,
+        // adds the hyp f(a) = f(b) (Lean congrArg, kernel
+        // core.PropLeftApply). The original equality is preserved; one
+        // subgoal, reconstructed by a DeriveTrans cut (mirrors
+        // instantiate). The CongrArgProto carries f and the index.
+        CongrArgProto congr_arg = 40;
+        // congr_fun: dual of congr_arg. Given a function-equality hyp
+        // (f = g) at hyp_index and an agent-supplied argument term x,
+        // adds the hyp f(x) = g(x) (Lean congrFun, kernel
+        // core.PropRightApply). The CongrFunProto carries x and the index.
+        CongrFunProto congr_fun = 41;
+        // arith: the unified agent-facing arithmetic ministep. Auto-
+        // dispatches: tries ring (commutative-semiring normalizer) first,
+        // then linarith (ℚ-Farkas + integer extension, OmegaTactic).
+        // Recorded as `arith` so the proof script reflects what the agent
+        // did, not the inner step that succeeded — replay re-runs the same
+        // try-then-try. Determined by the goal; sound under the omega
+        // soundness guard (placeholder integer leaves → decline). An empty
+        // message payload (a former ArithProto carried a semantics-version
+        // bit, wire-compatible with this).
+        google.protobuf.Empty arith = 42;
+        // lemma_preserve: hypothesis-preserving variant of `lemma`, used by
+        // the agent-facing session dispatch. Replay uses LemmaPreserveTactic:
+        // the same multi-strategy chain as LemmaTactic, but any result that
+        // would rewrite or drop a pre-existing goal hypothesis is discarded
+        // and the tactic falls back to plainly adding the lemma's conclusion
+        // as a new hypothesis (no whole-context re-normalization). This is
+        // the fix for "lemma/load re-normalizes the hyp context, dropping
+        // previously-built ground instantiations":
+        // LemmaTactic's simplifyNewGoal post-pass lets a resident ∀-hyp
+        // absorb its own ground instances (rewrite to ⊤ → drop), wiping
+        // manual `instantiate` work. Required as its own variant (same
+        // rationale as lean_rw): the two tactics can produce different
+        // SubGoals for the same lemma+goal, so the wire tag must record
+        // which dispatch was used — replaying an old `lemma` step through
+        // the preserving tactic (or vice versa) would diverge.
+        ext.HolPropProto lemma_preserve = 46;
+        // rw: directed equality-hyp rewrite to fixpoint (Lean
+        // `rw [h] at *`). Given the equality
+        // hyp (a = b) at hyp_index, rewrites a→b (or b→a when flip) across
+        // the goal's conclusion AND all other hyps, descending into every
+        // subterm position (relation-atom arguments, opaque function
+        // arguments), repeated to fixpoint. One subgoal; reconstruction
+        // chains the per-target eqSimplify bridges (EqMP / DeriveTrans),
+        // discharging the flipped orientation via EqSym when flip is set.
+        // The rewrite uses structural matching (no unification — replay
+        // stays deterministic, no unify wall-clock budget) and preserves
+        // the chosen direction without size guards. A self-expanding rule
+        // (oriented LHS occurs in the oriented RHS) is refused outright
+        // (EqRewrite's IsSub guard), guaranteeing termination.
+        // This is the fix for "[feature-gap] no directed equality-hyp
+        // rewrite-to-fixpoint": subst is
+        // one-target + size-monotone + auto-oriented; congr_arg is
+        // one-layer; rw subsumes the manual congr_arg-per-layer loop.
+        RwProto rw = 47;
+        // clear_hyps: batch weakening — drops the SET of hyps at these
+        // 0-based indices in ONE step (one child `Γ\\{dropped} ⊢ G`).
+        // All indices refer to the hyp list of the goal this step runs
+        // on (no sequential shifting — the set is removed atomically).
+        // Sound by weakening: a proof under fewer assumptions is
+        // stronger, so reconstruction is the identity. One ministep /
+        // one tree node however many hyps a sweep drops.
+        ClearHypsProto clear_hyps = 48;
+        // set_tac: the set closer — deterministic fixpoint
+        // unfold of the recorded set-vocabulary consts (set_member, set_comprehension,
+        // comprehension_spec, union, …) across the goal's conclusion AND hyps
+        // (per-occurrence type instantiation, same TryDefExpand walker
+        // def_expand uses), then a bare CNF refute on every residual
+        // leaf. Close-or-fail: the step records ONLY when everything
+        // closed, so at strict replay (RequireCNFCacheHit) the closing
+        // refutes are guaranteed cache hits under the same keys the
+        // record-time run wrote. ONE ministep — replay re-runs the same
+        // driver code (prover/tactic SetTacExpand + _CNFRefute), the
+        // record/emit/replay-reuse principle: no expansion snapshot to
+        // drift against.
+        SetTacProto set_tac = 49;
+        // simp_with: the simplifier — rewrite the
+        // goal's conclusion with an ORDERED rule set to joint fixpoint.
+        // Unconditional rules (∀-prefixed = / ⇔, conjunctions thereof,
+        // and propositional facts oriented to ⇔⊤) fire through the same
+        // ContextEqRewriteOpt + DeepRewriteWhistled composition the
+        // multi-clause lean_rw path uses. CONDITIONAL rules (Horn
+        // ∀x. C₁⇒…⇒(l=r), or the normalized clause form ¬C₁∨…∨(l=r))
+        // fire by instance mining: match l against binder-closed
+        // conclusion subterms, discharge each Cᵢσ against (a) a goal
+        // hyp, (b) a fact rule in the set, or (c) the unconditional
+        // rules rewriting Cᵢσ to ⊤; mined ground equations join the
+        // rewrite set and the loop re-runs until no rule fires (work
+        // budget sized by the goal, deterministic counter — never
+        // wall-clock). Progress-or-fail: records only when at least
+        // one rule fired; replay re-runs the same driver code
+        // (prover/tactic SimpWithExpand) with the rules recorded here
+        // — record/emit/replay-reuse, no expansion snapshot to drift
+        // against. Rules are the RESOLVED props installed at record
+        // time (post type/term-specialize, verbatim), so a later
+        // restatement of a cited entry never alters a recorded step's
+        // replay.
+        SimpWithProto simp_with = 50;
+        // def_expand: agent-facing def-unfold as ONE composite step.
+        // Payload is the const `c` being unfolded; replay re-runs the
+        // one shared driver (prover computeDefExpandSubGoals:
+        // tactic.TryDefExpand — the α-faithful unfold-everywhere def
+        // walker — with the general LeanRwTactic as capability
+        // fallback), so no expansion snapshot lives on the wire and
+        // record/replay cannot drift: the tag records the AGENT CALL,
+        // not a decomposition into internal ministeps
+        // (LeanRw+AxiomDef+TrivialSimplify). Sibling of set_tac /
+        // simp_with.
+        uint32 def_expand = 51;  // const node index into the section pool
+        // specialize: batch ∀-hyp grounding as ONE composite step — see
+        // SpecializeProto. It records the grounding, not an expansion
+        // snapshot (a drifting-index instantiate chain + a sweep
+        // clear_hyps).
+        SpecializeProto specialize = 52;
+        // paired_beta: the auto-pipeline paired-beta normalization
+        // (engine runAutoPairedBeta) as ONE composite step. Payload is
+        // the POLYMORPHIC source equation (pairs.PairedLambda's engine-canonical
+        // prop) — never the per-site term instance, which has no stable
+        // identity outside the recording session (the [auto-pipeline-gap]
+        // emit wall: a term-instance KnownThm payload resolves to no
+        // section / external-leaf / const-def classification and panics
+        // emit). Replay
+        // re-runs the one shared driver (prover
+        // computePairedBetaSubGoals): deterministic first-site fixpoint,
+        // per-site manual instantiation (InstantiateLambdaPair — Miller
+        // HO-unification can't recover `g := λx y. body` from the
+        // `g(x,y)` pattern), inner _LeanRwTactic rewrite, and the rule
+        // obligation discharged inside reconstruct via the same
+        // instantiation chained on the source's promise. Sibling of
+        // set_tac / simp_with / def_expand / specialize: the tag records
+        // the DRIVER CALL, not a snapshot of its LeanRw+KnownThm
+        // expansion.
+        ext.HolPropProto paired_beta = 53;
+        // by: the math layer's premise-disciplined close (`By(premises…)`
+        // / `ByArith(…)`, prover/proof/fact.go) as ONE composite step —
+        // see ByProto. The tag records the AGENT/AUTHOR CALL (premise
+        // list + shaping + closer choice); replay re-runs the one shared
+        // executor (prover _ByStep.apply: locate residents → clear-first
+        // → install/ground each premise → declared shaping → one
+        // refutation), so the closing refute is a guaranteed strict-mode
+        // cache hit under the same key the record-time run wrote, and no
+        // expansion snapshot (clear_hyps + lemma_preserve + specialize +
+        // basic + cnf_refute chain) lives on the wire to drift against.
+        // Named premises surface as CLAIM CHILDREN (⊢ the resolved
+        // install form, [premise order]) closed OUTSIDE the composite —
+        // by auto-match against the entry each premise names at session
+        // record time, by the By macro's
+        // cert at corpus replay — the SimpWith rule-children
+        // convention, which keeps emit's leaf resolution and the trust
+        // regime exactly where they were. Sibling of set_tac / simp_with /
+        // def_expand / specialize.
+        ByProto by = 55;
+        // define: the definition move's composite step — the body of a
+        // definition SECTION (the engine `define` RPC session-side, a
+        // family.Define Build at replay; see step_define.go).
+        // The MINT itself (core.NewConstDef + exclusive ConstMetaManager
+        // registration) happens OUTSIDE the proof tree at the RPC/Build
+        // boundary — apply runs on probe clones, so a kernel-definitional
+        // act must not live inside a step; this step derives the
+        // characterizing theorem from the minted const's stored
+        // definition. Payload is the minted const alone: the
+        // characterizing form is the recorded goal, and the definition
+        // body lives on the const's meta — nothing else rides the wire,
+        // so there is no second copy to drift. Dispatch is on the def
+        // shape (prop.IsHilbertConstDef):
+        //   - DIRECT (⊢ c = λx̄.body): zero children — apply derives
+        //     ⊢ ∀x̄. c(x̄) = body (a PropRightApply chain + β at the goal's own
+        //     binders) and closes the goal outright.
+        //   - HILBERT (⊢ c = εf.P(f)): one child — for the primrec
+        //     shapes the existence obligation [⊢ ∃f. P(f)], closed
+        //     engine-side by the compiled schema instance; for the WF
+        //     shape (measure set) the TERMINATION obligation, surfaced
+        //     for the author, with the WF compiler as the emit.
+        //     Reconstruct discharges the prop.ExistentialConstDef bridge
+        //     (∃f. P(f) ⊢ P(c)) with the child's proof and
+        //     BridgeNormalizes the result onto the goal's form.
+        //
+        // The payload is a message (not the bare const node index) so
+        // the WF measure rides the record.
+        DefineProto define = 57;
+        // define_data: the datatype definition move's composite step —
+        // the body of ONE of a data definition's derived-theorem
+        // sections (INDUCT / RECURSION / INJ / DISTINCT; the engine
+        // `define` RPC's `data:` payload session-side, a
+        // family.DefineData Build at replay; see
+        // step_define.go). The MINT (core.NewTypeDef + one
+        // core.NewConstDef per constructor, all under exclusive
+        // ConstMetaManager registration) happens OUTSIDE the proof tree
+        // at the RPC/registration boundary, exactly as for `define`.
+        // Payload is the minted identity alone — the mk const plus the
+        // ordered constructor consts; the recspace encoding, the shape
+        // predicate, and the typedef source all live on those consts'
+        // metas, so nothing else rides the wire to drift. apply
+        // recovers the datatype from the metas, recomputes the four
+        // derived statements, matches the recorded goal against them,
+        // and re-derives that theorem — pure kernel derivation over the
+        // recspace rows (constr_recursion / constr_injective /
+        // fcons_definition / suc_not_zero / suc_injective / pair_injective /
+        // fst_of_pair / snd_of_pair), deterministic and
+        // refuter-free, zero children (close-or-fail).
+        DefineDataProto define_data = 58;
+        // define_spec: the specification definition move's composite
+        // step — the body of a spec definition SECTION (the chapter
+        // family.DefineSpec Build; see define_spec.go). A spec
+        // definition introduces one or more constants by CHOICE
+        // against a specification: the recorded goal is the
+        // characterizing statement (the specification at the
+        // constants), and the step's ONE child is the POINTWISE
+        // existence obligation — at every point some values satisfy
+        // the specification — the author's mathematics, per the
+        // obligations-surfaced ruling. Payload is the ordered minted
+        // (or claimed) const list alone: the obligation statement is
+        // recomputed from the goal by substituting each constant's
+        // application with a fresh value binder, and the reconstruct
+        // (CompileSpecExistence) is a pure kernel derivation against
+        // the consts' STORED definitions — Skolemize the closed
+        // obligation by ε-witnesses, condition each stored existence
+        // claim's shape (name-tag binders, function-form inner
+        // existentials, pair-literal application arguments via the
+        // served fst_of_pair/snd_of_pair rows), and MP through the
+        // prop.ExistentialConstDef bridges in order, the last of
+        // which concludes the goal. Both provenances replay
+        // identically: a fresh `define spec` mint stores tag-free
+        // nested ε payloads, an imported specification constant
+        // keeps its tagged shape, and the executor reads whichever
+        // the meta carries.
+        DefineSpecProto define_spec = 59;
+        // define_type: the type-definition move's composite step — the
+        // body of ONE of a type definition's two sections (Retraction /
+        // Membership; the engine `define` RPC's `typedef:` payload
+        // session-side, a family.DefineType Build at replay; see
+        // step_define.go, define_type.go). The MINT (core.NewTypeDef +
+        // exclusive registration) happens OUTSIDE the proof tree; the
+        // payload is the minted abs const alone — the predicate, the
+        // representation type and the recorded inhabitation source
+        // live on its meta. Dispatch is by goal shape; the one child
+        // (absent when the normalizer decides the inhabitation) is the
+        // inhabitation statement, closed by a cite. Tag 61: 60 is
+        // split_hyp_conj below.
+        DefineTypeProto define_type = 61;
+
+        // ac_regroup: the AC kit's goal face as ONE composite — the
+        // assoc/sym certificate pair the derivation reads (as
+        // statements; the certs are resolved at replay), the leaf's
+        // equation regrouped by the kit (prover/proof/step_ac.go). The
+        // session `ac_regroup` tactic, the ACRegroup / ACRegroupWith
+        // Actions and emit all run the same executor; emit renders the
+        // pair as cite targets, so the derived certificate — which has
+        // no registry identity — never has to be named. Tag 62.
+        AcRegroupProto ac_regroup = 62;
+
+        // define_inductive: the inductive-definition move's composite
+        // step — the body of ONE of an inductive definition's three
+        // sections (RULES / INDUCT / CASES; the engine `define` RPC's
+        // `inductive:` payload session-side, a family.DefineInductive
+        // Build at replay; see step_define.go, define_inductive.go).
+        // The MINT (core.NewConstDef of the closure body + exclusive
+        // registration) happens OUTSIDE the proof tree. Payload: the
+        // minted constant, the parameter variables and the RULES as
+        // stated — the rules are the definition's identity and the
+        // closure body does not determine them (a substituted index
+        // equation and a premise equation read alike), so they ride
+        // the record as the WF measure does. apply re-runs the analysis
+        // on them, checks the constant's body is their closure,
+        // recomputes the three statements, matches the goal and
+        // re-derives it — pure kernel derivation, zero children
+        // (close-or-fail). Tag 63.
+        DefineInductiveProto define_inductive = 63;
+        // ring_nf: every arithmetic subterm to its ring normal form (step.go _RingNormalize).
+        google.protobuf.Empty ring_normalize = 64;
+
+        // define_quotient: the quotient definition move's composite
+        // step — the body of ONE of a quotient's seven sections
+        // (Surjectivity / Induct / Sound / Exact / Eq / ForallOnImage
+        // / ExistsOnImage; the engine `define` RPC's `quotient:`
+        // payload session-side, a family.DefineQuotient Build at
+        // replay; see step_define.go, define_quotient.go). The MINT
+        // (core.NewTypeDef over the equivalence-class shape + the class
+        // map's core.NewConstDef + exclusive registration) happens
+        // OUTSIDE the proof tree; the payload is the class map alone —
+        // its definition λx. abs(R(x)) names the relation and the
+        // typedef, whose meta carries the rest. Dispatch is by goal
+        // shape; the one child, in every section, is equivalence(R) —
+        // the author's mathematics, closed by a cite — and the
+        // reconstruct is a pure kernel derivation over the typedef
+        // axioms, the class map's definition and the relations
+        // chapter's definitions. Tag 65.
+        DefineQuotientProto define_quotient = 65;
+
+        // split_hyp_conj: By's conditioning stage, the premise split — one
+        // conjunctive hyp (top-level ∧, or ∀-prefixed with the prefix
+        // distributed) replaced by its two conjuncts. Deterministic (first
+        // matching hyp); By's stage runs it to fixpoint. Serialized only as
+        // a By-internal child; replay re-runs the composite, so the tag
+        // exists for the subtree walk, not for standalone dispatch.
+        google.protobuf.Empty split_hyp_conj = 60;
+
+        // open_telescope: a section's opening of its statement in the
+        // order the closure's parameters bind it (section_binding.go) —
+        // each binder, and each hypothesis after the binders it
+        // mentions, the rest left as a statement (tactic
+        // OpenTelescopeTactic). Tag 68.
+        TelescopeProto open_telescope = 69;
+
+        // elementarity: the elementarity step (ByElementarity,
+        // step_elementarity.go) — the goal, a proposition about a closed
+        // field, read as a first-order formula, its bridge proved from the
+        // reifier's plan, and the formula carried over by elementary
+        // equivalence from a source or along an elementary embedding. The
+        // payload is the call — the source and the facts — with the mode
+        // and theory the executor derived, which replay derives again and
+        // checks; the formula, its names and the bridge are recomputed.
+        // Tag 70.
+        ElementarityProto elementarity = 70;
+    };
+}
+
+// ElementarityProto carries a ByElementarity call: its source (an entry by its
+// registered name, a resident family of models by prime, or a resident
+// one-sided fact), the facts it is proved from (resident hypotheses by
+// statement, re-located by α at replay; library entries by registered
+// name), the fixed parameters of `.At`, and what the executor derived
+// from them — the mode, the theory and the embedding — recorded to be
+// checked, never trusted.
+message ElementarityProto {
+        enum Mode {
+                EQUIVALENCE = 0;
+                EMBEDDING = 1;
+        }
+        Mode mode = 1;
+        enum Theory {
+                REAL_CLOSED = 0;
+                ALGEBRAICALLY_CLOSED = 1;
+        }
+        Theory theory = 2;
+        oneof source {
+                string entry = 3;
+                ext.HolPropProto family = 4;
+                ext.HolPropProto fact = 5;
+        }
+        uint32 embedding = 6;
+        repeated ext.HolPropProto facts = 7;
+        repeated uint32 params = 8;
+        repeated string fact_entries = 9;
+}
+
+// TelescopeProto is open_telescope's order: one item per binder bound
+// or hypothesis assumed, in turn.
+message TelescopeProto {
+    repeated TelescopeItemProto items = 1;
+}
+
+// TelescopeItemProto is a binder, by its index in the statement's
+// leading telescope, or, with binder negative, the hypothesis joining
+// the pieces named.
+message TelescopeItemProto {
+    int32 binder = 1;
+    repeated PieceRefProto pieces = 2;
+}
+
+// PieceRefProto names a conjunct of a block's antecedent.
+message PieceRefProto {
+    int32 block = 1;
+    int32 index = 2;
+}
+
+// DefineProto carries the `define` ministep payload: the minted
+// const's node index into the section pool, plus — for the WF shape
+// only — the measure term's node index. The characterizing form is the
+// recorded goal and the definition body lives on the const's meta;
+// the measure is the ONE datum recoverable from neither (the ε-payload
+// β-reduces it away), and the executor needs it to recompute the
+// termination obligation child deterministically.
+message DefineProto {
+    uint32 const = 1;
+    // measure: the WF shape's measure term (λ over the recursion
+    // argument). Absent for the direct and primrec shapes — presence-
+    // tracked, since pool node indices start at 0.
+    optional uint32 measure = 2;
+}
+
+// DefineDataProto carries the `define data` ministep payload: the
+// minted datatype's identity, as node indices into the section pool.
+// mk is the typedef's abs const (mk_<T>); ctors are the constructor
+// consts in DECLARATION order (the order that fixed each constructor's
+// recspace_node index). Everything the executor derives is recovered from
+// these consts' metas — see the oneof comment above.
+message DefineDataProto {
+    uint32 mk = 1;
+    repeated uint32 ctors = 2;
+}
+
+// DefineSpecProto carries the `define spec` ministep payload: the
+// spec-defined constants, as node indices into the section pool, in
+// definition order (each constant's stored existence claim may nest
+// the next constant's — the specification chain). Everything else
+// recovers deterministically: the characterizing form is the recorded
+// goal, the obligation is recomputed from the goal, and each
+// definition body lives on its const's meta.
+message DefineSpecProto {
+    repeated uint32 consts = 1;
+}
+
+// DefineTypeProto carries the `define typedef` ministep payload: the
+// minted abs const, as a node index into the section pool. Everything
+// the executor derives is recovered from its meta (RecoverMintedTypedef).
+message DefineTypeProto {
+    uint32 abs = 1;
+}
+
+// DefineInductiveProto carries the `define_inductive` ministep payload:
+// the minted constant, the parameter variables (in declaration order)
+// and the rules as stated, with the definiendum as a variable.
+message DefineInductiveProto {
+    uint32 const = 1;
+    repeated uint32 params = 2;
+    repeated uint32 rules = 3;
+}
+
+// DefineQuotientProto carries the `define_quotient` ministep payload:
+// the minted class map alone.
+message DefineQuotientProto {
+    uint32 mk = 1;
+}
+
+// SimpWithProto carries the `simp_with` ministep payload: the ordered
+// rewrite-rule set. Slice order IS the deterministic firing order.
+//
+// rule_flip is a parallel slice (same length as rules on the wire OR empty
+// = "no rule is flipped", so a snapshot without the field round-trips
+// byte for byte): rule_flip[i] = true means the driver
+// applies EqSym to rule i BEFORE mining, so `l = r` fires as `r → l`. The
+// rule proto is still the STATED (natural-direction) form, so the
+// ministep's rule child α-matches the cited entry via the same
+// auto-close channels — flip is a per-fire driver knob, not a rewritten
+// statement, and record/emit/replay carry it verbatim without new tags.
+message SimpWithProto {
+    repeated ext.HolPropProto rules = 1;
+    repeated bool rule_flip = 2;
+    // at_hyp addresses the target: 0 (absent) is the conclusion; k > 0 is
+    // hypothesis k−1, rewritten in its place (Lean's `simp at h`).
+    int32 at_hyp = 3;
+    // rule_reading is parallel to rules: rule_reading[i] says what rule i
+    // was read from when it is a structure law read at an instance
+    // (ReadingProto), and is an empty message otherwise. Absent when no
+    // rule is a reading. The driver never consults it — rules[i] is the
+    // derived statement it rewrites with; emit spells `law.Read(instance)`
+    // from it.
+    repeated ReadingProto rule_reading = 4;
+}
+
+// ReadingProto says what a By premise or a Simp rule was read from when
+// it is a structure law READ at an instance (reading.go, the Go
+// `law.Read(instance)`): the recorded statement is the law's with its
+// components pinned to the instance's and its structure hypothesis
+// discharged, and this is the law and the instance. `law` is the law's
+// stated form. Exactly one of the other three is set: `instance`, an
+// instance entry's stated form; `under`, the resident hypothesis the
+// reading is taken under (a hyp-free prop whose conclusion is that
+// hypothesis); `inner`, when the instance is itself a reading — a
+// projection law read at an instance.
+message ReadingProto {
+    ext.HolPropProto law = 1;
+    ext.HolPropProto instance = 2;
+    ext.HolPropProto under = 3;
+    ReadingProto inner = 4;
+}
+
+// ClearHypsProto carries the 0-based hyp indices dropped by the
+// `clear_hyps` ministep. Order is irrelevant (a set); kept as recorded
+// for byte-stable round-trips.
+message ClearHypsProto {
+    repeated int32 hyp_indices = 1;
+}
+
+// ByPremiseProto is one premise of a `by` composite step (ByProto).
+//
+// Two flavors, discriminated by `resident`:
+//
+//   - NAMED (resident == false): `install` is the RESOLVED install form
+//     the premise materializes as (for a named dep: the canonical
+//     NormalizedThm∘Dep closed form; recorded verbatim like SimpWith's
+//     rules, so a later restatement of a cited entry never alters a
+//     recorded step's replay). The executor installs it via the preserving lemma chain
+//     and the step surfaces `install` as a claim child for the caller
+//     to certify.
+//   - RESIDENT (resident == true): `install` is the resident hypothesis'
+//     own statement; the executor LOCATES it by α-match (index-free —
+//     hyp indices don't survive restatement) and keeps it across the
+//     clear. No claim child.
+//
+// `witnesses` grounds the premise at those terms — `At(dep, w…)` /
+// `f.At(w…)` — in the REFERENCE form's stated binder order (the order
+// the author wrote, the order emit prints back). The executor reorders
+// to the installed hyp's binder order itself (witness_order.go), which
+// is a deterministic function of (reference, installed hyp, witnesses).
+// `reference` is that stated form; omitted when it coincides with
+// `install` or when there are no witnesses to reorder.
+message ByPremiseProto {
+    ext.HolPropProto install = 1;
+    ext.HolPropProto reference = 2;
+    repeated uint32 witnesses = 3;  // node indices into the section pool, stated binder order
+    bool resident = 4;
+    // derived marks a solver kit's self-proving premise (fact.go
+    // SelfProvingPremise): the executor asserts `install` at the
+    // premise's list position and closes the claim branch from the
+    // kit's certificate (a runtime input, like env — never on the
+    // wire). List position is behavior, not bookkeeping: an equation
+    // resident EARLIER changes what a later install absorbs, so the
+    // premise may not be hoisted. A kit's premise is hand-written only:
+    // a session `by` never records one and emit cannot render one. The
+    // flavor's other tenant is a structure law read under a resident
+    // hypothesis, which carries `reading` and is recorded and rendered.
+    bool derived = 5;
+    // exact marks `install` as an EXPLICIT type instantiation (an
+    // AtTypes target, or a session premise carrying an agent-supplied
+    // type_specialize σ): the executor installs it exactly instead of
+    // letting the speculative goal-side type adaptation override it.
+    bool exact = 6;
+    // named pins binders of the STATED form by name — Lean's
+    // `apply law (R := r)`: the premise is the apply rung's head with
+    // these binders seeded, the rest read off the goal and the
+    // context, and it MUST fire (fact.go Where). Mutually exclusive
+    // with witnesses (a positional tuple grounds a prefix; a named
+    // table may skip binders). Empty = none.
+    repeated NamedWitnessProto named = 7;
+    // scaled marks a premise carrying a coefficient (fact.go Scaled —
+    // Lean's linear_combination): once the premise, an equation
+    // l = r, is installed and grounded, its congruence c·l = c·r under
+    // the carrier's multiplication is added as a hypothesis, proved
+    // from the equation (keyless). coefficient is c, a node index into
+    // the section pool.
+    bool scaled = 8;
+    uint32 coefficient = 9;
+    // reading says what `install` was read from when the premise is a
+    // structure law read at an instance (ReadingProto). At an instance
+    // entry the premise is otherwise an ordinary named one. Under a
+    // resident hypothesis a bare reading is `derived` — asserted, its
+    // claim branch closed from the kernel-derived sequent, which a
+    // consumer of the record re-derives from `reading` — and a
+    // witnessed one is a named premise whose `install` is that sequent,
+    // installed exactly. The executor never consults the field.
+    ReadingProto reading = 10;
+    // clause is an exact premise's clause form: the entry's normalized
+    // statement at the instance, Normalize first and the types after
+    // (Script.AtTypes; for a session premise, ExplicitInstanceClause).
+    // The two do not commute, so it is not derivable from `install`; a
+    // consumer that re-runs the step from the record (emit's CNF
+    // collector) installs it as the executor did. Absent for every other
+    // premise, whose clause form, where it has one, is Normalize(install).
+    ext.HolPropProto clause = 11;
+}
+
+// NamedWitnessProto is one (binder, term) pin of a By premise's named
+// table: the binder by its STATED name, the term a node index into the
+// section pool.
+message NamedWitnessProto {
+    string binder = 1;
+    uint32 term = 2;
+}
+
+// ByShapeProto serializes the ByShape value (fact.go): the OPTIONAL
+// normalization the accumulated premises pass through before the
+// terminal close. Field-per-flag, matching ByShape's own struct; the
+// merged result of several shaping values in one premise list is
+// recorded (shaping values merge at the macro layer, so the wire
+// carries one).
+message ByShapeProto {
+    bool pre = 1;               // PreNormalized: Basic() BEFORE the denote/realize stage
+    int32 denote_size = 2;      // Denoted(n) — SEARCH form; 0 = none
+    bool hilbert = 3;           // HilbertDenoted
+    uint32 denote_term = 4;     // DenotedAs/HilbertDenotedAs explicit term; node index, 0 = none
+    string denote_name = 5;     // the variable naming denote_term
+    bool denote_hilbert = 6;    // denote_term realizes via the ε transform
+    bool raw = 7;               // Raw: the conditioning stage is suppressed for this call (the author's escape hatch)
+}
+
+// ByProto carries the `by` composite step payload: the premise list in
+// author order, the merged shaping (absent = none — a bare Basic-less
+// close), the closer choice (arith = the gated arithmetic closer, settac = the
+// membership-mode set driver, neither = the CNF refuter) and the
+// Broadcast flag (terminal closer runs over every leaf the shaping
+// fanned out, instead of demanding one).
+//
+// A shaping with NO premises, an empty list, and every other authoring
+// contract (⊥-form leaves must name hyp premises; early close accepted
+// only at the last premise) are enforced by the macro/dispatch layer
+// BEFORE the step records — a recorded ByProto is a witnessed-valid
+// call, and replay re-runs it without re-litigating those checks.
+// AcRegroupProto carries the `ac_regroup` composite's payload: the
+// associativity and commutativity certificates' STATEMENTS (their
+// stated forms — ∀m n p. (m⊕n)⊕p = m⊕(n⊕p) and ∀m n. m⊕n = n⊕m), as
+// pool props. Everything else the executor derives from the leaf's
+// own equation. The certificates are resolved at replay (the Action's
+// Thm arguments; emit renders each as a cite target); the recorded
+// statements identify them the way a By premise's install does.
+message AcRegroupProto {
+    ext.HolPropProto assoc = 1;
+    ext.HolPropProto sym = 2;
+}
+
+message ByProto {
+    repeated ByPremiseProto premises = 1;
+    ByShapeProto shape = 2;
+    bool arith = 3;
+    bool broadcast = 4;
+    // settac selects the membership-mode set_tac driver as the terminal
+    // closer (the math layer's BySets). The driver runs with the
+    // standard set vocabulary; consts are not a per-call choice on this
+    // surface (see StandardSetVocabulary). Mutually exclusive with
+    // arith — the constructors set at most one.
+    bool settac = 5;
+    // Tag 6 was wordarith, the retired machine-word closer.
+    reserved 6;
+    reserved "wordarith";
+    // chase selects the diagram-chase closer (the math layer's ByChase):
+    // the leaf's premises read as an abelian diagram, chase_depth the
+    // number of pull-back rounds the author wrote (Depth(k)). Mutually
+    // exclusive with arith and settac.
+    bool chase = 7;
+    uint32 chase_depth = 8;
+}
+
+message DetailedProofProto {
+    // Serializes the nodes in the proof tree in preorder traversal
+    repeated StepProto steps = 1;
+    // The shared pool every step's goal/sub_goals/term/prop refs index into.
+    ext.PoolProto pool = 2;
+}
+
+// CNFCache is the wire form of a family's recorded CNF refute cache:
+// one `<family>.cnf.pb` blob per family, written by the family CNF
+// recorder, packing the CNF refute proofs (and By conditioning plans)
+// every member's replay will look up. The family package embeds the
+// blob via `//go:embed` (registry.Family.CNF) and the replay harness
+// installs it env-side (Family.CNFStore → env.InstallCNFStore) so it
+// layers in front of env.ProofService.CNFStore — refutes then resolve
+// via in-memory map lookup instead of the session store (or the live
+// refuter, when no cache exists). Emit's CollectCNFCache produces the same message for
+// a session's sections. See InstallCNFCache for the override layering:
+// an unrelated read still falls through to the prior store so non-Auto
+// cache paths still work.
+message CNFCache {
+    // Key = normalized CNF prop AlphaKey (same key tryCNFRefute uses
+    // for its CNFStore.ReadProof / WriteProof). String for
+    // proto3 map compatibility (core.PropKey is a defined string
+    // type that round-trips through `string` losslessly).
+    map<string, refuter.CNFRefuteProofProto> entries = 1;
+    // Chapter members whose refute sets the family CNF recorder
+    // has measured (library/integrity/gates/record_cnf_test.go), sorted.
+    // A member whose recording captures ZERO refutes still lands here,
+    // so a measured family's blob is non-empty even with no entries —
+    // that is what arms the replay harness's strict gate
+    // (RequireCNFCacheHit fires on any non-empty blob) and makes
+    // "measured, zero keys" a fact about the tree rather than about a
+    // recorder transcript. Metadata only: InstallCNFCache ignores it
+    // (names are not lookup keys, so they must never enter `entries` —
+    // the α-variant scan reconstructs every entry it visits).
+    repeated string recorded_members = 2;
+    // The plan table beside the certificate table: key = the BARE working
+    // leaf's goal AlphaKey at the point the By executor's conditioning
+    // stage starts (the bare form, β-normal — before any conditioning
+    // transform), value = the grounding plans (the manual's S4) that
+    // conditioned it. Replay looks the entry up by that key and applies the
+    // plans mechanically — zero search on every replay path; the e-match
+    // heuristics evolve freely because stored rows never re-run the search.
+    map<string, ByConditionPlanProto> plans = 3;
+    // The compound-mechanism capabilities each recorded member's proof
+    // was OBSERVED to use (arith:nat / arith:real / arith:int /
+    // int_of_real:<source key>), keyed by the member's registered name
+    // — written by the family CNF recorder from the member's ProofScope
+    // after its build, read by the dependency manifest (manifest.Build)
+    // as the member's capability edges. Nobody declares a capability:
+    // this table IS the declaration, and the replay harness fails a
+    // member whose observed use drifted from it (re-record). Metadata
+    // only: InstallCNFCache ignores it.
+    map<string, CapabilityList> member_capabilities = 4;
+    // The corpus entries each recorded member's proof was OBSERVED to
+    // read — every library theorem its build read by name that a corpus
+    // entry serves: a cite, an induction or recursion principle, a
+    // served row — keyed by the member's registered name, each value the
+    // entries' registered names. Written by the family CNF recorder for a
+    // proved chapter member, read by the registry as that member's
+    // dependencies (ProofEntry.DepEntries). Nobody declares these: this
+    // table IS the declaration, and the replay harness serves a member
+    // exactly its record and fails a build that reads an entry off it or
+    // no longer reads one on it (re-record). A card, a definition door
+    // and the postulate declare their deps in their entries and have no
+    // row here. Metadata only: InstallCNFCache ignores it.
+    map<string, EntryList> member_deps = 5;
+    // The rows each recorded member's proof touched — the certificate
+    // keys and the plan keys its recording read or wrote, the member's
+    // own rows in the two tables above — keyed by the member's
+    // registered name. Written by the family CNF recorder beside the
+    // member's capability and dependency rows; read by the family GC,
+    // which keeps exactly the rows some member's row names and drops the
+    // rest, running no proof. A member with no row here, or whose row
+    // names a row the blob lacks, is measured by the next GC. Metadata
+    // only: InstallCNFCache ignores it.
+    map<string, RowList> member_rows = 6;
+    // The definitions each recorded member's proof was OBSERVED to open
+    // — the entry defining each constant its build unfolded (the
+    // def-expand step: Unfold, Unfolded, the session's def_expand) —
+    // keyed by the member's registered name, each value the defining
+    // entries' registered names, sorted. A constant the logic defines
+    // before any chapter has no entry and is not listed. Written by the
+    // family CNF recorder for a proved chapter member beside its
+    // dependency row, read by the registry as edges of the member's
+    // dependency graph (ProofEntry.DepEntries): a proof that opens a
+    // constant stands on its definition. The step reads the definition
+    // off the constant, so a build is not served these entries
+    // (ProofEntry.ServedDeps); the replay harness fails a build whose
+    // openings drifted from the row (re-record). An EMPTY row means
+    // "measured, opens nothing". Metadata only: InstallCNFCache ignores
+    // it.
+    map<string, EntryList> member_unfolds = 7;
+    // The exact-key table beside the certificate table: key = the
+    // AlphaKey of a certificate's refute prop as the CNF conversion
+    // builds it, nothing normalized; value = the key in `entries` the
+    // certificate is stored under. One row per certificate, and a
+    // function of the certificate's stored goal — the stored goal is
+    // restated so that its cold CNF is the CNF that was searched — so
+    // the table is rebuilt from `entries` with no proof run
+    // (rekey_cnf_blob). tryCNFRefute asks it first: a leaf whose refute
+    // prop is the recorded one up to α reaches its certificate without
+    // the normal form the key in `entries` is the key of, and every
+    // other lookup falls back to that key. A row names a certificate
+    // the blob holds (TestLintExactKeysNameCertificates).
+    map<string, string> exact_keys = 8;
+}
+
+// CapabilityList is one member's observed capability use, sorted.
+message CapabilityList {
+    repeated string names = 1;
+}
+
+// EntryList is one member's recorded dependencies: registered entry
+// names, sorted.
+message EntryList {
+    repeated string names = 1;
+}
+
+// RowList is one member's rows in the certificate and plan tables: the
+// keys its recording touched, each list sorted.
+message RowList {
+    repeated string certificates = 1;
+    repeated string plans = 2;
+}
+
+// ByConditionPlanProto is one recorded output of the By executor's S4
+// grounding stage for ONE working leaf: the e-match search's result as
+// DATA — which ∀-hypotheses were grounded at which witness tuples, and
+// which wide sources were then replaced by their instances. Stored in
+// the CNF store's plan table (CNFCache.plans / the cnf_plans DB table)
+// under the bare leaf's goal AlphaKey; the search that found the plans
+// is never re-run at replay.
+message ByConditionPlanProto {
+    // The pool every hyp/witness ref below indexes into.
+    ext.PoolProto pool = 1;
+    // The instantiations, applied as ONE composite specialize step
+    // (sources kept) in list order.
+    repeated ByGroundingProto groundings = 2;
+    // Pool refs of the wide ∀-hyps CLEARED after grounding (the
+    // REPLACE default — ∀-width is the poison). A hyp absent from this
+    // list keeps its wide form alongside its instances (partial pin /
+    // type-filled tuples).
+    repeated uint32 replaced = 3;
+    // AlphaKey of the working leaf AFTER the groundings + clears — the
+    // record-time anchor. Replay verifies it after applying the plans:
+    // a mismatch means the executor no longer reproduces the recorded
+    // conditioning (an engine drift to fix, never to paper over).
+    string conditioned_goal_key = 4;
+}
+
+// ByGroundingProto grounds one ∀-hyp's leading binders at a witness
+// tuple, positionally (a tuple shorter than the binder count leaves
+// the remaining binders universally quantified). The hyp is identified
+// by TERM, not index — the application site locates it by α-key, so
+// the record is stable against hyp-order drift.
+message ByGroundingProto {
+    uint32 hyp = 1;                 // node index into the plan's pool
+    repeated uint32 witnesses = 2;  // node indices, leading-binder order
+}

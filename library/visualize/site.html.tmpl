@@ -1,0 +1,326 @@
+<style>
+  .hits {
+    position: fixed;
+    z-index: 20;
+    width: min(560px, calc(100vw - 28px));
+    max-height: min(70vh, 640px);
+    overflow-y: auto;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    background: var(--bg);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+    font-size: 12px;
+  }
+  .hit { display: block; padding: 6px 10px; border-bottom: 1px solid var(--card-border); color: inherit; text-decoration: none; }
+  .hit.at, .hit:hover { background: var(--card); }
+  .hit-name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; font-size: 12.5px; }
+  .hit-kind {
+    margin-left: 6px;
+    padding: 0 5px;
+    border: 1px solid var(--card-border);
+    border-radius: 3px;
+    color: var(--muted-foreground);
+    font-size: 10.5px;
+  }
+  .hit-family { margin-left: 8px; color: var(--muted-foreground); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+  .hit-statement {
+    margin-top: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--muted-foreground);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+  }
+  .hits-foot { padding: 6px 10px; color: var(--muted-foreground); }
+</style>
+<script>
+// What the two pages share: the reading of the site's files
+// (visualize.Site), and the links from a page to another. A path is
+// relative, so the site reads the same wherever it is published.
+window.xugoSite = (function () {
+  "use strict";
+
+  // A file of the site, asked for once while the asking holds: one that
+  // could not be read — a server restarting, a network gone — is asked
+  // for again the next time it is wanted.
+  const asked = new Map();
+  function file(path) {
+    if (!asked.has(path)) {
+      const reading = fetch(path).then(answer => {
+        if (!answer.ok) throw new Error(`${path}: ${answer.status}`);
+        return answer.json();
+      });
+      asked.set(path, reading);
+      reading.catch(() => { if (asked.get(path) === reading) asked.delete(path); });
+    }
+    return asked.get(path);
+  }
+
+  function segments(name) {
+    return name.split("/").map(encodeURIComponent).join("/");
+  }
+
+  // The family graph's layout (visualize.SiteFamilies).
+  function families() {
+    return file("data/families.json");
+  }
+
+  // What the site says of a family and of its units (visualize.SiteFamily),
+  // the units by name too.
+  const read = new Map();
+  function family(name) {
+    if (!read.has(name)) {
+      const reading = file(`data/family/${segments(name)}.json`).then(said => {
+        said.byName = new Map(said.units.map(u => [u.name, u]));
+        return said;
+      });
+      read.set(name, reading);
+      reading.catch(() => { if (read.get(name) === reading) read.delete(name); });
+    }
+    return read.get(name);
+  }
+
+  // A unit's id is its family's name, a dot, and its own.
+  function familyOf(id) {
+    return id.slice(0, id.lastIndexOf("."));
+  }
+
+  // A family's last two path segments: what a node says of its family
+  // (visualize.familyTail).
+  function tail(name) {
+    const parts = name.split("/");
+    return parts.length <= 2 ? name : parts.slice(-2).join("/");
+  }
+
+  // A unit's graph as visualize.ProofGraph has it: its page's layout
+  // (visualize.SitePage) joined with what the families' files say of
+  // the units it draws, a theorem's units it uses and those using it,
+  // and a card's plan, among that (visualize.SiteUnit). A node's left edge and width are
+  // its column's; a node standing for a family is named by the family,
+  // and the one standing for the families not drawn by their count; and
+  // a user's stratum, where it is not proved, is read from its family's
+  // file.
+  async function proof(id) {
+    const page = await file(`data/proof/${segments(id)}.json`);
+    const names = new Set(page.units.map(familyOf));
+    for (const grain of page.grains) {
+      for (const n of grain.nodes) {
+        if (n.use === "family") names.add(n.id);
+      }
+    }
+    const said = new Map(await Promise.all([...names].map(async name => [name, await family(name)])));
+    const own = familyOf(page.target);
+    const grains = page.grains.map(grain => {
+      const nodes = grain.nodes.map(n => {
+        const column = grain.columns[n.c];
+        const at = { column: n.c, x: column.x, y: n.y, w: column.w, ambient: !!n.ambient, target: !!n.target, use: n.use };
+        if (n.use === "family") {
+          return { ...at, id: n.id, name: tail(n.id), family: n.id, users: n.users, statements: [], gloss: said.get(n.id).gloss };
+        }
+        if (n.use === "more") {
+          return { ...at, id: n.id, name: `${n.families} more families`, family: "", users: n.users, families: n.families, statements: [] };
+        }
+        const unit = page.units[n.u], of = familyOf(unit), name = unit.slice(of.length + 1);
+        const facts = said.get(of).byName.get(name);
+        return {
+          ...at, id: unit, name, family: of, own: of === own, definition: !!facts.definition,
+          status: facts.status, theorems: facts.theorems, cards: facts.cards, statements: facts.members, gloss: facts.gloss,
+          uses: facts.uses || [], usedBy: facts.used_by || [], plan: facts.plan
+        };
+      });
+      const edges = grain.edges.map(e => ({ s: nodes[e.s].id, t: nodes[e.t].id, via: !!e.via, y1: e.y1, y2: e.y2 }));
+      return { ...grain, nodes, edges };
+    });
+    let definition = null;
+    if (page.definition) {
+      definition = {
+        ...page.definition,
+        families: page.definition.families.map(f => ({
+          ...f,
+          users: (f.users || []).map(user => {
+            const status = said.get(f.family).byName.get(user.name).status;
+            return status === "proved" ? user : { ...user, status };
+          })
+        }))
+      };
+    }
+    return { target: page.target, name: page.target.slice(own.length + 1), definition, grains };
+  }
+
+  // A unit's page. Opened from another unit's page it keeps the grain
+  // and the font size that page is read at; opened from the family
+  // graph it has its own, whatever size the family graph is read at.
+  function pageOf(id) {
+    const kept = new URLSearchParams();
+    if (location.pathname.endsWith("/proof.html")) {
+      const here = new URLSearchParams(location.search);
+      for (const key of ["grain", "size"]) {
+        if (here.has(key)) kept.set(key, here.get(key));
+      }
+    }
+    const query = kept.toString();
+    return `proof.html?m=${segments(id)}${query ? "&" + query : ""}`;
+  }
+
+  // The family graph, a family locked.
+  function familyPage(name) {
+    return `./?family=${encodeURIComponent(name)}`;
+  }
+
+  return { families, family, proof, pageOf, familyPage };
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+
+  // The search of the corpus: what is typed in the page's search field
+  // is also asked of every member of the corpus, whatever its kind, and
+  // the members found are listed under the field, each a link to its
+  // page. The field goes on marking the nodes of the graph in view, as
+  // the page has it do.
+  //
+  // A query is its words, and a member is found when each word is part
+  // of its name, its family or its statement, whatever the case. The
+  // nearest come first: a word that is the name counts least, then one
+  // the name opens with, one the name holds, one the family holds, and
+  // one only the statement holds; then the shorter name. The first HITS
+  // are listed.
+  const SITE = window.xugoSite;
+  const HITS = 40;
+  const field = document.getElementById("search");
+  const list = document.createElement("div");
+  list.className = "hits";
+  list.hidden = true;
+  document.body.appendChild(list);
+  field.placeholder = "Find here, or search every member";
+  field.setAttribute("autocomplete", "off");
+
+  let asked = 0;
+  let at = -1;
+  let timer = null;
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  // The members of the corpus as a search reads them, from every
+  // family's file, read at the first search: each with its unit's id,
+  // which names its page, and its name, family and statement in lower
+  // case.
+  let corpus = null;
+  function members() {
+    if (corpus === null) {
+      corpus = SITE.families()
+        .then(graph => Promise.all(graph.nodes.map(n => SITE.family(n.family))))
+        .then(said => {
+          const entries = [];
+          for (const f of said) {
+            for (const unit of f.units) {
+              for (const m of unit.members) {
+                entries.push({
+                  hit: { id: `${f.family}.${unit.name}`, name: m.member, family: f.family, kind: m.kind, statement: m.text },
+                  name: m.member.toLowerCase(), family: f.family.toLowerCase(), statement: m.text.toLowerCase()
+                });
+              }
+            }
+          }
+          return entries;
+        });
+      corpus.catch(() => { corpus = null; });
+    }
+    return corpus;
+  }
+
+  function find(entries, query) {
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const found = [];
+    for (const e of entries) {
+      if (words.length === 0) continue;
+      let far = 0, matched = true;
+      for (const word of words) {
+        if (e.name === word) far += 0;
+        else if (e.name.startsWith(word)) far += 1;
+        else if (e.name.includes(word)) far += 2;
+        else if (e.family.includes(word)) far += 3;
+        else if (e.statement.includes(word)) far += 4;
+        else { matched = false; break; }
+      }
+      if (matched) found.push({ e, far });
+    }
+    found.sort((a, b) => a.far - b.far || a.e.name.length - b.e.name.length);
+    return { total: found.length, members: found.slice(0, HITS).map(x => x.e.hit) };
+  }
+
+  function place() {
+    const box = field.getBoundingClientRect();
+    list.style.left = `${Math.max(8, Math.min(box.left, innerWidth - list.offsetWidth - 8))}px`;
+    list.style.top = `${box.bottom + 4}px`;
+  }
+
+  function foot(count) {
+    return `<div class="hits-foot">${count}</div>`;
+  }
+
+  function show(rows, count) {
+    at = -1;
+    list.innerHTML = rows.join("") + foot(count);
+    list.hidden = false;
+    place();
+  }
+
+  function ask() {
+    const query = field.value.trim();
+    if (query.length < 2) {
+      list.hidden = true;
+      return;
+    }
+    const mine = ++asked;
+    if (list.hidden) show([], "reading the corpus…");
+    members().then(entries => {
+      if (mine !== asked) return;
+      const answer = find(entries, query);
+      const rows = answer.members.map(m =>
+        `<a class="hit" href="${escHtml(SITE.pageOf(m.id))}">
+          <div><span class="hit-name">${escHtml(m.name)}</span>${m.kind === "theorem" ? "" : `<span class="hit-kind">${escHtml(m.kind)}</span>`}<span class="hit-family">${escHtml(m.family)}</span></div>
+          <div class="hit-statement">${escHtml(m.statement)}</div>
+        </a>`);
+      const count = answer.total === 0
+        ? "no member found"
+        : (answer.total > answer.members.length ? `the first ${answer.members.length} of ${answer.total}` : `${answer.total} found`);
+      show(rows, count);
+    }).catch(refused => {
+      if (mine === asked) show([], `the corpus could not be read: ${escHtml(refused.message)}`);
+    });
+  }
+
+  function mark(next) {
+    const rows = list.querySelectorAll(".hit");
+    if (rows.length === 0) return;
+    at = (next + rows.length) % rows.length;
+    rows.forEach((row, i) => row.classList.toggle("at", i === at));
+    rows[at].scrollIntoView({ block: "nearest" });
+  }
+
+  field.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(ask, 140);
+  });
+  field.addEventListener("focus", () => { if (list.innerHTML && field.value.trim().length >= 2) { list.hidden = false; place(); } });
+  field.addEventListener("keydown", e => {
+    if (list.hidden) return;
+    if (e.key === "ArrowDown") { e.preventDefault(); mark(at + 1); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); mark(at - 1); }
+    else if (e.key === "Escape") { list.hidden = true; }
+    else if (e.key === "Enter") {
+      const rows = list.querySelectorAll(".hit");
+      if (rows.length) location.href = rows[Math.max(at, 0)].href;
+    }
+  });
+  document.addEventListener("mousedown", e => {
+    if (e.target !== field && !list.contains(e.target)) list.hidden = true;
+  });
+  window.addEventListener("resize", () => { if (!list.hidden) place(); });
+})();
+</script>

@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>XuGo</title>
+<meta name="description" content="XuGo：基于 Go 语言建立的形式数学系统，人与 AI agent 一起编写数学，每一步推导都由一个小型 LCF 内核检查。" />
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <a class="brand" href="./">XuGo</a>
+    <nav class="nav">
+      <a href="../corpus/">全库</a>
+      <a href="landmarks.html">重要定理</a>
+      <a href="#faq">常见问题</a>
+      <a href="architecture.html">架构</a>
+      <a href="practice.html">实践</a>
+      <a href="https://github.com/euc-ai/xugo">GitHub</a>
+      <a href="../index.html" lang="en">EN</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero wrap">
+  <h1>XuGo</h1>
+  <!-- from README.zh-CN.md -->
+  <p class="lead">People and AI write mathematics together—verified by a kernel, readable as a paper.</p>
+  <!-- end README.zh-CN.md -->
+  <div class="actions">
+    <a class="button primary" href="../corpus/">浏览全库</a>
+    <a class="button" href="landmarks.html">重要定理</a>
+    <a class="button" href="#faq">常见问题</a>
+    <a class="button" href="https://github.com/euc-ai/xugo">GitHub 源码</a>
+  </div>
+  <figure class="building">
+    <svg id="building" role="img" aria-label="全库的每个章节是一个方块，位于它所导入的最高章节的上一行"></svg>
+    <figcaption><b>全景。</b>全库的每个章节是一个方块，位于它所导入的最高章节的上一行，最底层是自然数。方块中填色的部分是其定理中已完整证明的比例，其余是卡片或依赖卡片。点击一个方块，就在全库浏览器中打开这一章。</figcaption>
+  </figure>
+</section>
+
+<section class="section wrap" id="about">
+  <div class="prose">
+    <!-- from README.zh-CN.md -->
+    <p>2026 年 11 月 20 日，Levent Alpöge 与 AI 协作交出了一份约 1700 万行 Lean 代码的黎曼猜想形式化证明，并通过了机器内核与独立检查器的核验。</p>
+    <p>未来的困难从验证转向了理解与共生：当一份证明的正确性已经可以交给机器确认，人类还要怎么读懂它、消化它，并在此基础上继续做数学？</p>
+    <p>XuGo 是为此原生设计的人与 AI 共同做数学的基础设施：</p>
+    <div class="pillars">
+      <div class="pillar">
+        <h3>证明即叙事：把可读性变成系统约束，而不是事后翻译。</h3>
+        <p>XuGo 在证明产生的源头强制推行「证明即叙事」，每一步中间结论都必须写出形式化陈述，自动证明器强制隔离、只能看见显式传入的前提变量，达到哪怕删掉全部注释，单凭代码正文仍能完整还原数学论证的标准。证明不是先跑出来再解释给人类听，而是从落笔起就长成人类能读、能审、能对话的数学叙事。</p>
+      </div>
+      <div class="pillar">
+        <h3>压缩与提纯：从一次性膨胀的证明，走向持续压实的结构。</h3>
+        <p>数学的长期推进依赖的是把散落的技巧提炼成可复用的底层结构。XuGo 的设计把 AI 擅长的软件工程重构能力（寻找重复代码、提取公共抽象、修改调用处）直接转化为了数学上的概念提纯：结构建在载体集合上，没有跨类型搬运的负担；定理依赖在源码中完全显式；从皮亚诺公理到完整曲线 Weil 猜想、类群有限性、形变理论、拟范畴、概率论与因果分析等领域一共只用了一万多个成员。配合家用多核电脑上即可完成的快速重放，agent 能够高频地跨章节去重、剥离冗余假设、把局部跳板升格为共享的底层定理。</p>
+      </div>
+      <div class="pillar">
+        <h3>人机交互与人类主体性：人是架构师，不是观众。</h3>
+        <p>大多数日常数学研究并不是押注算力冲刺一座孤立的山峰，而是试验新定义、调整理论边界、梳理领域结构，在反复对话中形成新的直觉。XuGo 的卡片图机制让人可以先用卡片画蓝图、在底层未证时先验证顶层接口自然性、再解耦派发给 Agent 并行填卡、最后由人做审美与概念裁定。</p>
+      </div>
+    </div>
+    <p>XuGo 基于 Go 语言建立。人和 AI 一起决定证明的目标和结构，AI 探索证明，逻辑内核检查推导。在 XuGo 里，一条定理是一个变量，一个数学章节是一个 Go pkg，整座数学库就是一个可以直接编译、运行和复用的软件工程。</p>
+    <p>XuGo 以极小的概念集合同时托起分析、拓扑、数论、模型论、无穷范畴、代数几何、概率论与因果推理，且不产生类型搬运内耗。XuGo 已经覆盖的数学内容可见 <a href="../corpus/">Corpus</a>。XuGo 已经证明的代表性定理可见<a href="landmarks.html">重要定理</a>。</p>
+    <!-- end README.zh-CN.md -->
+  </div>
+</section>
+
+<section class="section wrap follow" id="highlights">
+  <div class="prose">
+    <p>关于架构，请看<a href="architecture.html">架构</a>；关于 XuGo 实践，请看<a href="practice.html">实践</a>。</p>
+    <p>一些醒目的已证明定理：</p>
+  </div>
+  <div class="cards">
+    <a class="card" href="../corpus/proof.html?m=int_num/quadratic_reciprocity.QuadraticReciprocity">
+      <span class="area">Number theory</span>
+      <h3>Quadratic reciprocity</h3>
+      <p>For distinct odd primes p and q, (p/q)(q/p) = (−1)<sup>(p−1)/2 · (q−1)/2</sup>, proved with the
+      quadratic Gauss sum in a field of characteristic q.</p>
+      <code>int_num/quadratic_reciprocity.QuadraticReciprocity</code>
+    </a>
+    <a class="card" href="../corpus/proof.html?m=algebra/field/number_field/class_number.ClassNumberFinite">
+      <span class="area">Algebraic number theory</span>
+      <h3>The class number is finite</h3>
+      <p>The ideal class group of a number field is finite: its ring of integers has an
+      integral basis, and at that basis the ideals of bounded norm cover the classes.</p>
+      <code>algebra/field/number_field/class_number.ClassNumberFinite</code>
+    </a>
+    <a class="card" href="../corpus/proof.html?m=scheme/serre_duality.RiemannRoch">
+      <span class="area">Curves</span>
+      <h3>Riemann–Roch</h3>
+      <p>ℓ(M) − dim Hom(M, ω) = deg M + 1 − g for an invertible lattice pair on a curve,
+      which may be singular, through Serre duality.</p>
+      <code>scheme/serre_duality.RiemannRoch</code>
+    </a>
+    <a class="card" href="../corpus/proof.html?m=scheme/weil_curve.WeilConjecturesOverFiniteFields">
+      <span class="area">Curves over finite fields</span>
+      <h3>The Weil conjectures for curves</h3>
+      <p>For every smooth projective curve over every finite field: the zeta function is
+      rational, has its functional equation and satisfies the Riemann hypothesis, and the
+      point counts keep the Hasse–Weil bound.</p>
+      <code>scheme/weil_curve.WeilConjecturesOverFiniteFields</code>
+    </a>
+    <a class="card" href="../corpus/proof.html?m=simplicial/kan_fibration.ExactAtTotal">
+      <span class="area">Homotopy theory</span>
+      <h3>The exact sequence of a Kan fibration</h3>
+      <p>The higher homotopy groups of a Kan complex, and the long exact sequence of a
+      fibration through its fibre, total space and base.</p>
+      <code>simplicial/kan_fibration.ExactAtTotal</code>
+    </a>
+    <a class="card" href="../corpus/proof.html?m=simplicial/quasi_category.KanIffHomotopyGroupoid">
+      <span class="area">Higher categories</span>
+      <h3>Joyal's theorem</h3>
+      <p>A quasi-category is a Kan complex exactly when its homotopy category is a
+      groupoid.</p>
+      <code>simplicial/quasi_category.KanIffHomotopyGroupoid</code>
+    </a>
+    <a class="card" href="../corpus/proof.html?m=vector/euclidean_topology.BrouwerCube">
+      <span class="area">Topology</span>
+      <h3>Brouwer's fixed point theorem</h3>
+      <p>A continuous map of the cube [0, 1]<sup>n</sup> into itself has a fixed point, by
+      Kuhn's combinatorial lemma on a labelled grid.</p>
+      <code>vector/euclidean_topology.BrouwerCube</code>
+    </a>
+    <a class="card" href="../corpus/proof.html?m=probability/martingale/optional_stopping.OptionalStoppingDominated">
+      <span class="area">Probability</span>
+      <h3>The optional stopping theorem</h3>
+      <p>An almost surely finite stopping time preserves the expectation of a martingale
+      whose stopped process has an integrable bound.</p>
+      <code>probability/martingale/optional_stopping.OptionalStoppingDominated</code>
+    </a>
+  </div>
+</section>
+
+<section class="section wrap faq" id="faq">
+  <div class="prose">
+    <h2>常见问题</h2>
+
+    <!-- from README.zh-CN.md -->
+    <details>
+      <summary>XuGo 是给 AI agent 用的还是给人用的？</summary>
+      <div class="answer">
+        <p>XuGo 为双方安排了清晰的分工，把数学方向、品味与结构取舍留给人：</p>
+        <ul>
+          <li>人与 agent 先通过对话敲定章节边界、定义形式与定理顺序，将尚未证明的定理写为卡片——一种通过类型与依赖检查的正式接口，由人对这些数学陈述与整体架构拍板；</li>
+          <li>卡片图架构把设计和填卡完全解耦，Agent 在可保存、可回退、可跨中断接续的内核会话（Session）中独立完成证明。探索中暴露的工具短板与重复推导不会停留在单次对话里，而是在与人讨论后沉淀为引擎的新功能与底层公共引理，让下一位 agent 站在更高的起点上；</li>
+          <li>证明落地后由独立 referee agent 审阅，机械性的问题由 agent 自动修好，而“定义是否自然”“某段重复推导是否值得抽象成新概念”这类关乎数学审美的判断，则始终交还给人。</li>
+        </ul>
+        <p>一个典型的使用流程是：</p>
+        <ol class="flow">
+          <li>用户提出数学问题</li>
+          <li>与 agent 确认正式陈述</li>
+          <li>agent 探索证明</li>
+          <li>内核检查并重放确认证明成立</li>
+          <li>交由另一个 agent 独立审阅</li>
+          <li>机械性的改进由 agent 自动施行，概念性的意见和人进行讨论</li>
+          <li>得到可阅读、可复用的证明的同时，对证明库和引擎的改进提出建议</li>
+        </ol>
+        <p>引擎的进步降低了证明与重构的成本，数学结构的提纯又减少了重复劳动，并暴露出下一轮值得改进的工具需求。快速编译与重放使这两种改进能够高频发生：工具越完善，证明与重构越容易；数学结构越精炼，后续证明越能直达关键。定理库的增长持续改善着生产它的工具和组织它的概念，并为发现数学上新的结构创造条件。</p>
+        <p>关于人机协作与双循环重构机制，请参阅 <a href="practice.html">XuGo 的实践</a>。</p>
+      </div>
+    </details>
+    <details>
+      <summary>已经有了 Lean 和 mathlib，为什么还需要 XuGo？</summary>
+      <div class="answer">
+        <p>Lean 和 mathlib 已经建立了极其庞大的形式化数学生态，但它是围绕人类使用依值类型（Dependent Types）配合交互式 IDE 手写证明设计的。XuGo 探索的是另一条路，一套从零开始为人与 AI Agent 规模化协作而设计的数学基础设施。</p>
+        <p>XuGo 的设计选择旨在解决三个在传统定理证明器中难以兼顾的核心问题：</p>
+        <ul>
+          <li><b>证明即叙事</b>。在典型的 Lean 脚本中，证明是一串隐式改变状态的指令（如 rw、simp），中间结论与实际调用的前提隐藏在 IDE 状态里，源码本身难以直接通读。XuGo 要求每一步都在代码里写出中间结论及其依赖，证明可以像论文一样直接阅读。</li>
+          <li><b>结构建立在集合（Carrier Sets）而非类型之上，消除“类型搬运税”</b>。依值类型把子域、商这类对象各自定义为类型，对象之间的转换要靠强制类型转换和传输。XuGo 采取了另一条路线，让元素住在简单类型里，代数与几何结构定义为集合上的谓词。没有了跨类型同构搬运，全库的定理依赖在源码中显式可见。</li>
+          <li><b>驱动“工具进化”与“数学提纯”的双循环</b>。在庞大复杂的类型系统中，修改底层代数定义往往需要数小时的重新编译，底层重构成本极高。XuGo 的极简 LCF 内核配合模块化重放，修改底层后很快就能重新验证，工具改进与概念提纯这两个循环因而可以高频运转。</li>
+        </ul>
+        <p>XuGo 关心的不只是“能否用机器验算某条已知定理”，而是实践一种新的数学研究方式。XuGo 的证明明确记录中间结论和所用前提，人与 agent 因而可以比较不同章节的论证，把重复步骤提取为公共引理，并检查哪些假设其实并不需要。原来只服务于一个问题的局部论证因而可能成为适用于更多对象的一般定理。快速编译和证明重放，让“提取引理、修改引用、验证结果”的循环迭代能够成为日常工作。</p>
+        <p>关于这种迭代机制请参阅 <a href="practice.html">XuGo 的实践</a>。</p>
+        <p>关于底层架构的细节请参阅<a href="architecture.html">架构</a>。</p>
+      </div>
+    </details>
+    <details>
+      <summary>如何安装并初次使用 XuGo？</summary>
+      <div class="answer">
+        <h4>交给 AI 安装</h4>
+        <p>把下面这段发给能运行终端命令的 AI：</p>
+        <blockquote>请帮我安装 XuGo。克隆 https://github.com/euc-ai/xugo.git，阅读仓库里的 skill 文档，按 go.mod 的要求准备 Go，并在仓库根目录构建 xugo。然后在本地打开 browse 页面。完成后告诉我仓库装在哪里，以及页面的访问地址。</blockquote>
+        <h4>自己在终端安装</h4>
+        <p>推荐下载完整仓库，因为数学库本身就是源码的一部分。先准备 Git 和 Go；Go 版本以仓库的 <code>go.mod</code> 为准，要求至少为 Go 1.27。如果本地已安装 Go 1.21 及以上版本，Go 工具链会自动按 go.mod 下载对应版本，无需手动重装。</p>
+        <p>在终端执行：</p>
+        <pre>git clone https://github.com/euc-ai/xugo.git
+cd xugo
+go build -o xugo ./engine/cmd/xugo/</pre>
+        <h4>在浏览器里浏览全库</h4>
+        <p>全库已经发布成一个网站，不用安装就能看：<a href="../corpus/">https://euc-ai.github.io/xugo/corpus/</a>。它由 master 分支的最新提交生成。</p>
+        <p>它的首页是全库的章节依赖图：点一个章节，右侧显示它的介绍，以及其中的定义和定理列表。点一个定理进入它的页面，可以看到陈述、说明以及证明所依赖的结论，并沿着依赖继续跳转；点一个定义，可以看到它由什么构成、哪些定理用到它。页面上方的搜索框按名称、章节或陈述搜索全库的定理。</p>
+        <p>在本地也能打开同样的页面，内容是你检出的这份代码：</p>
+        <pre>./xugo browse</pre>
+        <p>读库需要几秒，随后打印访问地址，默认是 <code>http://127.0.0.1:8717/</code>，用浏览器打开即可；按 Ctrl-C 结束，端口被占用时用 <code>--port</code> 换一个。</p>
+        <h4>开始与 AI 一起工作</h4>
+        <p>仓库已经附带 <code>prove</code> skill，描述了从讨论数学目标、探索证明到检查和审阅的完整工作流。</p>
+        <ul>
+          <li><b>Claude Code</b>：在仓库根目录启动 <code>claude</code>，然后在对话中输入 <code>/prove</code>，后面接你的数学目标。</li>
+          <li><b>Codex</b>：打开本地仓库项目，或在仓库根目录启动 <code>codex</code>，然后在对话中输入 <code>$prove</code>，后面接你的数学目标。</li>
+          <li><b>Gemini（Antigravity / Gemini CLI）</b>：在 Antigravity 中打开本地仓库项目，或在仓库根目录启动 <code>gemini</code>，在对话中说明使用 <code>prove</code> skill（或输入 <code>/prove</code>）并描述你的数学目标。</li>
+        </ul>
+        <p>例如，在 Claude Code 中输入：</p>
+        <pre>/prove 我想研究自然数的整除性质。请先查询已有结果，
+介绍这一章已经证明了什么，并与我讨论接下来值得证明的命题。</pre>
+        <p>在 Codex 中，将开头的 <code>/prove</code> 换成 <code>$prove</code> 即可；在 Antigravity 或 Gemini CLI 中，可直接描述数学目标并要求使用 <code>prove</code> 工作流。这些内容输入在 AI 的对话框中。</p>
+        <p>你可以直接用自然语言描述问题，不必先写出形式化陈述。Agent 会查询数学库、解释已有定义与结果，并与你确认目标和证明路线。</p>
+        <p>各客户端分别从 <code>.claude/skills/</code>、<code>.agents/skills/</code> 和 <code>.gemini/skills/</code> 发现仓库内的 skill。</p>
+      </div>
+    </details>
+    <details>
+      <summary>XuGo 的证明脚本和 Lean 读起来有什么不同？</summary>
+      <div class="answer">
+        <p>XuGo 对入库证明有明确要求：关键中间结论要写在正文里，支持它们的事实通过命名引用连接起来，并说明这些步骤在数学上的作用。每个关键节点都对应可检查的陈述。注释帮助解释思路，删掉注释之后，程序仍须保留完整推导。Lean 常见的 tactic 脚本会记录“展开定义、改写、应用引理、化简”等操作；理解这些操作后的目标，有时需要结合编辑器显示的证明状态。区别主要在于写作约定：在 XuGo 里，自动证明器强制隔离，只能看见显式传给它的前提变量。</p>
+        <p>这带来了三个效果：</p>
+        <ul>
+          <li>陌生读者能从正文重建论证，证明代码的阅读体验高度贴近数学论文。即使删掉文件里的所有注释，仅靠代码正文里的命题与变量引用图，陌生读者也能完整重建数学论证。这一要求由静态门禁（lint）和独立评审共同强制执行。</li>
+          <li>定理的依赖关系在源码里显式可见。</li>
+          <li>数学上同构的推导表现为代码结构上的重复，从而能够像给代码去重一样自动提炼公共引理。</li>
+        </ul>
+        <p>例如，库中的 <a href="https://github.com/euc-ai/xugo/blob/master/library/proofs/vector/euclidean/norm.go">Cauchy Schwarz 不等式</a>的证明片段：</p>
+        <pre>nonneg := a.Have(
+    "the form at w is nonnegative",
+    "&amp;0 ≤ «cauchyExpansion»",
+    expand.RwRev(),
+    By(DotPosLe.At(a.VecAs[Real, DimN]("w"))))
+
+// Halve — linear over the two products — then cancel the
+// positive factor ‖u‖‖v‖.
+bound := a.Have(
+    "so ‖u‖‖v‖·⟨u,v⟩ ≤ ‖u‖‖v‖·(‖u‖‖v‖)",
+    "‖u‖_n * ‖v‖_n * ⟪u, v⟫_n ≤ ‖u‖_n * ‖v‖_n * (‖u‖_n * ‖v‖_n)",
+    ByArith(nonneg))
+prodPos := a.Have(
+    "‖u‖‖v‖ is positive",
+    "&amp;0 &lt; ‖u‖_n * ‖v‖_n",
+    By(uPos, vPos, At(real_order_ring.MulPos, normU, normV)))
+a.Show(
+    "cancel the positive factor ‖u‖‖v‖",
+    By(
+        prodPos,
+        bound,
+        At(real_order_ring.LessEqCancelMulLeft, normProduct, form, normProduct)))</pre>
+        <p>这就是 XuGo 所说的“证明即叙事”原则：论证的结构保留在可检查的命题与引用关系中。即使略过注释，读者仍能读出证明路线；需要追问某一步时，也能打开它引用的定理继续阅读。自然语言解释思路，形式化正文承载推导，内核检查每一步是否成立。</p>
+        <p>这种写法也为后续整理提供了依据：人与 agent 可以比较不同证明中的中间命题和依赖关系，识别重复论证，再将有独立价值的部分提取为公共引理。静态门禁检查可机械检查的写作规范，独立评审则检查论证是否确实能被陌生读者理解。</p>
+        <p>作为对照，mathlib 中 <a href="https://github.com/leanprover-community/mathlib4/blob/master/Mathlib/Analysis/InnerProductSpace/Defs.lean#L317">Cauchy Schwarz 不等式</a>的 Lean 脚本片段如下：</p>
+        <pre>theorem inner_mul_inner_self_le (x y : F) :
+    ‖⟪x, y⟫‖ * ‖⟪y, x⟫‖ ≤ re ⟪x, x⟫ * re ⟪y, y⟫ := by
+  suffices discrim (normSqF x) (2 * ‖⟪x, y⟫_𝕜‖) (normSqF y) ≤ 0 by
+    rw [norm_inner_symm y x]
+    rw [discrim, normSq, normSq, sq] at this
+    linarith
+  refine discrim_le_zero fun t ↦ ?_
+  by_cases hzero : ⟪x, y⟫ = 0
+  · simp only [← sq, hzero, norm_zero, mul_zero, zero_mul, add_zero]
+    obtain ⟨hx, hy⟩ : (0 ≤ normSqF x ∧ 0 ≤ normSqF y) :=
+      ⟨inner_self_nonneg, inner_self_nonneg⟩
+    positivity
+  · have hzero' : ‖⟪x, y⟫‖ ≠ 0 := norm_ne_zero_iff.2 hzero
+    convert cauchy_schwarz_aux' (𝕜 := 𝕜) (⟪x, y⟫ • x) y
+      (t / ‖⟪x, y⟫‖) using 3
+    · field_simp
+      rw [normSq, normSq, inner_smul_right, inner_smul_left,
+        ← mul_assoc _ _ ⟪x, x⟫, mul_conj]
+      rw [← ofReal_pow, re_ofReal_mul]
+      ring
+    · field_simp
+      rw [inner_smul_left, mul_comm _ ⟪x, y⟫_𝕜, mul_conj,
+        ← ofReal_pow, ofReal_re]
+      ring</pre>
+        <p>这段 Lean 代码写出了判别式这个主要中间目标，也用 <code>have</code> 命名了事实；但在 <code>convert</code>、<code>field_simp</code> 和连续的 <code>rw</code> 之后，各个分支具体变成了什么等式，没有逐一反映在正文中。</p>
+      </div>
+    </details>
+    <details>
+      <summary>卡片是什么？它相当于 Lean 中的 <code>sorry</code> 吗？</summary>
+      <div class="answer">
+        <p>卡片是一条已经写好正式陈述、但尚未给出证明的库成员。它有名字、说明和可查询的依赖关系，可以成为一个明确的证明任务。引用卡片，意味着暂时把卡片的陈述作为假设。内核检查的是：在这些假设成立的前提下，后面的推导是否成立。它和 Lean 中的 <code>sorry</code> 有本质区别：<code>sorry</code> 是让编译器暂时通过的万能占位符，在内核里坍缩为一个匿名公理（<code>sorryAx</code>），而卡片是把数学顶层架构与底层证明施工解耦的数学协作工程接口。</p>
+        <p>卡片让一个大目标在证明完成之前，就被拆成可以审阅、分工和追踪的正式命题。XuGo 会明确区分“已证明”“证明仍依赖卡片”和“卡片”，并列出一个结果通过依赖链最终站在哪些未证陈述上。在这个机制下面：</p>
+        <ul>
+          <li>架构先行：在动手写任何证明之前，人与 Agent 可以先通过对话，把一整章的数学设计成一张卡片网。因为每张卡片都是带有完整类型签名和显式依赖的 Go 变量，你可以在底层引理还是卡片的时候，先把顶层主定理的证明跑通。这能提前验证定义是否好用、引理接口是否对齐，一旦发现缺陷，在卡片阶段就能低成本修改。</li>
+          <li>多 Agent 并行施工：卡片图中每一张卡片就是一个边界清晰的独立任务。系统可以同时派发若干冷启动的 Agent，按任意顺序并行填卡。卡片的陈述、定义、预期路线和依赖信息，可以直接成为 Agent 的任务上下文。因为卡片的名字、身份标识（Key）和类型签名已经固定，当某张卡片的真正证明落盘替换时，所有引用它的上游定理无需修改一行代码。</li>
+          <li>透明的“未证前沿”追踪：任何定理都能快速查询自己所依赖的未证卡片，当一个顶层定理的卡片依赖清零时，它就真正成为了不依赖任何额外假设的定理。所有未证明卡片都有自己的唯一标识，不是笼统的 <code>sorry</code>。</li>
+        </ul>
+        <p>卡片不允许循环论证或隐藏假设。XuGo 内置的检查确保了：1. 整个依赖图必须无环。2. 自动计算工具（如自动算数工具 Omega）不能依赖卡片。3. 新常量的定义（如用选择算子构造对象）不能建立在卡片之上。再加上重放时要求证明实际读取的依赖与记录一致，定理的依赖列表里看到的卡片，就是它的证明被记录到的全部未证假设。</p>
+        <p>关于卡片的使用方式详情请参阅 <a href="practice.html">XuGo 的实践</a>。</p>
+      </div>
+    </details>
+    <details>
+      <summary>它能自己发现新的数学吗，还是只能验证已有数学？</summary>
+      <div class="answer">
+        <p>XuGo 可以接受没有参考证明的新命题，让 agent 尝试寻找证明；更重要的是，它能在持续重构已有数学的过程中，通过逻辑去重，反复剥离冗余假设，发现更一般、更本质的数学定理与结构。</p>
+        <p>为什么整理已有证明也能带来发现？假设一个定理原本要求对象同时满足 A、B、C 三个条件。重新检查论证时，我们发现只凭 B、C 就能完成证明；把这个更弱的前提正式写下来并验证，便得到了一条适用于更多对象的定理。同样，如果不同领域反复出现相同的论证，把它提取出来，就可能揭示它们共同依赖的数学结构。</p>
+        <p>XuGo 的设计让这种工作可以持续进行。证明本身就是标准的 Go 程序。因此，agent 擅长的“寻找重复代码、提取公共部分”，在这里可以成为数学探索的入口：这两段证明为什么相似？共同的论证需要什么条件？它是否值得成为一个独立的引理或概念？</p>
+        <p>XuGo 的做法是：第一，它把所有结构条件都写成集合上的显式谓词；第二，它要求证明的每一步都必须显式指明所依赖的前提，每个关键推导明确列出采用的事实，系统记录证明实际读取的依赖。Agent 可以据此尝试拆开结构条件、删去冗余假设，再由内核检查削弱后的陈述是否仍然成立；第三，全库重放和底层重构的成本极低。当 Agent 不断在全库范围内寻找重复的推导模式，并将定理重述为“只索取证明真正用到的性质”时，新的数学发现就会沿着逻辑的真实受力点自然浮现：</p>
+        <ul>
+          <li>从局部探路中长出新引理：Agent 在证明一个定理时，需要在会话树中自己发明中间步骤。在后续迭代中，其他 Agent 会发现某段局部造出的临时跳板其实是一个跨章节通用的数学事实（例如在证明可分根域的 Galois 性时，局部构造出的“有限多个代数元生成有限扩张”被提取为独立定理），从而将其晋升为公共定理。</li>
+          <li>概念的拆解：在代数数论的理想唯一分解中，教科书通常笼统要求环是一个 Dedekind 整环（打包了多条公理）。而 XuGo 将其拆解为：存在性定理其实只需要“当前理想上方的严格理想链有界”加“极大理想可逆”；唯一性定理则只需要“参与分解的极大理想可逆”。</li>
+          <li>跨领域的底层结构坍缩：当不同领域的证明在代码上呈现出同构的推导模式时，Agent 会将其提纯为共享的底层结构。例如，数论中的“理想类群有限性”与几何中的“曲线 Weil 猜想”经过反复提纯后，汇入了同一套可逆分式理想与模论定律——最终，数域依赖锥中大量成员被直接复用到了几何侧的 Weil 猜想证明中。</li>
+          <li>新任务会反过来改善已有数学：库里每条证明都可能成为下一次发现的材料，而新的数学任务又会改变旧证明的组织方式。</li>
+        </ul>
+        <p>在这个过程中，Agent 利用显式依赖图做逻辑拆解与代码去重，而人类则与独立评审 Agent 一起做数学审美上的裁定。人类教科书的定义粒度是为了适应人类的工作记忆，而 XuGo 允许我们按照逻辑的真实受力结构来重新切割数学概念——这正是新的数学结构潜在发生的地方。</p>
+        <p>关于人机协作与重构机制请参阅 <a href="practice.html">XuGo 的实践</a>。</p>
+      </div>
+    </details>
+    <details>
+      <summary>如何知道 XuGo 有没有 bug？XuGo 中的 bug 会不会产生数学上不严谨的推导？</summary>
+      <div class="answer">
+        <p>XuGo 的核心安全原则是：即使引擎或 AI 出现 bug，也无法伪造出一条错误的数学定理。要理解这一点，最关键的是区分内核（Kernel）与引擎（Engine）。在 XuGo 中，数学的严密性由很小的内核保证。不需要功能强大的引擎毫无 bug，才能信任最终的数学推导。</p>
+        <h4>极小且容易审查的内核</h4>
+        <p>XuGo 采用经典的 LCF 架构，将全部数学可靠性集中在 core/ 包这一个仅有数千行代码的极小内核中。一条已证定理是一个内部字段对外完全封闭的受保护对象——除了内核中的那几条基本逻辑推理规则和几个具名的信任入口之外，没有任何外部代码能够直接构造或篡改它。</p>
+        <p>因为内核体量极小、功能固定且几乎不随业务改动，任何人或 AI 都可以轻易完整通读并审计它的每一行代码。XuGo 有意偏离了 Go 语言惯用的错误处理方式：一旦出现逻辑不一致，程序便会触发 panic 而非抛出 error。任何对内核或框架不变性的违背，都会直接导致程序终止，而非让错误在系统中传播。</p>
+        <h4>不断进化的引擎</h4>
+        <p>建立在内核之上的引擎（负责管理证明树、搜索路线、化简计算、运行自动化以及与 Agent 交互）体量要大得多，而且在日常实践中会随着 Agent 的探索高频迭代、不断增加新功能。但无论引擎多么复杂，它都没有直接生成定理的权限，它找到的任何巧妙走法，最终都必须一步步拆解成内核规则能够通过的原始推导。</p>
+        <p>举个例子：假如引擎里的化简器出了 bug，错误地认为两个不相等的代数式相等，它也没法直接把这句话变成定理。它的所有操作必须还原为若干步内核罗列出的少数几条原子公理操作的组合。在 Go 的可见性规则之内，它拿不到任何能改写内核对象的入口。</p>
+        <p>同样，如果搜索算法或 Agent 出现了幻觉、走错了方向，最坏的结果只是耗时增加、证明卡住或会话报错，但绝不可能把一步错误推理混进最终的定理库。正是这种设计，让我们敢于放手让引擎和工具快速进化，而不用担心破坏数学严密性。</p>
+        <h4>门禁系统：堵死定义、循环论证与未证假设的后门</h4>
+        <p>XuGo 在外围还设有一整套自动化门禁检查：</p>
+        <ul>
+          <li>防伪造定义：所有新数学常量的引入会强制检查合法性，防止通过病态定义偷渡矛盾。</li>
+        </ul>
+        <ul>
+          <li>防循环论证：依赖图的无环性由 Go 编译器和门禁的环检测共同保证——编译器禁止包之间的循环导入和包内变量的循环初始化，按名字读取的依赖（如归纳与递归原理）则由门禁在记录的依赖图上检测；门禁同时严格锁定算术等自动决策工具的逻辑底座，严禁自动机反过来依赖它正在证明的定理。</li>
+        </ul>
+        <ul>
+          <li>透明追踪未证卡片：库中尚未证明的陈述以卡片形式存在。系统记录每条证明实际读取的依赖，重放时要求它与记录完全一致，并据此公开每条定理的依赖链——一条定理是“已完全证明”还是“仍建立在某张未证卡片之上”，在索引中一目了然，且未证卡片被严禁进入底层自动化工具的信任底座。</li>
+        </ul>
+        <p>在内核及其受控信任边界正确工作的前提下，上层证明工具的任何 bug 都无法伪造定理。它影响的是证明的效率、成功率和可用性，而不是已经通过内核检查的推导是否成立。</p>
+        <p>因此，引擎会不断演化、反复改进，而很小的内核保持稳定：数学的可靠性由这个内核，以及公理、定义和模块化验证等明确的信任入口共同保证。</p>
+      </div>
+    </details>
+    <details>
+      <summary>我需要先学 Go、形式逻辑和 XuGo 的专有语法，才能使用 XuGo 吗？</summary>
+      <div class="answer">
+        <p>不需要。</p>
+        <p>XuGo 为人和 AI 交互工作而原生设计。可以先用自然语言讨论目标，由 agent 查询已有结果、起草正式陈述，并解释其中的定义与条件。人负责确认这是否表达了自己的数学意图，选择定义、讨论证明路线、决定章节如何组织。证明编写和机械检查可以交给 agent 和内核。</p>
+        <p>证明即论文叙事，推导由 XuGo 的逻辑内核检查。在工作流中，你扮演的是数学架构师与审稿人，编写代码、查找引理可以由 Agent 完成。即便你去阅读生成的 Go 证明文件，看到的也不是复杂的底层指令，而是由 <code>Have("步骤说明", "数学命题", By(前提变量))</code> 串联起来的显式逻辑链，无需懂 Go 语法也能像读论文一样跟进每一步推理。</p>
+        <p>XuGo 的定理陈述采用数学家最熟悉的集合与谓词写法（如 <code>∀x. x ∈ c ⇒ …</code>），它的具体语法在文档中有详细描述，交给 agent 去掌握细节会更高效。</p>
+        <p>关于人机协作机制请参阅 <a href="practice.html">XuGo 的实践</a>。</p>
+      </div>
+    </details>
+    <details>
+      <summary>为什么用 Go 写？</summary>
+      <div class="answer">
+        <p>Go 在 XuGo 中同时承担系统实现和证明编写的工作。一个定理对应一个 Go 变量，一个章节对应一个包，章节之间的引用对应包之间的依赖。</p>
+        <p>XuGo 除了 Go 1.27 以外没有额外的语言依赖（包括refutation prover，Omega，diagram-chase closer 等工具都是直接用 Go 编写，没有调用外部的 Z3 / CVC5 / Vampire / E prover 等工具），自带的 AST 分析与文档工具链（go test、go doc）开箱即用。Go 生态中高度成熟的编译器、测试工具和代码重构工具，都可以直接参与数学库的建设。</p>
+        <p>这带来三个实际好处。</p>
+        <ul>
+          <li>证明可以像普通程序一样被拆分、复用和重新组织。Agent 熟悉的“找到重复代码、提取公共部分、修改调用处”，在这里可以对应“找到重复论证、提取公共引理、修改引用”。提取出来的东西是否具有数学价值，仍由人与评审判断。</li>
+          <li>快速编译和高效重放让频繁修改底层成为可行的日常工作。提炼一个公共引理后，可以修改多处证明，再检查它们是否仍然成立。修改一个章节并重放验证只需几秒到几分钟。</li>
+          <li>XuGo 巧妙利用了 Go 的泛型机制，把逻辑类型、载体集以及向量/矩阵的维数编码进了 Go 的静态类型签名中。一旦 Agent 用错了定理的载体类型，或者把维数不匹配的矩阵相乘，在编译阶段就会直接报错拦截。此外，Go 编译器严格禁止包之间的循环导入，章节之间的依赖因此天然无环。</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary>我可以怎样参与 XuGo？</summary>
+      <div class="answer">
+        <p>欢迎任何形式的参与：讨论 XuGo 可能的应用，对它的发展方向提出建议，把它嵌入你自己的项目（它是一个 Go 模块，外部程序可以直接导入内核和定理库），或者用它写数学，再告诉我们体验如何。这些都可以在 <a href="https://github.com/euc-ai/xugo/discussions">Discussions</a> 里展开。</p>
+        <p>发现缺陷，尤其是能让内核接受错误命题的漏洞，请开一个 issue，附上能复现问题的最小 Go 测试。</p>
+      </div>
+    </details>
+    <!-- end README.zh-CN.md -->
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>XuGo · Apache License 2.0</span>
+    <nav>
+      <a href="../corpus/">全库</a>
+      <a href="landmarks.html">重要定理</a>
+      <a href="#faq">常见问题</a>
+      <a href="architecture.html">架构</a>
+      <a href="practice.html">实践</a>
+      <a href="https://github.com/euc-ai/xugo">GitHub</a>
+      <a href="../index.html" lang="en">EN</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+// The building is read from the corpus browser's own layout
+// (corpus/data/families.json), so it is that of the corpus published
+// beside this page.
+(function () {
+  "use strict";
+  const NS = "http://www.w3.org/2000/svg";
+  fetch("../corpus/data/families.json")
+    .then(answer => {
+      if (!answer.ok) throw new Error(`../corpus/data/families.json: ${answer.status}`);
+      return answer.json();
+    })
+    .then(draw)
+    .catch(err => console.error(err));
+
+  function draw(layout) {
+    const svg = document.getElementById("building");
+    svg.setAttribute("viewBox", `0 0 ${layout.width} ${layout.height}`);
+    for (const n of layout.nodes) {
+      // The share is of the chapter's theorems, a postulate counted with
+      // the proved; a definition is never on cards, and a chapter of
+      // definitions alone has nothing left to prove.
+      const done = n.proved_theorems + n.postulates;
+      const theorems = done + n.theorems_on_cards;
+      const share = theorems > 0 ? done / theorems : 1;
+      const link = document.createElementNS(NS, "a");
+      link.setAttribute("class", "blk");
+      link.setAttribute("href", `../corpus/index.html?family=${encodeURIComponent(n.family)}`);
+      link.appendChild(block(n.x, n.y, n.w, layout.block, "open"));
+      if (share > 0) link.appendChild(block(n.x, n.y, n.w * share, layout.block, "done"));
+      svg.appendChild(link);
+    }
+  }
+
+  function block(x, y, w, h, kind) {
+    const r = document.createElementNS(NS, "rect");
+    r.setAttribute("x", x);
+    r.setAttribute("y", y);
+    r.setAttribute("width", w);
+    r.setAttribute("height", h);
+    r.setAttribute("rx", 4);
+    r.setAttribute("class", kind);
+    return r;
+  }
+})();
+</script>
+</body>
+</html>
